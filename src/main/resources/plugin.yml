@@ -2,3 +2,10 @@ name: DisabledSMP
 version: '1.0-SNAPSHOT'
 main: de.joja.disabledSMP.DisabledSMP
 api-version: '1.21'
+
+commands:
+  goon:
+    description: you goon a lot
+    aliases:
+      - jerk
+      - good_time

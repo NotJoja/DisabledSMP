@@ -6,12 +6,15 @@ public final class DisabledSMP extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
 
+        getServer().getPluginManager().registerEvents(new FuckListener(), this);
+
+        getCommand("goon").setExecutor();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
     }
 }
