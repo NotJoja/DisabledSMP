@@ -9,7 +9,7 @@ public final class DisabledSMP extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new FuckListener(), this);
 
-        getCommand("goon").setExecutor();
+        getCommand("goon").setExecutor(new GoonCommand());
     }
 
     @Override
