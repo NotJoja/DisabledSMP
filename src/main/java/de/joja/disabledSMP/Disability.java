@@ -15,4 +15,7 @@ public enum Disability {
 
     public static final int DISABILITIES_TOTAL_AMOUNT = Disability.values().length;
 
+    public static Disability get(int i) {
+        return values()[i];
+    }
 }
