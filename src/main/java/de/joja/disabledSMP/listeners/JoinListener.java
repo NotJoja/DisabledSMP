@@ -1,14 +1,15 @@
 package de.joja.disabledSMP.listeners;
 
+import de.joja.disabledSMP.Disability;
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import de.joja.disabledSMP.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,26 +35,23 @@ public class JoinListener implements Listener {
             return;
 
         // if player disabilities are not already loaded, but do exist, then load them
-        int[] disabilityIDs = YamlDisabilityStorage.loadDisabilityIDs(plugin, uuid);
-        if (disabilityIDs != null) {
-            List<Integer> disabilityList = Utils.asIntegerList(disabilityIDs, DISABILITIES_TOTAL_AMOUNT);
-            plugin.disabilityM.disabilityMap.put(uuid, disabilityList);
+        Disability[] disabilities = YamlDisabilityStorage.loadDisabilities(plugin, uuid);
+        if (disabilities != null) {
+            plugin.disabilityM.disabilityMap.put(uuid, new ArrayList<>(Arrays.asList(disabilities)));
             return;
         }
 
         // disabilities do not exist yet, it is a new player, then generate their disabilities
-        List<Integer> possibleDisabilityIDs = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
-        for (int i = 0; i < DISABILITIES_TOTAL_AMOUNT; i++)
-            possibleDisabilityIDs.add(i);
-        List<Integer> generatedDisabilityIDs = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
+        List<Disability> possibleDisabilities = new ArrayList<>(Arrays.asList(Disability.values()));
+        List<Disability> generatedDisabilities = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
 
         for (int i = 0; i < DISABILITIES_TOTAL_AMOUNT/2; i++) {
-            int randomIndex = random.nextInt(possibleDisabilityIDs.size());
-            generatedDisabilityIDs.add(possibleDisabilityIDs.get(randomIndex));
-            possibleDisabilityIDs.remove(randomIndex);
+            int randomIndex = random.nextInt(possibleDisabilities.size());
+            generatedDisabilities.add(possibleDisabilities.get(randomIndex));
+            possibleDisabilities.remove(randomIndex);
         }
 
-        plugin.disabilityM.disabilityMap.put(uuid, generatedDisabilityIDs);
+        plugin.disabilityM.disabilityMap.put(uuid, generatedDisabilities);
     }
 
 }

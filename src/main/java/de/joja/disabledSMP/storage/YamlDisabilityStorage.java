@@ -44,4 +44,11 @@ public abstract class YamlDisabilityStorage {
         }
     }
 
+    public static void saveDisabilities(JavaPlugin plugin, UUID uuid, Disability[] disabilities) {
+        int[] disabilityIDs = new int[disabilities.length];
+        for (int i = 0; i < disabilities.length; i++)
+            disabilityIDs[i] = disabilities[i].ordinal();
+        saveDisabilityIDs(plugin, uuid, disabilityIDs);
+    }
+
 }

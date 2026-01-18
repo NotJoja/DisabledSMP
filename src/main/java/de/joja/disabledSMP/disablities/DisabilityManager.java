@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public class DisabilityManager {
 
-    public Map<UUID, List<Integer>> disabilityMap = new HashMap<>();
+    public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
 
 }
