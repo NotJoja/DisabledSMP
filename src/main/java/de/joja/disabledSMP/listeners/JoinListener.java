@@ -3,6 +3,7 @@ package de.joja.disabledSMP.listeners;
 import de.joja.disabledSMP.Disability;
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
+import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,9 +36,9 @@ public class JoinListener implements Listener {
             return;
 
         // if player disabilities are not already loaded, but do exist, then load them
-        Disability[] disabilities = YamlDisabilityStorage.loadDisabilities(plugin, uuid);
+        List<Disability> disabilities = YamlDisabilityStorage.loadDisabilities(plugin, uuid);
         if (disabilities != null) {
-            plugin.disabilityM.disabilityMap.put(uuid, new ArrayList<>(Arrays.asList(disabilities)));
+            plugin.disabilityM.disabilityMap.put(uuid, disabilities);
             return;
         }
 

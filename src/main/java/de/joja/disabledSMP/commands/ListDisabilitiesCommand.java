@@ -13,23 +13,23 @@ import java.util.UUID;
 
 import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
 
-public class AddDisabilityCommand implements CommandExecutor {
+public class ListDisabilitiesCommand implements CommandExecutor {
 
     DisabledSMP plugin;
 
-    public AddDisabilityCommand(DisabledSMP plugin) {
+    public ListDisabilitiesCommand(DisabledSMP plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (args.length < 2) {
+        if (args.length < 1) {
             sender.sendRichMessage("<red>Not enough args!");
             return true;
         }
 
-        if (args.length > 2) {
+        if (args.length > 1) {
             sender.sendRichMessage("<red>Too many args!");
             return true;
         }
@@ -40,27 +40,11 @@ public class AddDisabilityCommand implements CommandExecutor {
             return true;
         }
 
-        int i;
-        try {
-            i = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            sender.sendRichMessage("<red>Given disability id is not an integer!");
-            return true;
-        }
-
-        if (i < 0 && i > DISABILITIES_TOTAL_AMOUNT-1) {
-            sender.sendRichMessage("<red>Given disability id does not exist!");
-            return true;
-        }
-
         UUID uuid = player.getUniqueId();
+        sender.sendRichMessage("<gray>Disabilities of " + player.getName());
         List<Disability> disabilities = plugin.disabilityM.disabilityMap.get(uuid);
-
-        if (!disabilities.contains(Disability.get(i))) {
-            plugin.disabilityM.disabilityMap.get(uuid).add(Disability.get(i));
-            sender.sendRichMessage("<green>Successfully added disability to this player!");
-        } else
-            sender.sendRichMessage("<yellow>Player already has that disability!");
+        for (Disability d : disabilities)
+            sender.sendRichMessage("<gray>- " + d.ordinal());
 
         return true;
     }

@@ -3,29 +3,35 @@ package de.joja.disabledSMP.storage;
 import de.joja.disabledSMP.Disability;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public abstract class YamlDisabilityStorage {
 
-    public static int[] loadDisabilityIDs(JavaPlugin plugin, UUID uuid) {
+    public static List<Integer> loadDisabilityIDs(JavaPlugin plugin, UUID uuid) {
         File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
         if (!file.exists()) return null;
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        return (int[]) cfg.get("disability_ids");
+        return (ArrayList<Integer>) cfg.get("disability_ids");
     }
 
-    public static Disability[] loadDisabilities(JavaPlugin plugin, UUID uuid) {
-        int[] disabilityIDs = loadDisabilityIDs(plugin, uuid);
+    public static List<Disability> loadDisabilities(JavaPlugin plugin, UUID uuid) {
+        List<Integer> disabilityIDs = loadDisabilityIDs(plugin, uuid);
         if (disabilityIDs == null)
             return null;
 
-        Disability[] disabilities = new Disability[disabilityIDs.length];
-        for (int i = 0; i < disabilityIDs.length; i++)
-            disabilities[i] = Disability.values()[disabilityIDs[i]];
+        List<Disability> disabilities = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
+        for (int i = 0; i < disabilityIDs.size(); i++)
+            disabilities.add(Disability.get(disabilityIDs.get(i)));
         return disabilities;
     }
 

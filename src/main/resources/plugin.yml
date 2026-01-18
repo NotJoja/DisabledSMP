@@ -10,6 +10,9 @@ commands:
   remove_disability:
     permission: "disabledSMP.disability_admin"
     description: Remove a disability from a player
+  list_disabilities:
+    permission: "disabledSMP.disability_admin"
+    description: Lists all the disabilities of a player
 
 permissions:
   disabledSMP.disability_admin:

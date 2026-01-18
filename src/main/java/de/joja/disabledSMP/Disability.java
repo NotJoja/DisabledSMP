@@ -11,7 +11,12 @@ public enum Disability {
     FARBENBLINDHEIT,
     GLEICHGEWICHTSPROBLEME,
     TAUB,
-    ZITTERANFAELLE;
+    ZITTERANFAELLE,
+    UEBERGEWICHT,
+    KEINE_ZAEHNE,
+    ALLERGIE,
+    SCHIZOPHRENIE,
+    RASSISMUS;
 
     public static final int DISABILITIES_TOTAL_AMOUNT = Disability.values().length;
 

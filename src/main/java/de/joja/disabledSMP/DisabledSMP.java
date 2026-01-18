@@ -1,6 +1,7 @@
 package de.joja.disabledSMP;
 
 import de.joja.disabledSMP.commands.AddDisabilityCommand;
+import de.joja.disabledSMP.commands.ListDisabilitiesCommand;
 import de.joja.disabledSMP.commands.RemoveDisabilityCommand;
 import de.joja.disabledSMP.disablities.DisabilityManager;
 import de.joja.disabledSMP.listeners.JoinListener;
@@ -14,10 +15,13 @@ public final class DisabledSMP extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        System.out.println("can print");
+
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
 
         getCommand("add_disability").setExecutor(new AddDisabilityCommand(this));
         getCommand("remove_disability").setExecutor(new RemoveDisabilityCommand(this));
+        getCommand("list_disabilities").setExecutor(new ListDisabilitiesCommand(this));
     }
 
     @Override
