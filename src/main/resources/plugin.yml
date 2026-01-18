@@ -1,4 +1,12 @@
 name: DisabledSMP
-version: '1.0-SNAPSHOT'
+version: '0.1-SNAPSHOT'
 main: de.joja.disabledSMP.DisabledSMP
 api-version: '1.21'
+
+commands:
+  add_disability:
+    permission: "disabledSMP.disability_admin"
+    description: add a disability to a player
+  remove_disability:
+    permission: "disabledSMP.disability_admin"
+    description: add a disability from a player
