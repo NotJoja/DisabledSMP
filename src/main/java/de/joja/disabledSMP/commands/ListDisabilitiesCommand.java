@@ -1,7 +1,6 @@
 package de.joja.disabledSMP.commands;
 
-import de.joja.disabledSMP.Disability;
-import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,15 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 
 public class ListDisabilitiesCommand implements CommandExecutor {
-
-    DisabledSMP plugin;
-
-    public ListDisabilitiesCommand(DisabledSMP plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -42,7 +35,7 @@ public class ListDisabilitiesCommand implements CommandExecutor {
 
         UUID uuid = player.getUniqueId();
         sender.sendRichMessage("<gray>Disabilities of " + player.getName());
-        List<Disability> disabilities = plugin.disabilityM.disabilityMap.get(uuid);
+        List<Disability> disabilities = plugin.disManager.disabilityMap.get(uuid);
         for (Disability d : disabilities)
             sender.sendRichMessage("<gray>- " + d.ordinal());
 

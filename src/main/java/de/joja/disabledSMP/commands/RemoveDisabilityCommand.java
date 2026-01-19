@@ -1,7 +1,6 @@
 package de.joja.disabledSMP.commands;
 
-import de.joja.disabledSMP.Disability;
-import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,15 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 
 public class RemoveDisabilityCommand implements CommandExecutor {
-
-    DisabledSMP plugin;
-
-    public RemoveDisabilityCommand(DisabledSMP plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -53,7 +47,7 @@ public class RemoveDisabilityCommand implements CommandExecutor {
         }
 
         UUID uuid = player.getUniqueId();
-        if (!plugin.disabilityM.disabilityMap.get(uuid).remove(Disability.get(i)))
+        if (!plugin.disManager.disabilityMap.get(uuid).remove(Disability.get(i)))
             sender.sendRichMessage("<yellow>Player does not have that disability!");
         else
             sender.sendRichMessage("<green>Successfully removed disability from this player!");

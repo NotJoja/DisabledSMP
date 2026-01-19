@@ -1,9 +1,7 @@
 package de.joja.disabledSMP.listeners;
 
-import de.joja.disabledSMP.Disability;
-import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,16 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.utils.Utils.random;
 
 public class JoinListener implements Listener {
-
-    DisabledSMP plugin;
-
-    public JoinListener(DisabledSMP plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -32,13 +25,13 @@ public class JoinListener implements Listener {
         UUID uuid = player.getUniqueId();
 
         // if player disabilities are already loaded, then return
-        if (plugin.disabilityM.disabilityMap.get(uuid) != null)
+        if (plugin.disManager.disabilityMap.get(uuid) != null)
             return;
 
         // if player disabilities are not already loaded, but do exist, then load them
         List<Disability> disabilities = YamlDisabilityStorage.loadDisabilities(plugin, uuid);
         if (disabilities != null) {
-            plugin.disabilityM.disabilityMap.put(uuid, disabilities);
+            plugin.disManager.disabilityMap.put(uuid, disabilities);
             return;
         }
 
@@ -52,7 +45,7 @@ public class JoinListener implements Listener {
             possibleDisabilities.remove(randomIndex);
         }
 
-        plugin.disabilityM.disabilityMap.put(uuid, generatedDisabilities);
+        plugin.disManager.disabilityMap.put(uuid, generatedDisabilities);
     }
 
 }

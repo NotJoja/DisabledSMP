@@ -13,6 +13,11 @@ commands:
   list_disabilities:
     permission: "disabledSMP.disability_admin"
     description: Lists all the disabilities of a player
+  disabled_menu:
+    permission: "disabledSMP.disability_admin"
+    description: Shows all your disabilities in a menu
+    aliases:
+      - dismenu
 
 permissions:
   disabledSMP.disability_admin:

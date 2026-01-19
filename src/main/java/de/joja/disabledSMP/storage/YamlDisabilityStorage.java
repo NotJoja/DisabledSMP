@@ -1,10 +1,8 @@
 package de.joja.disabledSMP.storage;
 
-import de.joja.disabledSMP.Disability;
+import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static de.joja.disabledSMP.Disability.DISABILITIES_TOTAL_AMOUNT;
+import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public abstract class YamlDisabilityStorage {
 

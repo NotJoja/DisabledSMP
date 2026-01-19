@@ -1,6 +1,6 @@
 package de.joja.disabledSMP.listeners;
 
-import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.utils.PlayerAttack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -12,20 +12,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static de.joja.disabledSMP.DisabledSMP.plugin;
+import static de.joja.disabledSMP.utils.ConfigManager.CONFIG_MAX_KILL_TIME_MS;
+
 public class KillListener implements Listener {
 
-    long COMBAT_TIMEOUT_MS = 30*1000;
-
-    DisabledSMP plugin;
-
     Map<UUID, PlayerAttack> lastAttackMap = new HashMap<>();
-
-    public KillListener(DisabledSMP plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void onAttacked(EntityDamageByEntityEvent event) {
@@ -60,7 +56,7 @@ public class KillListener implements Listener {
         if (last == null)
             return;
 
-        if (System.currentTimeMillis() - last.getTime() <= COMBAT_TIMEOUT_MS) {
+        if (System.currentTimeMillis() - last.getTime() <= CONFIG_MAX_KILL_TIME_MS) {
             killer = Bukkit.getPlayer(last.getAttackerUUID());
             onPlayerKilledPlayer(died, killer);
             lastAttackMap.remove(died.getUniqueId());
@@ -71,6 +67,10 @@ public class KillListener implements Listener {
     }
 
     public void onPlayerKilledPlayer(Player diedPlayer, Player killerPlayer) {
-
+        System.out.println(killerPlayer.getName() + " killed " + diedPlayer.getName());
+        List<Disability> diedPlayerDisabilities = plugin.disManager.disabilityMap.get(diedPlayer.getUniqueId());
+        List<Disability> killerPlayerDisabilities = plugin.disManager.disabilityMap.get(killerPlayer.getUniqueId());
+        diedPlayerDisabilities.add(killerPlayerDisabilities.getLast());
+        killerPlayerDisabilities.removeLast();
     }
 }
