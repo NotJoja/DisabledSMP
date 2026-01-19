@@ -67,7 +67,8 @@ public class KillListener implements Listener {
     }
 
     public void onPlayerKilledPlayer(Player diedPlayer, Player killerPlayer) {
-        System.out.println(killerPlayer.getName() + " killed " + diedPlayer.getName());
+        if (diedPlayer == killerPlayer)
+            return;
         List<Disability> diedPlayerDisabilities = plugin.disManager.disabilityMap.get(diedPlayer.getUniqueId());
         List<Disability> killerPlayerDisabilities = plugin.disManager.disabilityMap.get(killerPlayer.getUniqueId());
         diedPlayerDisabilities.add(killerPlayerDisabilities.getLast());

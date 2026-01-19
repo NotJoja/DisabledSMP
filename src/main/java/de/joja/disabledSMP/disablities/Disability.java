@@ -125,7 +125,6 @@ public enum Disability {
             "Schwarze Blöcke oder Items zu berühren schadet dir"
     );
 
-
     public final String enName;
     public final String enDataName;
     public final String enDescription;
