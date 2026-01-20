@@ -42,36 +42,22 @@ public class DisabilityManager {
 
         ItemStack[] disabilityItems = new ItemStack[disabilities.size()];
         for (int i = 0; i < disabilityItems.length; i++) {
+
             ItemStack disItem = new ItemStack(Material.IRON_NUGGET, 1);
             ItemMeta meta = disItem.getItemMeta();
 
             if (CONFIG_LANGUAGE.equals("en")) {
-
-                meta.displayName(
-                        Component.text(disabilities.get(i).enName)
-                                .decoration(TextDecoration.ITALIC, false)
-                                .color(TextColor.color(237, 64, 87)));
-
-                List<Component> descriptionLines = new ArrayList<>();
-                for (String lineString : disabilities.get(i).enDescription.split("&"))
-                    descriptionLines.add(Component.text(lineString)
-                            .decoration(TextDecoration.ITALIC, false)
-                            .color(TextColor.color(255, 255, 255)));
-                meta.lore(descriptionLines);
-
+                meta.displayName(createTextComponent(disabilities.get(i).enName, 237, 64, 87));
+                String[] descriptionLinesStrings = disabilities.get(i).enDescription.split("&");
+                List<Component> descriptionLinesComps =
+                        createTextLineComponents(descriptionLinesStrings, 255, 255, 255);
+                meta.lore(descriptionLinesComps);
             } else if (CONFIG_LANGUAGE.equals("de")) {
-
-                meta.displayName(Component.text(disabilities.get(i).deName)
-                        .decoration(TextDecoration.ITALIC, false)
-                        .color(TextColor.color(237, 64, 87)));
-
-                List<Component> descriptionLines = new ArrayList<>();
-                for (String lineString : disabilities.get(i).deDescription.split("&"))
-                    descriptionLines.add(Component.text(lineString)
-                            .decoration(TextDecoration.ITALIC, false)
-                            .color(TextColor.color(255, 255, 255)));
-                meta.lore(descriptionLines);
-
+                meta.displayName(createTextComponent(disabilities.get(i).deName, 237, 64, 87));
+                String[] descriptionLinesStrings = disabilities.get(i).deDescription.split("&");
+                List<Component> descriptionLinesComps =
+                        createTextLineComponents(descriptionLinesStrings, 255, 255, 255);
+                meta.lore(descriptionLinesComps);
             }
             disItem.setItemMeta(meta);
             disabilityItems[i] = disItem;
@@ -82,6 +68,19 @@ public class DisabilityManager {
         menuInv.setContents(disabilityItems);
 
         return menuInv;
+    }
+
+    private List<Component> createTextLineComponents(String[] lines, int r, int g, int b) {
+        List<Component> linesComponents = new ArrayList<>();
+        for (String lineString : lines)
+            linesComponents.add(createTextComponent(lineString, r, g, b));
+        return linesComponents;
+    }
+
+    private Component createTextComponent(String text, int r, int g, int b) {
+        return Component.text(text)
+                .decoration(TextDecoration.ITALIC, false)
+                .color(TextColor.color(237, 64, 87));
     }
 
 }
