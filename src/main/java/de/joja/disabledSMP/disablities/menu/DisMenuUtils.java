@@ -1,7 +1,6 @@
-package de.joja.disabledSMP.disablities;
+package de.joja.disabledSMP.disablities.menu;
 
-import de.joja.disabledSMP.disablities.menu.DisMenuHolder;
-import de.joja.disabledSMP.disablities.menu.DisMenuType;
+import de.joja.disabledSMP.disablities.Disability;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -12,33 +11,28 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.utils.ConfigManager.CONFIG_LANGUAGE;
 
-public class DisabilityManager {
+public class DisMenuUtils {
 
-    public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
-
-    public Inventory createDisabilitiesMenu(Player player, String menuName, DisMenuType menuType) {
-
-        System.out.println("create thingy now");
+    public static Inventory createDisabilitiesMenu(Player player, String menuName, DisMenuType menuType) {
 
         List<Disability> disabilities = null;
         switch (menuType) {
             case SHOW_ALL -> disabilities = Arrays.asList(Disability.values());
-            case SHOW_MINE -> disabilities = disabilityMap.get(player.getUniqueId());
+            case SHOW_MINE -> disabilities = plugin.disabilityMap.get(player.getUniqueId());
         }
-
-       System.out.println("past switch");
 
         Inventory menuInv = Bukkit.createInventory(
                 new DisMenuHolder(menuType),
                 27,
                 Component.text(menuName)
         );
-
-        System.out.println("created menu inv kinda");
 
         ItemStack[] disabilityItems = new ItemStack[disabilities.size()];
         for (int i = 0; i < disabilityItems.length; i++) {
@@ -63,24 +57,20 @@ public class DisabilityManager {
             disabilityItems[i] = disItem;
         }
 
-        System.out.println("past contents mading");
-
         menuInv.setContents(disabilityItems);
-
         return menuInv;
     }
 
-    private List<Component> createTextLineComponents(String[] lines, int r, int g, int b) {
+    public static List<Component> createTextLineComponents(String[] lines, int r, int g, int b) {
         List<Component> linesComponents = new ArrayList<>();
         for (String lineString : lines)
             linesComponents.add(createTextComponent(lineString, r, g, b));
         return linesComponents;
     }
 
-    private Component createTextComponent(String text, int r, int g, int b) {
+    public static Component createTextComponent(String text, int r, int g, int b) {
         return Component.text(text)
                 .decoration(TextDecoration.ITALIC, false)
-                .color(TextColor.color(237, 64, 87));
+                .color(TextColor.color(r, g, b));
     }
-
 }

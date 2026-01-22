@@ -2,7 +2,6 @@ package de.joja.disabledSMP.storage;
 
 import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,20 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public abstract class YamlDisabilityStorage {
 
-    public static List<Integer> loadDisabilityIDs(JavaPlugin plugin, UUID uuid) {
+    public static List<Integer> loadDisabilityIDs(UUID uuid) {
         File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
         if (!file.exists()) return null;
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        return (ArrayList<Integer>) cfg.get("disability_ids");
+        return cfg.getIntegerList("disability_ids");
     }
 
-    public static List<Disability> loadDisabilities(JavaPlugin plugin, UUID uuid) {
-        List<Integer> disabilityIDs = loadDisabilityIDs(plugin, uuid);
+    public static List<Disability> loadDisabilities(UUID uuid) {
+        List<Integer> disabilityIDs = loadDisabilityIDs(uuid);
         if (disabilityIDs == null)
             return null;
 
@@ -33,14 +33,23 @@ public abstract class YamlDisabilityStorage {
         return disabilities;
     }
 
+    public static int loadAllergy(UUID uuid) {
+        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        if (!file.exists()) return -1;
+
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+        return cfg.getInt("allergy");
+    }
 
 
-    public static void saveDisabilityIDs(JavaPlugin plugin, UUID uuid, int[] disabilityIDs) {
+
+    public static void saveDisabilityIDs(UUID uuid, int[] disabilityIDs, int allergyID) {
         File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
         file.getParentFile().mkdirs();
 
         YamlConfiguration cfg = new YamlConfiguration();
         cfg.set("disability_ids", disabilityIDs);
+        cfg.set("allergy_id", allergyID);
         try {
             cfg.save(file);
         } catch (IOException e) {
@@ -48,11 +57,13 @@ public abstract class YamlDisabilityStorage {
         }
     }
 
-    public static void saveDisabilities(JavaPlugin plugin, UUID uuid, Disability[] disabilities) {
+    public static void saveDisabilities(UUID uuid, Disability[] disabilities, int allergy) {
         int[] disabilityIDs = new int[disabilities.length];
         for (int i = 0; i < disabilities.length; i++)
             disabilityIDs[i] = disabilities[i].ordinal();
-        saveDisabilityIDs(plugin, uuid, disabilityIDs);
+        saveDisabilityIDs(uuid, disabilityIDs, allergy);
     }
+
+
 
 }

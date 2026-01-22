@@ -1,14 +1,13 @@
 package de.joja.disabledSMP.commands;
 
 import de.joja.disabledSMP.disablities.menu.DisMenuType;
+import de.joja.disabledSMP.disablities.menu.DisMenuUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-
-import static de.joja.disabledSMP.DisabledSMP.plugin;
 
 public class AllDisCommand implements CommandExecutor {
 
@@ -25,7 +24,7 @@ public class AllDisCommand implements CommandExecutor {
             return true;
         }
 
-        Inventory disMenuInv = plugin.disManager.createDisabilitiesMenu(player, "All Disabilities", DisMenuType.SHOW_ALL);
+        Inventory disMenuInv = DisMenuUtils.createDisabilitiesMenu(player, "All Disabilities", DisMenuType.SHOW_ALL);
         player.openInventory(disMenuInv);
 
         return true;

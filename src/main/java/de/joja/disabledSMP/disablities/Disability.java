@@ -2,6 +2,8 @@ package de.joja.disabledSMP.disablities;
 
 public enum Disability {
 
+    //NO_DISABILITY("", "", "", ""),
+
     NEARSIGHTED(
             "Nearsighted",
             "You have a reduced view distance",

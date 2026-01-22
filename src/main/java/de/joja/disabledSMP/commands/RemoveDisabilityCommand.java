@@ -47,7 +47,7 @@ public class RemoveDisabilityCommand implements CommandExecutor {
         }
 
         UUID uuid = player.getUniqueId();
-        if (!plugin.disManager.disabilityMap.get(uuid).remove(Disability.get(i)))
+        if (!plugin.disabilityMap.get(uuid).remove(Disability.get(i)))
             sender.sendRichMessage("<yellow>Player does not have that disability!");
         else
             sender.sendRichMessage("<green>Successfully removed disability from this player!");

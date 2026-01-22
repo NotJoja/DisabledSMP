@@ -2,6 +2,7 @@ package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,13 +26,15 @@ public class JoinListener implements Listener {
         UUID uuid = player.getUniqueId();
 
         // if player disabilities are already loaded, then return
-        if (plugin.disManager.disabilityMap.get(uuid) != null)
+        if (plugin.disabilityMap.get(uuid) != null)
             return;
 
         // if player disabilities are not already loaded, but do exist, then load them
-        List<Disability> disabilities = YamlDisabilityStorage.loadDisabilities(plugin, uuid);
+        List<Disability> disabilities = YamlDisabilityStorage.loadDisabilities(uuid);
         if (disabilities != null) {
-            plugin.disManager.disabilityMap.put(uuid, disabilities);
+            plugin.disabilityMap.put(uuid, disabilities);
+            int allergy = YamlDisabilityStorage.loadAllergy(uuid);
+            plugin.allergyMap.put(uuid, allergy);
             return;
         }
 
@@ -45,7 +48,7 @@ public class JoinListener implements Listener {
             possibleDisabilities.remove(randomIndex);
         }
 
-        plugin.disManager.disabilityMap.put(uuid, generatedDisabilities);
+        plugin.disabilityMap.put(uuid, generatedDisabilities);
     }
 
 }

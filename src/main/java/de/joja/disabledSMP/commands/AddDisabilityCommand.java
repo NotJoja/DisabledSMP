@@ -48,10 +48,10 @@ public class AddDisabilityCommand implements CommandExecutor {
         }
 
         UUID uuid = player.getUniqueId();
-        List<Disability> disabilities = plugin.disManager.disabilityMap.get(uuid);
+        List<Disability> disabilities = plugin.disabilityMap.get(uuid);
 
         if (!disabilities.contains(Disability.get(i))) {
-            plugin.disManager.disabilityMap.get(uuid).add(Disability.get(i));
+            plugin.disabilityMap.get(uuid).add(Disability.get(i));
             sender.sendRichMessage("<green>Successfully added disability to this player!");
         } else
             sender.sendRichMessage("<yellow>Player already has that disability!");

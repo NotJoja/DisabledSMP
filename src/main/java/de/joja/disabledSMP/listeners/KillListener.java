@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +70,8 @@ public class KillListener implements Listener {
     public void onPlayerKilledPlayer(Player diedPlayer, Player killerPlayer) {
         if (diedPlayer == killerPlayer)
             return;
-        List<Disability> diedPlayerDisabilities = plugin.disManager.disabilityMap.get(diedPlayer.getUniqueId());
-        List<Disability> killerPlayerDisabilities = plugin.disManager.disabilityMap.get(killerPlayer.getUniqueId());
+        List<Disability> diedPlayerDisabilities = plugin.disabilityMap.get(diedPlayer.getUniqueId());
+        List<Disability> killerPlayerDisabilities = plugin.disabilityMap.get(killerPlayer.getUniqueId());
         diedPlayerDisabilities.add(killerPlayerDisabilities.getLast());
         killerPlayerDisabilities.removeLast();
     }

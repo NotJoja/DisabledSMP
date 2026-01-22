@@ -35,7 +35,7 @@ public class ListDisabilitiesCommand implements CommandExecutor {
 
         UUID uuid = player.getUniqueId();
         sender.sendRichMessage("<gray>Disabilities of " + player.getName());
-        List<Disability> disabilities = plugin.disManager.disabilityMap.get(uuid);
+        List<Disability> disabilities = plugin.disabilityMap.get(uuid);
         for (Disability d : disabilities)
             sender.sendRichMessage("<gray>- " + d.ordinal());
 
