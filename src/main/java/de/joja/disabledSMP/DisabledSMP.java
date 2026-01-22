@@ -1,17 +1,54 @@
 package de.joja.disabledSMP;
 
+import de.joja.disabledSMP.commands.*;
+import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.listeners.JoinListener;
+import de.joja.disabledSMP.listeners.KillListener;
+import de.joja.disabledSMP.listeners.MenuListener;
+import de.joja.disabledSMP.storage.YamlDisabilityStorage;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public final class DisabledSMP extends JavaPlugin {
 
+    public static DisabledSMP plugin;
+
+    public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
+    public Map<UUID, Integer> allergyMap = new HashMap<>();
+
+    public static final Material[] possibleAllergies = {};
+
+    @Override
+    public void onLoad() {
+        saveDefaultConfig();
+    }
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
 
+        plugin = this;
+
+        getServer().getPluginManager().registerEvents(new MenuListener(), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(), this);
+        getServer().getPluginManager().registerEvents(new KillListener(), this);
+
+        getCommand("add_disability").setExecutor(new AddDisabilityCommand());
+        getCommand("remove_disability").setExecutor(new RemoveDisabilityCommand());
+        getCommand("list_disabilities").setExecutor(new ListDisabilitiesCommand());
+        getCommand("disabled_menu").setExecutor(new DisMenuCommand());
+        getCommand("all_disabilities").setExecutor(new AllDisCommand());
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        disabilityMap.forEach(
+                (uuid, disabilities) -> YamlDisabilityStorage
+                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new), allergyMap.get(uuid))
+        );
     }
 }

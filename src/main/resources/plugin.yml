@@ -2,3 +2,27 @@ name: DisabledSMP
 version: '1.0-SNAPSHOT'
 main: de.joja.disabledSMP.DisabledSMP
 api-version: '1.21'
+
+commands:
+  add_disability:
+    permission: "disabledSMP.disability_admin"
+    description: Add a disability to a player
+  remove_disability:
+    permission: "disabledSMP.disability_admin"
+    description: Remove a disability from a player
+  list_disabilities:
+    permission: "disabledSMP.disability_admin"
+    description: Lists all the disabilities of a player
+  disabled_menu:
+    description: Shows all your disabilities in a menu
+    aliases:
+      - dismenu
+  all_disabilities:
+    description: Shows all existing disabilities in a menu
+    aliases:
+      - alldis
+
+permissions:
+  disabledSMP.disability_admin:
+    description: Allows managing player disabilities
+    default: op
