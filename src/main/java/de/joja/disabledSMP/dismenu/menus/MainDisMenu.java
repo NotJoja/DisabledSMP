@@ -5,6 +5,8 @@ import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
 import de.joja.disabledSMP.utils.ConfigManager;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -37,13 +39,22 @@ public class MainDisMenu extends Menu {
             int rgb = playerDisabilities.contains(dis) ? DIS_RED_RGB : DIS_GRAY_RGB;
 
             if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-                ItemUtils.configureItem(item, dis.icon, dis.enName, dis.enDescription, rgb);
+                ItemUtils.configureItem(item, dis.icon, dis.enName, dis.enDescription, rgb, false);
             else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-                ItemUtils.configureItem(item, dis.icon, dis.deName, dis.deDescription, rgb);
+                ItemUtils.configureItem(item, dis.icon, dis.deName, dis.deDescription, rgb, false);
 
             this.items[i] = item;
-            this.clickables[i] = new DisabilityClickable(dis);
+            this.clickables[i] = new DisabilityClickable(dis, MainDisMenu::onClickDisItem);
         }
 
+    }
+
+    private static void onClickDisItem(Player player, Disability disability) {
+        Inventory menuInv = null;
+        if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
+            menuInv = ItemUtils.createMenuInv(disability.enName, new SpecDisMenu(player.getUniqueId(), disability));
+        else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
+            menuInv = ItemUtils.createMenuInv(disability.deName, new SpecDisMenu(player.getUniqueId(), disability));
+        player.openInventory(menuInv);
     }
 }

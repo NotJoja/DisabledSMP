@@ -166,6 +166,7 @@ import de.joja.disabledSMP.disablities.handlers.*;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.dismenu.menus.Menu;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Material;
 
 import java.util.List;
 
@@ -198,10 +199,11 @@ public enum Disability {
 
     public final Key icon;
     public final Key grayIcon;
-
     public final Key cureIcon;
-
     public final Menu specificInfoMenu;
+
+    public final Material[] cureDisRitual;
+    public final Material[] addDisRitual;
 
     Disability(DisabilityHandler handler) {
         this.handler = handler;
@@ -218,6 +220,9 @@ public enum Disability {
         this.grayIcon = handler.grayIcon;
         this.specificInfoMenu = handler.specifcInfoMenu;
         this.cureIcon = handler.cureIcon;
+
+        this.cureDisRitual = handler.cureDisRitual;
+        this.addDisRitual = handler.addDisRitual;
     }
 
     public static final int DISABILITIES_TOTAL_AMOUNT = values().length;

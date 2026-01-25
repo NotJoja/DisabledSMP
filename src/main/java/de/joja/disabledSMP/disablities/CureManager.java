@@ -19,9 +19,9 @@ public abstract class CureManager {
         ItemStack cureItem = new ItemStack(Material.POTATO);
 
         if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.enName + " Cure", null, CURE_RGB);
+            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.enName + " Cure", null, CURE_RGB, false);
         else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.deName + " Cure", null, CURE_RGB);
+            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.deName + " Cure", null, CURE_RGB, false);
 
         ItemMeta meta = cureItem.getItemMeta();
         meta.getPersistentDataContainer().set(

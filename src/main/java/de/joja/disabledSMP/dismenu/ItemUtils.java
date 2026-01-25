@@ -22,25 +22,26 @@ public abstract class ItemUtils {
         return menuInv;
     }
 
-    public static void configureItem(ItemStack item, Key texture, String name, List<String> description, int rgb) {
+    public static void configureItem(ItemStack item, Key texture, String name, List<String> description, int rgb, boolean bold) {
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(createTextComponent(name, rgb));
+        meta.displayName(createTextComponent(name, rgb, bold));
         item.setData(DataComponentTypes.ITEM_MODEL, texture);
         if (description != null)
-            meta.lore(createTextLinesComponents(description, 0xFFFFFF));
+            meta.lore(createTextLinesComponents(description, 0xFFFFFF, bold));
         item.setItemMeta(meta);
     }
 
-    public static List<Component> createTextLinesComponents(List<String> lines, int rgb) {
+    public static List<Component> createTextLinesComponents(List<String> lines, int rgb, boolean bold) {
         List<Component> linesComponents = new ArrayList<>();
         for (String lineString : lines)
-            linesComponents.add(createTextComponent(lineString, rgb));
+            linesComponents.add(createTextComponent(lineString, rgb, bold));
         return linesComponents;
     }
 
-    public static Component createTextComponent(String text, int rgb) {
+    public static Component createTextComponent(String text, int rgb, boolean bold) {
         return Component.text(text)
                 .decoration(TextDecoration.ITALIC, false)
+                .decoration(TextDecoration.BOLD, bold)
                 .color(TextColor.color(rgb));
     }
 
