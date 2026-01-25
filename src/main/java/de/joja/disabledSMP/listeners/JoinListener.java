@@ -2,7 +2,6 @@ package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 import static de.joja.disabledSMP.DisabledSMP.plugin;
+import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 import static de.joja.disabledSMP.utils.Utils.random;
 
 public class JoinListener implements Listener {

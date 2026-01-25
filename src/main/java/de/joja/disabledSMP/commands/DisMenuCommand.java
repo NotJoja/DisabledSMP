@@ -1,7 +1,7 @@
 package de.joja.disabledSMP.commands;
 
-import de.joja.disabledSMP.disablities.menu.DisMenuType;
-import de.joja.disabledSMP.disablities.menu.DisMenuUtils;
+import de.joja.disabledSMP.dismenu.ItemUtils;
+import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,8 +24,11 @@ public class DisMenuCommand implements CommandExecutor {
             return true;
         }
 
-        Inventory disMenuInv = DisMenuUtils.createDisabilitiesMenu(player, "Disabilities of " + player.getName(), DisMenuType.SHOW_MINE);
+        System.out.println("going to create menu in command");
+        Inventory disMenuInv = ItemUtils.createMenuInv("Disabilities of " + player.getName(), new MainDisMenu(player.getUniqueId()));
+        System.out.println("created menu in command");
         player.openInventory(disMenuInv);
+        System.out.println("opened menu inv");
 
         return true;
     }
