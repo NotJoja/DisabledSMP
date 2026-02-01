@@ -20,5 +20,7 @@ public class BalanceDisorder extends DisabilityHandler {
                 "Du wirst zufällig von",
                 "Blockkanten geschubst"
         );
+
+        initIcons();
     }
 }

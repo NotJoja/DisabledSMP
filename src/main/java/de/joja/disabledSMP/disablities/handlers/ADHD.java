@@ -20,5 +20,7 @@ public class ADHD extends DisabilityHandler {
                 "Du kannst nicht zu lange",
                 "am selben Ort bleiben"
         );
+
+        initIcons();
     }
 }

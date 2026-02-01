@@ -20,5 +20,7 @@ public class Overweight extends DisabilityHandler {
                 "Du verbrauchst mehr Hunger",
                 "bist langsamer und springst niedriger"
         );
+
+        initIcons();
     }
 }

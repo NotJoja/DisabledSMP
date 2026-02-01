@@ -20,5 +20,7 @@ public class Seizures extends DisabilityHandler {
                 "Dein Crosshair zittert",
                 "manchmal extrem"
         );
+
+        initIcons();
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
-import static de.joja.disabledSMP.utils.ConfigManager.CONFIG_MAX_KILL_TIME_MS;
+import static de.joja.disabledSMP.utils.DisConfig.CONFIG_MAX_KILL_TIME_MS;
 
 public class KillListener implements Listener {
 

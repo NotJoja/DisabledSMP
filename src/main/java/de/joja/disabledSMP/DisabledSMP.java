@@ -5,11 +5,11 @@ import de.joja.disabledSMP.commands.DisMenuCommand;
 import de.joja.disabledSMP.commands.ListDisabilitiesCommand;
 import de.joja.disabledSMP.commands.RemoveDisabilityCommand;
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.dismenu.MenuManager;
+import de.joja.disabledSMP.listeners.CureListener;
 import de.joja.disabledSMP.listeners.JoinListener;
 import de.joja.disabledSMP.listeners.KillListener;
-import de.joja.disabledSMP.listeners.CureListener;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import de.joja.disabledSMP.dismenu.MenuManager;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -20,5 +20,7 @@ public class Racism extends DisabilityHandler {
                 "Schwarze Blöcke oder Items",
                 "zu berühren schadet dir"
         );
+
+        initIcons();
     }
 }

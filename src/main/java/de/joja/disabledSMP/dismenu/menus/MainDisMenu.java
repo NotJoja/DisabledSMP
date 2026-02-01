@@ -3,7 +3,8 @@ package de.joja.disabledSMP.dismenu.menus;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
-import de.joja.disabledSMP.utils.ConfigManager;
+import de.joja.disabledSMP.utils.DisConfig;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -27,6 +28,11 @@ public class MainDisMenu extends Menu {
     }
 
     @Override
+    public Inventory createMenuInv() {
+        return null;
+    }
+
+    @Override
     protected void createContents() {
 
         List<Disability> playerDisabilities = plugin.disabilityMap.get(uuid);
@@ -37,11 +43,12 @@ public class MainDisMenu extends Menu {
             ItemStack item = new ItemStack(Material.IRON_NUGGET);
 
             int rgb = playerDisabilities.contains(dis) ? DIS_RED_RGB : DIS_GRAY_RGB;
+            Key icon = playerDisabilities.contains(dis) ? dis.icon : dis.grayIcon;
 
-            if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-                ItemUtils.configureItem(item, dis.icon, dis.enName, dis.enDescription, rgb, false);
-            else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-                ItemUtils.configureItem(item, dis.icon, dis.deName, dis.deDescription, rgb, false);
+            if (DisConfig.CONFIG_LANGUAGE.equals("en"))
+                ItemUtils.configureItem(item, icon, dis.enName, dis.enDescription, rgb, false);
+            else if (DisConfig.CONFIG_LANGUAGE.equals("de"))
+                ItemUtils.configureItem(item, icon, dis.deName, dis.deDescription, rgb, false);
 
             this.items[i] = item;
             this.clickables[i] = new DisabilityClickable(dis, MainDisMenu::onClickDisItem);
@@ -50,11 +57,7 @@ public class MainDisMenu extends Menu {
     }
 
     private static void onClickDisItem(Player player, Disability disability) {
-        Inventory menuInv = null;
-        if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-            menuInv = ItemUtils.createMenuInv(disability.enName, new SpecDisMenu(player.getUniqueId(), disability));
-        else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-            menuInv = ItemUtils.createMenuInv(disability.deName, new SpecDisMenu(player.getUniqueId(), disability));
+        Inventory menuInv = new SpecDisMenu(player.getUniqueId(), disability).createMenuInv();
         player.openInventory(menuInv);
     }
 }

@@ -18,5 +18,7 @@ public class Nearsighted extends DisabilityHandler {
         this.deDescription = List.of(
                 "Du hast eine verringerte Sichtweite"
         );
+
+        initIcons();
     }
 }

@@ -20,5 +20,7 @@ public class Dwarfism extends DisabilityHandler {
                 "Du bist kleiner und hast eine geringere Reichweite",
                 "und weniger maximales Leben"
         );
+
+        initIcons();
     }
 }

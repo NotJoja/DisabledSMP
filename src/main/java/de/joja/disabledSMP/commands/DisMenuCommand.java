@@ -24,11 +24,8 @@ public class DisMenuCommand implements CommandExecutor {
             return true;
         }
 
-        System.out.println("going to create menu in command");
-        Inventory disMenuInv = ItemUtils.createMenuInv("Disabilities of " + player.getName(), new MainDisMenu(player.getUniqueId()));
-        System.out.println("created menu in command");
+        Inventory disMenuInv = new MainDisMenu(player.getUniqueId()).createMenuInv();
         player.openInventory(disMenuInv);
-        System.out.println("opened menu inv");
 
         return true;
     }

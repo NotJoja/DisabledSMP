@@ -20,5 +20,7 @@ public class Toothless extends DisabilityHandler {
                 "Du kannst nur weiches Essen",
                 "oder Suppen richtig essen"
         );
+
+        initIcons();
     }
 }

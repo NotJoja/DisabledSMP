@@ -1,7 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
-import net.kyori.adventure.key.Key;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class Allergy extends DisabilityHandler {
                 "dir stark in deiner Nähe"
         );
 
-        this.icon = Key.key("disabledsmp", "allergy");
-        this.grayIcon = Key.key("disabledsmp", "gray_allergy");
+        initIcons();
     }
 }

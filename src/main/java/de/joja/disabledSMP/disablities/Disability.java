@@ -172,20 +172,25 @@ import java.util.List;
 
 public enum Disability {
 
-    NEARSIGHTED(new Nearsighted()),
-    PARALYZED_ARM(new ParalyzedArm()),
+    ADHD(new ADHD()),
+    ALLERGY(new Allergy()),
+    BALANCE_DISORDER(new BalanceDisorder()),
+    COAGULATION_DISORDER(new CoagulationDisorder()),
+    COLOR_BLINDNESS(new ColorBlindness()),
     DWARFISM(new Dwarfism()),
     HEART_ATTACKS(new HeartAttacks()),
-    PARALYZED_LEG(new ParalyzedLeg()),
-    SHORT_TERM_MEMORY(new ShortTermMemory()),
-    COLOR_BLINDNESS(new ColorBlindness()),
-    BALANCE_DISORDER(new BalanceDisorder()),
-    SEIZURES(new Seizures()),
+    NEARSIGHTED(new Nearsighted()),
     OVERWEIGHT(new Overweight()),
-    TOOTHLESS(new Toothless()),
-    ALLERGY(new Allergy()),
+    PANIC_ATTACKS(new PanicAttacks()),
+    PARALYZED_ARM(new ParalyzedArm()),
+    PARALYZED_LEG(new ParalyzedLeg()),
+    RACISM(new Racism()),
     SCHIZOPHRENIA(new Schizophrenia()),
-    RACISM(new Racism());
+    SEIZURES(new Seizures()),
+    SHORT_TERM_MEMORY(new ShortTermMemory()),
+    TOOTHLESS(new Toothless());
+
+
 
     public final DisabilityHandler handler;
 
@@ -202,8 +207,7 @@ public enum Disability {
     public final Key cureIcon;
     public final Menu specificInfoMenu;
 
-    public final Material[] cureDisRitual;
-    public final Material[] addDisRitual;
+    public final Material[] ritual;
 
     Disability(DisabilityHandler handler) {
         this.handler = handler;
@@ -221,8 +225,7 @@ public enum Disability {
         this.specificInfoMenu = handler.specifcInfoMenu;
         this.cureIcon = handler.cureIcon;
 
-        this.cureDisRitual = handler.cureDisRitual;
-        this.addDisRitual = handler.addDisRitual;
+        this.ritual = handler.ritual;
     }
 
     public static final int DISABILITIES_TOTAL_AMOUNT = values().length;

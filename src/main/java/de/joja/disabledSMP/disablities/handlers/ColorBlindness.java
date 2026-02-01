@@ -20,5 +20,7 @@ public class ColorBlindness extends DisabilityHandler {
                 "Bestimmte Blöcke oder Items",
                 "sehen für dich gleich aus"
         );
+
+        initIcons();
     }
 }

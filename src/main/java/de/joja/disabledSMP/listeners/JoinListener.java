@@ -1,16 +1,19 @@
 package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
@@ -23,6 +26,15 @@ public class JoinListener implements Listener {
 
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
+
+        byte[] hash = HexFormat.of().parseHex("7341e8f884a8f1117eb90c1393a39bf850fd29bf");
+
+        player.setResourcePack(
+                "https://example.com/dissmp-resourcepack.zip",
+                hash,
+                Component.text("This server requires the DisabledSMP resource pack"),
+                true
+        );
 
         // if player disabilities are already loaded, then return
         if (plugin.disabilityMap.get(uuid) != null)
@@ -49,5 +61,17 @@ public class JoinListener implements Listener {
 
         plugin.disabilityMap.put(uuid, generatedDisabilities);
     }
+
+    @EventHandler
+    public void onPackStatus(PlayerResourcePackStatusEvent event) {
+        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED
+                || event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
+
+            event.getPlayer().kick(
+                    Component.text("You must accept the resource pack to play")
+            );
+        }
+    }
+
 
 }

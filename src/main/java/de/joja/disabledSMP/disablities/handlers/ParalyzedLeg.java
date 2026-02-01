@@ -20,5 +20,7 @@ public class ParalyzedLeg extends DisabilityHandler {
                 "Du bewegst dich viel langsamer",
                 "kannst aber einen Rollstuhl craften"
         );
+
+        initIcons();
     }
 }

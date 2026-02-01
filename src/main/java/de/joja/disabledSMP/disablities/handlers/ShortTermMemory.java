@@ -20,5 +20,7 @@ public class ShortTermMemory extends DisabilityHandler {
                 "Items in deinem Inventar können temporär",
                 "Aussehen, Namen oder Position ändern"
         );
+
+        initIcons();
     }
 }

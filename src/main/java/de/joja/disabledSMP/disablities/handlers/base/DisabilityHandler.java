@@ -17,15 +17,19 @@ public abstract class DisabilityHandler implements EventListener {
     public String deDataName;
     public List<String> deDescription;
 
-    public Key icon = Key.key("", "");
-    public Key grayIcon = Key.key("", "");
-
-    public Key cureIcon = Key.key("", "");
+    public Key icon;
+    public Key grayIcon;
+    public Key cureIcon;
 
     public Menu specifcInfoMenu = null;
 
-    public Material[] cureDisRitual = {Material.GOLD_BLOCK, Material.HAY_BLOCK};
-    public Material[] addDisRitual = {};
+    public Material[] ritual = {Material.ANCIENT_DEBRIS, Material.DIAMOND_BLOCK, Material.HAY_BLOCK, Material.PUMPKIN, Material.MELON};
+
+    public void initIcons() {
+        icon = Key.key("dissmp", "disicons/" + enDataName);
+        grayIcon = Key.key("dissmp", "gray_disicons/gray_" + enDataName);
+        cureIcon = Key.key("dissmp", "cure_" + enDataName);
+    }
 
     public static String toDataName(String name) {
         return name.toLowerCase()

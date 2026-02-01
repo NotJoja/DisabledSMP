@@ -19,5 +19,7 @@ public class ParalyzedArm extends DisabilityHandler {
                 "Du kannst nicht deine Off-Hand benutzen",
                 "und die Hälfte deiner Hotbar"
         );
+
+        initIcons();
     }
 }

@@ -20,5 +20,7 @@ public class HeartAttacks extends DisabilityHandler {
                 "Du erleidest zufällig Schaden",
                 "bis zu 8 Herzen"
         );
+
+        initIcons();
     }
 }

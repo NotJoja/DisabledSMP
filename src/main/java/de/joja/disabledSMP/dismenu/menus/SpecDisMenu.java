@@ -6,10 +6,8 @@ import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
 import de.joja.disabledSMP.dismenu.clickables.MenuClickable;
 import de.joja.disabledSMP.dismenu.clickables.PlayerDisabilityExecutable;
-import de.joja.disabledSMP.utils.ConfigManager;
+import de.joja.disabledSMP.utils.DisConfig;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -25,17 +23,6 @@ public class SpecDisMenu extends Menu {
     public static final Key CURE_RITUAL_ICON = Key.key("", "");
     public static final Key ADD_RITUAL_ICON = Key.key("", "");
 
-    public static Inventory createSpecDisMenuInv(Player player, Disability disability) {
-        SpecDisMenu menu = new SpecDisMenu(player.getUniqueId(), disability);
-        Inventory menuInv = null;
-        if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-            menuInv = Bukkit.createInventory(menu, menu.size, Component.text(disability.enName + " Menu"));
-        else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-            menuInv = Bukkit.createInventory(menu, menu.size, Component.text(disability.deName + " Menu"));
-        menuInv.setContents(menu.items);
-        return menuInv;
-    }
-
     public final Disability disability;
 
     public SpecDisMenu(UUID uuid, Disability disability) {
@@ -47,16 +34,17 @@ public class SpecDisMenu extends Menu {
     }
 
     @Override
+    public Inventory createMenuInv() {
+        return createMenuInvHelper(disability.enName + " Menu", disability.deName + " Menu");
+    }
+
+    @Override
     protected void createContents() {
 
-        MenuClickable goBack = player -> {
-            Inventory mainDisMenuInv = ItemUtils.createMenuInv("Disabilities of " + player.getName(), new MainDisMenu(player.getUniqueId()));
-            player.openInventory(mainDisMenuInv);
-        };
+        MenuClickable goBack = player -> player.openInventory(new MainDisMenu(player.getUniqueId()).createMenuInv());
         createMenuOption(0, "Go Back", GO_BACK_ICON, goBack);
 
-        PlayerDisabilityExecutable withdrawCureExe =
-                (player, disability) -> player.give(CureManager.createCureItem(disability));
+        PlayerDisabilityExecutable withdrawCureExe = (player, disability) -> player.give(CureManager.createCureItem(disability));
         MenuClickable withdrawCure = new DisabilityClickable(disability, withdrawCureExe);
         createMenuOption(2, "Withdraw Cure", disability.cureIcon, withdrawCure);
 
@@ -67,9 +55,14 @@ public class SpecDisMenu extends Menu {
             createMenuOption(4, "Extra Disability Info", EXTRA_INFO_ICON, extraDisInfo);
 
         PlayerDisabilityExecutable cureRitualExe = (player, disability) ->
-                player.openInventory(CureRitualMenu.createCureRitualMenuInv(player, disability));
+                player.openInventory(new RitualMenu(player.getUniqueId(), disability, true).createMenuInv());
         DisabilityClickable cureRitual = new DisabilityClickable(disability, cureRitualExe);
         createMenuOption(6, "Cure Ritual", CURE_RITUAL_ICON, cureRitual);
+
+        PlayerDisabilityExecutable addRitualExe = (player, disability) ->
+                player.openInventory(new RitualMenu(player.getUniqueId(), disability, false).createMenuInv());
+        DisabilityClickable addRitual = new DisabilityClickable(disability, addRitualExe);
+        createMenuOption(8, "Add Ritual", CURE_RITUAL_ICON, addRitual);
     }
 
     private void createMenuOption(int i, String name, Key icon, MenuClickable clickable) {
@@ -82,13 +75,7 @@ public class SpecDisMenu extends Menu {
     private static void extraDisInfoExe(Player player, Disability disability) {
         if (disability.specificInfoMenu == null)
             return;
-
-        if (ConfigManager.CONFIG_LANGUAGE.equals("en"))
-            player.openInventory(ItemUtils
-                    .createMenuInv(disability.enName + " Extra Info", disability.specificInfoMenu));
-        else if (ConfigManager.CONFIG_LANGUAGE.equals("de"))
-            player.openInventory(ItemUtils
-                    .createMenuInv(disability.deName + " Extra Info", disability.specificInfoMenu));
+        player.openInventory(disability.specificInfoMenu.createMenuInv());
     }
 
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class ItemUtils {
 
-    public static Inventory createMenuInv(String menuName, Menu menu) {
+    public static Inventory createMenuInvb(String menuName, Menu menu) {
         Inventory menuInv = Bukkit.createInventory(menu, menu.size, Component.text(menuName));
         menuInv.setContents(menu.items);
         return menuInv;
@@ -25,10 +25,10 @@ public abstract class ItemUtils {
     public static void configureItem(ItemStack item, Key texture, String name, List<String> description, int rgb, boolean bold) {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(createTextComponent(name, rgb, bold));
-        item.setData(DataComponentTypes.ITEM_MODEL, texture);
         if (description != null)
             meta.lore(createTextLinesComponents(description, 0xFFFFFF, bold));
         item.setItemMeta(meta);
+        item.setData(DataComponentTypes.ITEM_MODEL, texture);
     }
 
     public static List<Component> createTextLinesComponents(List<String> lines, int rgb, boolean bold) {

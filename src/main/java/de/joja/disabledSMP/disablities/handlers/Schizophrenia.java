@@ -20,5 +20,7 @@ public class Schizophrenia extends DisabilityHandler {
                 "Du erlebst Halluzinationen",
                 "wie fake Mobs oder Sounds"
         );
+
+        initIcons();
     }
 }
