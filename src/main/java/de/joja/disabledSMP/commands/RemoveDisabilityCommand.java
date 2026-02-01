@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 import static de.joja.disabledSMP.DisabledSMP.plugin;
+import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public class RemoveDisabilityCommand implements CommandExecutor {
 

@@ -1,6 +1,7 @@
 {
-  "pack": {
-    "pack_format": 69,
-    "description": "&6The official DisabledSMP texturepack!!!"
+   "pack": {
+      "pack_format": 64,
+      "description": "Resource Pack for the Disabled SMP!"
+   }
   }
 }
