@@ -1,17 +1,13 @@
 package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -30,7 +26,7 @@ public class JoinListener implements Listener {
         byte[] hash = HexFormat.of().parseHex("7341e8f884a8f1117eb90c1393a39bf850fd29bf");
 
         player.setResourcePack(
-                "https://example.com/dissmp-resourcepack.zip",
+                "https://github.com/NotJoja/DisabledSMP/raw/refs/heads/main/src/main/resources/DisabledSMP.zip",
                 hash,
                 Component.text("This server requires the DisabledSMP resource pack"),
                 true

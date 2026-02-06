@@ -1,6 +1,5 @@
 package de.joja.disabledSMP.commands;
 
-import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

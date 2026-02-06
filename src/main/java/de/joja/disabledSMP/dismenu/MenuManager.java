@@ -25,5 +25,6 @@ public class MenuManager implements Listener {
         if (clickable != null)
             menu.clickables[slot].onClick(player);
     }
+
 }
 

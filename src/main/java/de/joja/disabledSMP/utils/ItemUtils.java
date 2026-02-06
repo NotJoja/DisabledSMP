@@ -1,13 +1,10 @@
-package de.joja.disabledSMP.dismenu;
+package de.joja.disabledSMP.utils;
 
-import de.joja.disabledSMP.dismenu.menus.Menu;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,17 +13,30 @@ import java.util.List;
 
 public abstract class ItemUtils {
 
-    public static Inventory createMenuInvb(String menuName, Menu menu) {
-        Inventory menuInv = Bukkit.createInventory(menu, menu.size, Component.text(menuName));
-        menuInv.setContents(menu.items);
-        return menuInv;
+    public static void configureItem(ItemStack item, Key texture,
+                                     String enName, String deName,
+                                     List<String> enDescription, List<String> deDescription,
+                                     int rgb, boolean bold) {
+
+        ItemMeta meta = item.getItemMeta();
+        if (DConfig.LANGUAGE.equals("en")) {
+            meta.displayName(createTextComponent(enName, rgb, bold));
+            if (enDescription != null)
+                meta.lore(createTextLinesComponents(enDescription, 0xFFFFFF, false));
+        } else if (DConfig.LANGUAGE.equals("de")) {
+            meta.displayName(createTextComponent(deName, rgb, bold));
+            if (deDescription != null)
+                meta.lore(createTextLinesComponents(deDescription, 0xFFFFFF, false));
+        }
+        item.setItemMeta(meta);
+        item.setData(DataComponentTypes.ITEM_MODEL, texture);
     }
 
     public static void configureItem(ItemStack item, Key texture, String name, List<String> description, int rgb, boolean bold) {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(createTextComponent(name, rgb, bold));
         if (description != null)
-            meta.lore(createTextLinesComponents(description, 0xFFFFFF, bold));
+            meta.lore(createTextLinesComponents(description, 0xFFFFFF, false));
         item.setItemMeta(meta);
         item.setData(DataComponentTypes.ITEM_MODEL, texture);
     }

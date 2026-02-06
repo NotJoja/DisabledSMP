@@ -1,7 +1,7 @@
 package de.joja.disabledSMP.disablities;
 
-import de.joja.disabledSMP.dismenu.ItemUtils;
-import de.joja.disabledSMP.utils.DisConfig;
+import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -17,9 +17,9 @@ public abstract class CureManager {
     public static ItemStack createCureItem(Disability disability) {
         ItemStack cureItem = new ItemStack(Material.POTATO);
 
-        if (DisConfig.CONFIG_LANGUAGE.equals("en"))
+        if (DConfig.LANGUAGE.equals("en"))
             ItemUtils.configureItem(cureItem, disability.cureIcon, disability.enName + " Cure", null, CURE_RGB, false);
-        else if (DisConfig.CONFIG_LANGUAGE.equals("de"))
+        else if (DConfig.LANGUAGE.equals("de"))
             ItemUtils.configureItem(cureItem, disability.cureIcon, disability.deName + " Cure", null, CURE_RGB, false);
 
         ItemMeta meta = cureItem.getItemMeta();

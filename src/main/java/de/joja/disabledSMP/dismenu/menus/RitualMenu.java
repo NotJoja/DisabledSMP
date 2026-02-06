@@ -2,16 +2,16 @@ package de.joja.disabledSMP.dismenu.menus;
 
 import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
 import de.joja.disabledSMP.dismenu.clickables.PlayerDisabilityExecutable;
+import de.joja.disabledSMP.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-import static de.joja.disabledSMP.dismenu.menus.SpecDisMenu.GO_BACK_ICON;
+import static de.joja.disabledSMP.utils.Icons.GO_BACK_ICON;
 
 public class RitualMenu extends Menu {
 

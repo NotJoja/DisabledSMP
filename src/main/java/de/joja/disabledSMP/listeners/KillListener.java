@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
-import static de.joja.disabledSMP.utils.DisConfig.CONFIG_MAX_KILL_TIME_MS;
+import static de.joja.disabledSMP.utils.DConfig.MAX_KILL_TIME_MS;
 
 public class KillListener implements Listener {
 
@@ -56,7 +56,7 @@ public class KillListener implements Listener {
         if (last == null)
             return;
 
-        if (System.currentTimeMillis() - last.getTime() <= CONFIG_MAX_KILL_TIME_MS) {
+        if (System.currentTimeMillis() - last.getTime() <= MAX_KILL_TIME_MS) {
             killer = Bukkit.getPlayer(last.getAttackerUUID());
             onPlayerKilledPlayer(died, killer);
             lastAttackMap.remove(died.getUniqueId());

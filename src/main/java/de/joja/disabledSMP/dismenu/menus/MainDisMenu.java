@@ -1,9 +1,9 @@
 package de.joja.disabledSMP.dismenu.menus;
 
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.ItemUtils;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
-import de.joja.disabledSMP.utils.DisConfig;
+import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -42,13 +42,11 @@ public class MainDisMenu extends Menu {
             Disability dis = Disability.get(i);
             ItemStack item = new ItemStack(Material.IRON_NUGGET);
 
-            int rgb = playerDisabilities.contains(dis) ? DIS_RED_RGB : DIS_GRAY_RGB;
-            Key icon = playerDisabilities.contains(dis) ? dis.icon : dis.grayIcon;
+            boolean playerHasDis = playerDisabilities.contains(dis);
+            int rgb = playerHasDis ? DIS_RED_RGB : DIS_GRAY_RGB;
+            Key icon = playerHasDis ? dis.icon : dis.grayIcon;
 
-            if (DisConfig.CONFIG_LANGUAGE.equals("en"))
-                ItemUtils.configureItem(item, icon, dis.enName, dis.enDescription, rgb, false);
-            else if (DisConfig.CONFIG_LANGUAGE.equals("de"))
-                ItemUtils.configureItem(item, icon, dis.deName, dis.deDescription, rgb, false);
+            ItemUtils.configureItem(item, icon, dis.enName, dis.deName, dis.enDescription, dis.deDescription, rgb, true);
 
             this.items[i] = item;
             this.clickables[i] = new DisabilityClickable(dis, MainDisMenu::onClickDisItem);
