@@ -12,8 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.UUID;
 
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.utils.Icons.*;
 
 public class SpecDisMenu extends Menu {
@@ -38,8 +40,16 @@ public class SpecDisMenu extends Menu {
 
         createMenuOption(0, "Go Back", "Zurück", GO_BACK_ICON, SpecDisMenu::goBackExe);
 
-        MenuClickable withdrawCure = new DisabilityClickable(disability, SpecDisMenu::withDrawCureExe);
-        createMenuOption(2, "Withdraw Cure", "Heilmittel Extrahieren", disability.cureIcon, withdrawCure);
+        MenuClickable withdrawCure = new DisabilityClickable(disability, SpecDisMenu::withdrawCureExe);
+        if (plugin.disabilityMap.get(uuid).contains(disability))
+            createMenuOption(2,
+                    "Withdraw Cure",
+                    "Heilmittel Extrahieren",
+                    List.of("Only possible if you don't have that Disability!"),
+                    List.of("Nur möglich wenn du diese Disability nicht hast!"),
+                    disability.grayCureIcon, withdrawCure);
+        else
+            createMenuOption(2, "Withdraw Cure", "Heilmittel Extrahieren", disability.cureIcon, withdrawCure);
 
         MenuClickable extraDisInfo = new DisabilityClickable(disability, SpecDisMenu::extraDisInfoExe);
         if (disability.specificInfoMenu == null)
@@ -47,20 +57,22 @@ public class SpecDisMenu extends Menu {
         else
             createMenuOption(4, "Extra Disability Info", "Extra Disability Info", EXTRA_INFO_ICON, extraDisInfo);
 
-        PlayerDisabilityExecutable cureRitualExe = (player, disability) ->
-                player.openInventory(new RitualMenu(player.getUniqueId(), disability, true).createMenuInv());
-        DisabilityClickable cureRitual = new DisabilityClickable(disability, cureRitualExe);
+        DisabilityClickable cureRitual = new DisabilityClickable(disability, SpecDisMenu::cureRitualExe);
         createMenuOption(6, "Cure Disability Ritual", "Disability Heilmittel Ritual", CURE_RITUAL_ICON, cureRitual);
 
         PlayerDisabilityExecutable addRitualExe = (player, disability) ->
                 player.openInventory(new RitualMenu(player.getUniqueId(), disability, false).createMenuInv());
         DisabilityClickable addRitual = new DisabilityClickable(disability, addRitualExe);
-        createMenuOption(8, "Add Disability Ritual", "Disability hinzufügen Ritual", CURE_RITUAL_ICON, addRitual);
+        createMenuOption(8, "Add Disability Ritual", "Disability hinzufügen Ritual", ADD_RITUAL_ICON, addRitual);
     }
 
     private void createMenuOption(int i, String enName, String deName, Key icon, MenuClickable clickable) {
+        createMenuOption(i, enName, deName, null, null, icon, clickable);
+    }
+
+    private void createMenuOption(int i, String enName, String deName, List<String> enDescription, List<String> deDescription, Key icon, MenuClickable clickable) {
         ItemStack item = new ItemStack(Material.IRON_NUGGET);
-        ItemUtils.configureItem(item, icon, enName, deName, null, null, 0xF0F0FF, true);
+        ItemUtils.configureItem(item, icon, enName, deName, enDescription, deDescription, 0xF0F0FF, true);
         items[i] = item;
         clickables[i] = clickable;
     }
@@ -69,8 +81,17 @@ public class SpecDisMenu extends Menu {
         player.openInventory(new MainDisMenu(player.getUniqueId()).createMenuInv());
     }
 
-    private static void withDrawCureExe(Player player, Disability disability) {
-        player.give(CureManager.createCureItem(disability));
+    private static void withdrawCureExe(Player player, Disability disability) {
+        List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
+        if (!disabilities.contains(disability)) {
+            player.give(CureManager.createCureItem(disability));
+            disabilities.add(disability);
+            player.closeInventory();
+        }
+    }
+
+    private static void cureRitualExe(Player player, Disability disability) {
+        player.openInventory(new RitualMenu(player.getUniqueId(), disability, true).createMenuInv());
     }
 
 

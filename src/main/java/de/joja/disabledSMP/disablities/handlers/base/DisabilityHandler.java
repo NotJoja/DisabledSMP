@@ -20,6 +20,7 @@ public abstract class DisabilityHandler implements EventListener {
     public Key icon;
     public Key grayIcon;
     public Key cureIcon;
+    public Key grayCureIcon;
 
     public Menu specifcInfoMenu = null;
 
@@ -28,10 +29,16 @@ public abstract class DisabilityHandler implements EventListener {
     public void initIcons() {
         icon = Key.key("dissmp", "disicons/" + enDataName);
         grayIcon = Key.key("dissmp", "gray_disicons/gray_" + enDataName);
-        cureIcon = Key.key("dissmp", "cure_" + enDataName);
+        cureIcon = Key.key("dissmp", "cures/" + enDataName);
+        grayCureIcon = Key.key("dissmp", "gray_cures/gray_" + enDataName);
     }
 
-    public static String toDataName(String name) {
+    public void setDataNames() {
+        enDataName = toDataName(enName);
+        deDataName = toDataName(deName);
+    }
+
+    protected static String toDataName(String name) {
         return name.toLowerCase()
                 .replace(' ', '_')
                 .replace('-', '_');

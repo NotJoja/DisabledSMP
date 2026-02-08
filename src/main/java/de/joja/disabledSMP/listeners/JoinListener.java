@@ -24,13 +24,14 @@ public class JoinListener implements Listener {
         UUID uuid = player.getUniqueId();
 
         byte[] hash = HexFormat.of().parseHex("7341e8f884a8f1117eb90c1393a39bf850fd29bf");
-
         player.setResourcePack(
-                "https://github.com/NotJoja/DisabledSMP/raw/refs/heads/main/src/main/resources/DisabledSMP.zip",
-                hash,
+                "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/DisabledSMP.zip",
+                null,
                 Component.text("This server requires the DisabledSMP resource pack"),
                 true
         );
+        System.out.println(player.getName() + "got raped");
+
 
         // if player disabilities are already loaded, then return
         if (plugin.disabilityMap.get(uuid) != null)
@@ -60,13 +61,13 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onPackStatus(PlayerResourcePackStatusEvent event) {
-        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED
-                || event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
-
-            event.getPlayer().kick(
-                    Component.text("You must accept the resource pack to play")
-            );
-        }
+//        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED
+//                || event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
+//
+//            event.getPlayer().kick(
+//                    Component.text("You must accept the resource pack to play")
+//            );
+//        }
     }
 
 

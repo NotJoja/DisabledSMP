@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
+import static de.joja.disabledSMP.utils.Icons.DIS_GRAY_RGB;
+import static de.joja.disabledSMP.utils.Icons.DIS_RED_RGB;
 
 public class MainDisMenu extends Menu {
-
-    public static final int DIS_RED_RGB  = 0xED4057;
-    public static final int DIS_GRAY_RGB = 0x6E6A6B;
 
     public MainDisMenu(UUID uuid) {
         super(uuid);
@@ -29,7 +28,7 @@ public class MainDisMenu extends Menu {
 
     @Override
     public Inventory createMenuInv() {
-        return null;
+        return createMenuInvHelper("Disabled Menu", "Disabled Menu");
     }
 
     @Override

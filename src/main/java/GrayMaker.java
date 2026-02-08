@@ -8,12 +8,12 @@ import java.io.IOException;
 public class GrayMaker {
 
     public static void main(String[] args) {
-//        File dic = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledPack/assets/dissmp/textures/item/disicons/");
-//        File[] imgFiles = dic.listFiles();
-//        for (File f : imgFiles)
-//            turnGrayAndSave(f);
+        File dic = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/cures");
+        File[] imgFiles = dic.listFiles();
+        for (File f : imgFiles)
+            turnGrayAndSave(f);
 
-        turnGrayAndSave(new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/icons/cure.png"));
+        //turnGrayAndSave(new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/icons/cure.png"));
     }
 
     static void turnGrayAndSave(File file) {
@@ -44,7 +44,7 @@ public class GrayMaker {
             }
         }
 
-        File grayImgFile = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/icons/gray_" + file.getName());
+        File grayImgFile = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/gray_cures/gray_" + file.getName());
         try {
             ImageIO.write(grayImg, "png", grayImgFile);
         } catch (IOException e) {

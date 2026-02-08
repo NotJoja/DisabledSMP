@@ -9,10 +9,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
+import static de.joja.disabledSMP.utils.Icons.CURE_RGB;
 
-public abstract class CureManager {
-
-    public static final int CURE_RGB = 0x82C44F;
+public abstract class CureManager { ;
 
     public static ItemStack createCureItem(Disability disability) {
         ItemStack cureItem = new ItemStack(Material.POTATO);

@@ -17,8 +17,8 @@ public class Overweight extends DisabilityHandler {
         this.deName = "Übergewicht";
         this.deDataName = toDataName(deName);
         this.deDescription = List.of(
-                "Du verbrauchst mehr Hunger",
-                "bist langsamer und springst niedriger"
+                "Du verbrauchst mehr Hunger, bist",
+                "langsamer und springst niedriger"
         );
 
         initIcons();

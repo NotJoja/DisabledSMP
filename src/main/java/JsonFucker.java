@@ -7,14 +7,14 @@ void main() throws IOException {
 //        replaceLine(file, newFile, 5, "\"dissmp:item/gray_disicons/gray_" + file.getName().split("\\.")[0] + "\"");
 //    }
 
-    File dic = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/icons");
+    File dic = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/textures/item/gray_cures");
     File[] pedoFiles = dic.listFiles();
     System.out.println(Arrays.toString(pedoFiles));
     for (File file : pedoFiles) {
         File copyOldFile = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/items/disicons/adhd.json");
-        File newFile = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/items/icons/" + file.getName().split("\\.")[0] + ".json");
+        File newFile = new File("/home/nic/Programming/Minecraft-Plugins/DisabledSMP/src/main/resources/DisabledSMP/assets/dissmp/items/gray_cures/" + file.getName().split("\\.")[0] + ".json");
         newFile.createNewFile();
-        replaceLine(copyOldFile, newFile, 5, "\"dissmp:item/icons/" + file.getName().split("\\.")[0] + "\"");
+        replaceLine(copyOldFile, newFile, 5, "\"dissmp:item/gray_cures/" + file.getName().split("\\.")[0] + "\"");
     }
 }
 

@@ -205,6 +205,8 @@ public enum Disability {
     public final Key icon;
     public final Key grayIcon;
     public final Key cureIcon;
+    public final Key grayCureIcon;
+
     public final Menu specificInfoMenu;
 
     public final Material[] ritual;
@@ -222,8 +224,10 @@ public enum Disability {
 
         this.icon = handler.icon;
         this.grayIcon = handler.grayIcon;
-        this.specificInfoMenu = handler.specifcInfoMenu;
         this.cureIcon = handler.cureIcon;
+        this.grayCureIcon = handler.grayCureIcon;
+
+        this.specificInfoMenu = handler.specifcInfoMenu;
 
         this.ritual = handler.ritual;
     }
