@@ -1,5 +1,3 @@
-import org.eclipse.aether.util.DirectoryUtils;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;

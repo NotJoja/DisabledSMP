@@ -1,6 +1,5 @@
 package de.joja.disabledSMP.dismenu.menus;
 
-import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
 import de.joja.disabledSMP.dismenu.clickables.PlayerDisabilityExecutable;

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
 import java.util.*;
 
@@ -28,19 +27,26 @@ public class JoinListener implements Listener {
                 "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/DisabledSMP.zip",
                 null,
                 Component.text("This server requires the DisabledSMP resource pack"),
-                true
+                false
         );
-        System.out.println(player.getName() + "got raped");
 
 
         // if player disabilities are already loaded, then return
-        if (plugin.disabilityMap.get(uuid) != null)
+        List<Disability> disabilities = plugin.disabilityMap.get(uuid);
+        if (disabilities != null) {
+            for (Disability dis : disabilities)
+                dis.handler.addToPlayer(player);
             return;
+        }
 
         // if player disabilities are not already loaded, but do exist, then load them
-        List<Disability> disabilities = YamlDisabilityStorage.loadDisabilities(uuid);
+        disabilities = YamlDisabilityStorage.loadDisabilities(uuid);
         if (disabilities != null) {
+
             plugin.disabilityMap.put(uuid, disabilities);
+            for (Disability dis : disabilities)
+                dis.handler.addToPlayer(player);
+
             int allergy = YamlDisabilityStorage.loadAllergy(uuid);
             plugin.allergyMap.put(uuid, allergy);
             return;
@@ -57,17 +63,9 @@ public class JoinListener implements Listener {
         }
 
         plugin.disabilityMap.put(uuid, generatedDisabilities);
-    }
 
-    @EventHandler
-    public void onPackStatus(PlayerResourcePackStatusEvent event) {
-//        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED
-//                || event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
-//
-//            event.getPlayer().kick(
-//                    Component.text("You must accept the resource pack to play")
-//            );
-//        }
+        for (Disability dis : generatedDisabilities)
+            dis.handler.addToPlayer(player);
     }
 
 

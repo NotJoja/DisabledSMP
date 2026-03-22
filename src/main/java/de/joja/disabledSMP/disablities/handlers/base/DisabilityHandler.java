@@ -1,13 +1,17 @@
 package de.joja.disabledSMP.disablities.handlers.base;
 
+import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.Menu;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
-import java.util.EventListener;
 import java.util.List;
 
-public abstract class DisabilityHandler implements EventListener {
+import static de.joja.disabledSMP.DisabledSMP.plugin;
+
+public abstract class DisabilityHandler implements Listener {
 
     public String enName;
     public String enDataName;
@@ -43,5 +47,15 @@ public abstract class DisabilityHandler implements EventListener {
                 .replace(' ', '_')
                 .replace('-', '_');
     }
+
+
+
+    public static boolean hasDis(Player player, Disability dis) {
+        return plugin.disabilityMap.get(player.getUniqueId()).contains(dis);
+    }
+
+    public void addToPlayer(Player player) {}
+    public void removeFromPlayer(Player player) {}
+
 }
 

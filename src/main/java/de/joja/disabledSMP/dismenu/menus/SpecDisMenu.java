@@ -82,10 +82,11 @@ public class SpecDisMenu extends Menu {
     }
 
     private static void withdrawCureExe(Player player, Disability disability) {
-        List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
-        if (!disabilities.contains(disability)) {
+        List<Disability> playerDisabilities = plugin.disabilityMap.get(player.getUniqueId());
+        if (!playerDisabilities.contains(disability)) {
             player.give(CureManager.createCureItem(disability));
-            disabilities.add(disability);
+            playerDisabilities.add(disability);
+            disability.handler.addToPlayer(player);
             player.closeInventory();
         }
     }

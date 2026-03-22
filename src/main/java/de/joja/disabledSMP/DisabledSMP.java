@@ -11,6 +11,7 @@ import de.joja.disabledSMP.listeners.JoinListener;
 import de.joja.disabledSMP.listeners.KillListener;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
 import org.bukkit.Material;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -37,10 +38,14 @@ public final class DisabledSMP extends JavaPlugin {
 
         plugin = this;
 
-        getServer().getPluginManager().registerEvents(new MenuManager(), this);
-        getServer().getPluginManager().registerEvents(new JoinListener(), this);
-        getServer().getPluginManager().registerEvents(new KillListener(), this);
-        getServer().getPluginManager().registerEvents(new CureListener(), this);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new MenuManager(), this);
+        pm.registerEvents(new JoinListener(), this);
+        pm.registerEvents(new KillListener(), this);
+        pm.registerEvents(new CureListener(), this);
+
+        for (Disability dis : Disability.values())
+            pm.registerEvents(dis.handler, this);
 
         getCommand("add_disability").setExecutor(new AddDisabilityCommand());
         getCommand("remove_disability").setExecutor(new RemoveDisabilityCommand());
@@ -52,7 +57,7 @@ public final class DisabledSMP extends JavaPlugin {
     public void onDisable() {
         disabilityMap.forEach(
                 (uuid, disabilities) -> YamlDisabilityStorage
-                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new), allergyMap.get(uuid))
+                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new), 0) //allergyMap.get(uuid))
         );
     }
 }

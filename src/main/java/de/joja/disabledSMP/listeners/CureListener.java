@@ -45,11 +45,9 @@ public class CureListener implements Listener {
             return;
 
         int cureDisabilityID = pdc.get(cureKey, PersistentDataType.INTEGER);
-        System.out.println("curing disability id: " + cureDisabilityID);
-
-        plugin.disabilityMap
-                .get(player.getUniqueId())
-                .remove(Disability.get(cureDisabilityID));
+        Disability dis = Disability.get(cureDisabilityID);
+        plugin.disabilityMap.get(player.getUniqueId()).remove(dis);
+        dis.handler.removeFromPlayer(player);
     }
 
 

@@ -2,7 +2,6 @@ package de.joja.disabledSMP.dismenu.menus;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
-import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;

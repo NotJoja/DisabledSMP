@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.utils.DConfig.MAX_KILL_TIME_MS;
+import static de.joja.disabledSMP.utils.Utils.random;
 
 public class KillListener implements Listener {
 
@@ -71,7 +72,8 @@ public class KillListener implements Listener {
             return;
         List<Disability> diedPlayerDisabilities = plugin.disabilityMap.get(diedPlayer.getUniqueId());
         List<Disability> killerPlayerDisabilities = plugin.disabilityMap.get(killerPlayer.getUniqueId());
-        diedPlayerDisabilities.add(killerPlayerDisabilities.getLast());
-        killerPlayerDisabilities.removeLast();
+        int rand = random.nextInt(killerPlayerDisabilities.size());
+        diedPlayerDisabilities.add(killerPlayerDisabilities.get(rand));
+        killerPlayerDisabilities.remove(rand);
     }
 }

@@ -21,6 +21,9 @@ public class MenuManager implements Listener {
 
         event.setCancelled(true);
         int slot = event.getRawSlot();
+        if (slot >= menu.size)
+            return;
+
         MenuClickable clickable = menu.clickables[slot];
         if (clickable != null)
             menu.clickables[slot].onClick(player);

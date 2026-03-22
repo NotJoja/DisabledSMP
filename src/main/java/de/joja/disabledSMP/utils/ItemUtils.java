@@ -32,11 +32,9 @@ public abstract class ItemUtils {
         item.setData(DataComponentTypes.ITEM_MODEL, texture);
     }
 
-    public static void configureItem(ItemStack item, Key texture, String name, List<String> description, int rgb, boolean bold) {
+    public static void configureItem(ItemStack item, Key texture, String name, int rgb, boolean bold) {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(createTextComponent(name, rgb, bold));
-        if (description != null)
-            meta.lore(createTextLinesComponents(description, 0xFFFFFF, false));
         item.setItemMeta(meta);
         item.setData(DataComponentTypes.ITEM_MODEL, texture);
     }
