@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.utils.ItemUtils;
@@ -7,12 +8,14 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -64,7 +67,6 @@ public class ParalyzedArm extends DisabilityHandler {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-
         Player player = event.getPlayer();
         if (!hasDis(player, Disability.PARALYZED_ARM))
             return;
@@ -86,17 +88,42 @@ public class ParalyzedArm extends DisabilityHandler {
         int slot = event.getSlot();
 
         boolean numKeySwap = (click == ClickType.NUMBER_KEY) && (event.getHotbarButton() < 4);
-        if (numKeySwap)
-            event.setCancelled(true);
-
         boolean offhandSwap = (click == ClickType.SWAP_OFFHAND);
-        if (offhandSwap)
+        if (offhandSwap || numKeySwap)
             event.setCancelled(true);
 
         boolean blockedClickType = (click == ClickType.LEFT) || (click == ClickType.DROP);
         boolean blockSlot = (slot < 4 || slot == 40);
         if (blockedClickType && blockSlot)
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getPlayer();
+        if (!hasDis(player, Disability.PARALYZED_ARM))
+            return;
+        List<ItemStack> drops = event.getDrops();
+        for (int i = 0; i < drops.size(); i++) {
+            if (drops.get(i).getType() == Material.CARROT_ON_A_STICK) {
+                drops.remove(i);
+                i--;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerPostRespawnEvent event) {
+        Player player = event.getPlayer();
+        if (!hasDis(player, Disability.PARALYZED_ARM))
+            return;
+
+        ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
+
+        player.getInventory().setItemInOffHand(blocked);
+        for (int i = 0; i < 4; i++)
+            player.getInventory().setItem(i, blocked);
     }
 
 
@@ -111,7 +138,9 @@ public class ParalyzedArm extends DisabilityHandler {
             if (item.getType() != Material.CARROT_ON_A_STICK)
                 player.dropItem(i);
         }
-        player.dropItem(EquipmentSlot.OFF_HAND);
+
+        if (player.getInventory().getItemInOffHand().getType() != Material.CARROT_ON_A_STICK)
+            player.dropItem(EquipmentSlot.OFF_HAND);
 
         ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
         ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
@@ -125,5 +154,6 @@ public class ParalyzedArm extends DisabilityHandler {
     public void removeFromPlayer(Player player) {
         for (int i = 0; i < 4; i++)
             player.getInventory().setItem(i, new ItemStack(Material.AIR));
+        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
     }
 }
