@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public class ParalyzedArm extends DisabilityHandler {
         );
 
         this.deName = "Gelähmter Arm";
-        this.deDataName = toDataName(enName);
+        this.deDataName = toDataName(deName);
         this.deDescription = List.of(
                 "Du kannst nicht deine Off-Hand benutzen",
                 "und die Hälfte deiner Hotbar"

@@ -61,6 +61,7 @@ public class ADHD extends DisabilityHandler {
                 if (timeStayed > STAY_TIME_MS) {
                     double newHealth = Math.max(0, player.getHealth() - DAMAGE);
                     player.setHealth(newHealth);
+                    player.damage(0.01);
                 }
             }
         }, 20L, 20L);

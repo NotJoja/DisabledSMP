@@ -37,11 +37,6 @@ public abstract class DisabilityHandler implements Listener {
         grayCureIcon = Key.key("dissmp", "gray_cures/gray_" + enDataName);
     }
 
-    public void setDataNames() {
-        enDataName = toDataName(enName);
-        deDataName = toDataName(deName);
-    }
-
     protected static String toDataName(String name) {
         return name.toLowerCase()
                 .replace(' ', '_')

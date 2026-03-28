@@ -219,7 +219,7 @@ public enum Disability {
         this.enDescription = handler.enDescription;
 
         this.deName = handler.deName;
-        this.deDataName = handler.enDataName;
+        this.deDataName = handler.deDataName;
         this.deDescription = handler.deDescription;
 
         this.icon = handler.icon;

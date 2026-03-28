@@ -47,7 +47,6 @@ public class Overweight extends DisabilityHandler {
                 player.setExhaustion(player.getExhaustion() + 0.03f);
             }
         }, 20L, 20L);
-
     }
 
 

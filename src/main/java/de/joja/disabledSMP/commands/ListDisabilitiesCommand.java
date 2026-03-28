@@ -1,6 +1,7 @@
 package de.joja.disabledSMP.commands;
 
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.utils.DConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,8 +37,12 @@ public class ListDisabilitiesCommand implements CommandExecutor {
         UUID uuid = player.getUniqueId();
         sender.sendRichMessage("<gray>Disabilities of " + player.getName());
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
-        for (Disability d : disabilities)
-            sender.sendRichMessage("<gray>- " + d.ordinal());
+        for (Disability d : disabilities) {
+            if (DConfig.LANGUAGE.equals("en"))
+                sender.sendRichMessage("<gray>- " + d.enName);
+            else if (DConfig.LANGUAGE.equals("de"))
+                sender.sendRichMessage("<gray>- " + d.deName);
+        }
 
         return true;
     }

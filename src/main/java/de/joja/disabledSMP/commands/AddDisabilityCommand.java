@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
-import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public class AddDisabilityCommand implements CommandExecutor {
 
@@ -28,33 +27,34 @@ public class AddDisabilityCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = plugin.getServer().getPlayer(args[0]);
+        String playerName = args[0];
+        Player player = plugin.getServer().getPlayer(playerName);
         if (player == null) {
             sender.sendRichMessage("<red>Player not found!");
             return true;
         }
 
-        int i;
-        try {
-            i = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            sender.sendRichMessage("<red>Given disability id is not an integer!");
-            return true;
-        }
+        String disName = args[1];
+        Disability dis = null;
+        for (Disability d : Disability.values())
+            if (d.enDataName.equals(disName) || d.deDataName.equals(disName))
+                dis = d;
 
-        if (i < 0 && i > DISABILITIES_TOTAL_AMOUNT-1) {
-            sender.sendRichMessage("<red>Given disability id does not exist!");
+        if (dis == null) {
+            sender.sendRichMessage("<red>Disability not found!");
             return true;
         }
 
         UUID uuid = player.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
 
-        if (!disabilities.contains(Disability.get(i))) {
-            plugin.disabilityMap.get(uuid).add(Disability.get(i));
-            sender.sendRichMessage("<green>Successfully added disability to this player!");
-        } else
+        if (disabilities.contains(dis)) {
             sender.sendRichMessage("<yellow>Player already has that disability!");
+        } else {
+            disabilities.add(dis);
+            dis.handler.addToPlayer(player);
+            sender.sendRichMessage("<green>Successfully added disability to this player!");
+        }
 
         return true;
     }
