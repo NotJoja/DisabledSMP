@@ -22,14 +22,12 @@ public class JoinListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        byte[] hash = HexFormat.of().parseHex("7341e8f884a8f1117eb90c1393a39bf850fd29bf");
         player.setResourcePack(
                 "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/DisabledSMP.zip",
                 null,
-                Component.text("This server requires the DisabledSMP resource pack"),
-                false
+                Component.text("This server requires the DisabledSMP resource pack!"),
+                true
         );
-
 
         // if player disabilities are already loaded, then return
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);

@@ -4,14 +4,14 @@ import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static de.joja.disabledSMP.DisabledSMP.plugin;
-import static de.joja.disabledSMP.utils.Utils.random;
 
 public class BalanceDisorder extends DisabilityHandler {
 
@@ -37,32 +37,62 @@ public class BalanceDisorder extends DisabilityHandler {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
 
                 if (!hasDis(player, Disability.BALANCE_DISORDER))
-                    continue;
-
-                if (!player.isOnGround())
-                    continue;
+                    return;
 
                 Location loc = player.getLocation();
+                Block block = loc.clone().add(0, -1, 0).getBlock();
 
-                double x = loc.getX() % 1;
-                double z = loc.getZ() % 1;
+                if (!(block.isSolid() || player.isOnGround()))
+                    return;
 
-                boolean nearEdge = x < 0.3 || x > 0.7 || z < 0.3 || z > 0.7;
-                if (!nearEdge)
-                    continue;
+                // Directions to check
+                Vector[] directions = new Vector[] {
+                        new Vector(1, 0, 0),   // east
+                        new Vector(-1, 0, 0),  // west
+                        new Vector(0, 0, 1),   // south
+                        new Vector(0, 0, -1)   // north
+                };
 
-                if (random.nextDouble() > 0.05)
-                    continue;
+                List<Vector> unsafeDirections = new ArrayList<>();
 
-                Location below1 = loc.clone().add(0, -1, 0);
-                Location below2 = loc.clone().add(0, -2, 0);
-                if (below1.getBlock().isSolid() && below2.getBlock().isSolid())
-                    continue;
+                for (Vector dir : directions) {
 
-                Vector push = new Vector(x - 0.5, 0, z - 0.5).normalize();
-                push.multiply(-0.4);
-                push.setY(0.18);
-                player.setVelocity(push);
+                    Block relative = block.getRelative(
+                            dir.getBlockX(),
+                            0,
+                            dir.getBlockZ()
+                    );
+
+                    Block below1 = relative.getRelative(0, -1, 0);
+                    Block below2 = relative.getRelative(0, -2, 0);
+                    boolean ground = relative.getType().isSolid();
+                    boolean groundBelow1 = below1.getType().isSolid();
+                    boolean groundBelow2 = below2.getType().isSolid();
+
+                    if (!ground && !groundBelow1 && !groundBelow2)
+                        unsafeDirections.add(dir);
+                }
+
+                if (unsafeDirections.isEmpty())
+                    return;
+
+                if (Math.random() > unsafeDirections.size()*0.0125)
+                    return;
+
+                // Pick random unsafe direction
+                Vector pushDir = unsafeDirections.get(
+                        (int) (Math.random() * unsafeDirections.size())
+                );
+
+                // Apply push
+                Vector velocity = pushDir.clone().normalize().multiply(0.4);
+
+                if (player.isSneaking())
+                    velocity.setY(0.4);
+                else
+                    velocity.setY(0.2);
+
+                player.setVelocity(velocity);
             }
 
         }, 1L, 5L);
