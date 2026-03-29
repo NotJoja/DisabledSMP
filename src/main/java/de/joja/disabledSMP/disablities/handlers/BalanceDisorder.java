@@ -76,7 +76,7 @@ public class BalanceDisorder extends DisabilityHandler {
                 if (unsafeDirections.isEmpty())
                     return;
 
-                if (Math.random() > unsafeDirections.size()*0.0125)
+                if (Math.random() > unsafeDirections.size()*0.01)
                     return;
 
                 // Pick random unsafe direction
