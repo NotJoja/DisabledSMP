@@ -13,8 +13,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -54,7 +52,7 @@ public class Schizophrenia extends DisabilityHandler {
                 if (!hasDis(player, Disability.SCHIZOPHRENIA))
                     continue;
 
-                if (Math.random() < 0.04)
+                if (Math.random() < 0.05)
                     spawnFakeMob(player);
                 if (Math.random() < 0.005)
                     player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 1);
@@ -87,15 +85,15 @@ public class Schizophrenia extends DisabilityHandler {
         if (randomFakeMob == EntityType.GHAST)
             distanceRange = 48;
 
-        Location fakeMobLoc = player.getLocation().add(
-                (Math.random() - 0.5) * distanceRange,
-                0,
-                (Math.random() - 0.5) * distanceRange
-        );
+        Location fakeMobLoc;
         if (randomFakeMob == EntityType.GHAST)
-            fakeMobLoc.add(0, (Math.random() - 0.5) * distanceRange, 0);
+            fakeMobLoc = player.getLocation().add(
+                    (Math.random() - 0.5) * distanceRange,
+                    (Math.random() - 0.5) * distanceRange,
+                    (Math.random() - 0.5) * distanceRange
+            );
         else
-            fakeMobLoc = findSpawnLocation(fakeMobLoc);
+            fakeMobLoc = findSpawnLocation(player, distanceRange);
 
         spawnPacket.getDoubles()
                 .write(0, fakeMobLoc.getX())
@@ -160,13 +158,31 @@ public class Schizophrenia extends DisabilityHandler {
 
 
 
-    public Location findSpawnLocation(Location base) {
+    private Location findSpawnLocation(Player player, int distanceRange) {
+
+        Location checkLoc = null;
+        for (int i = 0; i < 8; i++) {
+            checkLoc = player.getLocation().add(
+                    (Math.random() - 0.5) * distanceRange,
+                    0,
+                    (Math.random() - 0.5) * distanceRange
+            );
+            Location foundLoc = tryFindSpawnLocation(checkLoc);
+            if (foundLoc != null)
+                return foundLoc;
+            distanceRange--;
+        }
+
+        return checkLoc;
+    }
+
+    private Location tryFindSpawnLocation(Location base) {
 
         World world = base.getWorld();
         int x = base.getBlockX();
         int z = base.getBlockZ();
 
-        for (int y = base.getBlockY()+8; y > base.getBlockY()-12; y--) {
+        for (int y = base.getBlockY()+6; y > base.getBlockY()-6; y--) {
 
             Block ground = world.getBlockAt(x, y, z);
             Block above1 = world.getBlockAt(x, y + 1, z);
@@ -180,7 +196,7 @@ public class Schizophrenia extends DisabilityHandler {
             }
         }
 
-        return base;
+        return null;
     }
 
 
