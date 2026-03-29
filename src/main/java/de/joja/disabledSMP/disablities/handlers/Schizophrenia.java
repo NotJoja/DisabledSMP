@@ -54,8 +54,20 @@ public class Schizophrenia extends DisabilityHandler {
 
                 if (Math.random() < 0.05)
                     spawnFakeMob(player);
-                if (Math.random() < 0.005)
-                    player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 1);
+
+                if (player.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+                    if (Math.random() < 0.008) {
+                        player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1);
+                        player.sendMessage("GH SHOOT");
+                    }
+                    if (Math.random() < 0.008) {
+                        player.playSound(player.getLocation(), Sound.ENTITY_GHAST_WARN, 1, 1);
+                        player.sendMessage("GH WARN");
+                    }
+                } else {
+                    if (Math.random() < 0.008)
+                        player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 1);
+                }
             }
         }, 20L, 20L);
     }
@@ -68,7 +80,7 @@ public class Schizophrenia extends DisabilityHandler {
         else if (player.getWorld().getEnvironment().equals(World.Environment.NETHER))
             randomFakeMob = POSSIBLE_FAKE_MOBS_NETHER[random.nextInt(POSSIBLE_FAKE_MOBS_NETHER.length)];
         else
-            return;
+            randomFakeMob = EntityType.ENDERMAN;
 
         int entityId = CURRENT_ENTITY_ID.getAndIncrement();
         var fakeEntityIDs = fakeEntityIDsMap.get(player.getUniqueId());
