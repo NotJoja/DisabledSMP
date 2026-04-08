@@ -1,6 +1,9 @@
 package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import java.util.List;
 
