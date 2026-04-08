@@ -57,6 +57,8 @@ public class Overweight extends DisabilityHandler {
             return;
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
             return;
+        if (!hasDis(player, Disability.OVERWEIGHT))
+            return;
 
         float fall = player.getFallDistance();
         if (fall < 18)

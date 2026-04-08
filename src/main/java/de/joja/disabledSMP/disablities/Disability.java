@@ -179,6 +179,7 @@ public enum Disability {
     COLOR_BLINDNESS(new ColorBlindness()),
     DWARFISM(new Dwarfism()),
     HEART_ATTACKS(new HeartAttacks()),
+    MENTALLY_DISABLED(new MentallyDisabled()),
     NEARSIGHTED(new Nearsighted()),
     OVERWEIGHT(new Overweight()),
     PANIC_ATTACKS(new PanicAttacks()),
