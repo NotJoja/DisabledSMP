@@ -34,7 +34,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         switch (sub) {
             case "add" -> handleAdd(sender, args);
             case "rm" -> handleRemove(sender, args);
-            case "menu" -> handleMenu(sender);
+            case "menu" -> handleMenu(sender, args);
             case "list" -> handleList(sender, args);
             default -> sender.sendRichMessage("<red>Unknown subcommand!");
         }
@@ -42,46 +42,53 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private Player getTargetPlayer(CommandSender sender, String[] args, int index) {
-        if (args.length > index) {
-            Player p = Bukkit.getPlayer(args[index]);
-            if (p == null) {
-                sender.sendRichMessage("<red>Player not found!");
-                return null;
-            }
-            return p;
-        } else if (sender instanceof Player player) {
-            return player;
-        } else {
-            sender.sendRichMessage("<red>You must specify a player!");
-            return null;
-        }
-    }
-
-    private Disability getDisability(CommandSender sender, String name) {
-        for (Disability d : Disability.values()) {
-            if (d.enDataName.equalsIgnoreCase(name) || d.deDataName.equalsIgnoreCase(name))
-                return d;
-        }
-        sender.sendRichMessage("<red>Disability not found!");
-        return null;
+    private boolean isAdmin(CommandSender sender) {
+        return sender.hasPermission("disabledSMP.disability_admin") || sender.isOp();
     }
 
     private void handleAdd(CommandSender sender, String[] args) {
+        if (!isAdmin(sender)) {
+            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            return;
+        }
+
         if (args.length < 2) {
             sender.sendRichMessage("<red>Usage: /dis add <disability> [player]");
             return;
         }
 
-        Disability dis = getDisability(sender, args[1]);
-        if (dis == null) return;
+        String disName = args[1];
+        Disability dis = null;
+        for (Disability d : Disability.values())
+            if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
+                dis = d;
 
-        Player target = getTargetPlayer(sender, args, 2);
-        if (target == null) return;
+        if (dis == null) {
+            sender.sendRichMessage("<red>Disability not found!");
+            return;
+        }
+
+        Player target;
+        if (args.length >= 3) {
+            target = Bukkit.getPlayer(args[2]);
+            if (target == null) {
+                sender.sendRichMessage("<red>Player not found!");
+                return;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                sender.sendRichMessage("<red>You must specify a player!");
+                return;
+            }
+            target = (Player) sender;
+        }
 
         UUID uuid = target.getUniqueId();
-        List<Disability> disabilities = plugin.disabilityMap.getOrDefault(uuid, new ArrayList<>());
-        plugin.disabilityMap.putIfAbsent(uuid, disabilities);
+        List<Disability> disabilities = plugin.disabilityMap.get(uuid);
+        if (disabilities == null) {
+            disabilities = new ArrayList<>();
+            plugin.disabilityMap.put(uuid, disabilities);
+        }
 
         if (disabilities.contains(dis)) {
             sender.sendRichMessage("<yellow>Player already has that disability!");
@@ -93,20 +100,44 @@ public class DisCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleRemove(CommandSender sender, String[] args) {
+        if (!isAdmin(sender)) {
+            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            return;
+        }
+
         if (args.length < 2) {
             sender.sendRichMessage("<red>Usage: /dis rm <disability> [player]");
             return;
         }
 
-        Disability dis = getDisability(sender, args[1]);
-        if (dis == null) return;
+        String disName = args[1];
+        Disability dis = null;
+        for (Disability d : Disability.values())
+            if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
+                dis = d;
 
-        Player target = getTargetPlayer(sender, args, 2);
-        if (target == null) return;
+        if (dis == null) {
+            sender.sendRichMessage("<red>Disability not found!");
+            return;
+        }
+
+        Player target;
+        if (args.length >= 3) {
+            target = Bukkit.getPlayer(args[2]);
+            if (target == null) {
+                sender.sendRichMessage("<red>Player not found!");
+                return;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                sender.sendRichMessage("<red>You must specify a player!");
+                return;
+            }
+            target = (Player) sender;
+        }
 
         UUID uuid = target.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
-
         if (disabilities == null || !disabilities.contains(dis)) {
             sender.sendRichMessage("<yellow>Player does not have that disability!");
             return;
@@ -117,29 +148,58 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         sender.sendRichMessage("<green>Successfully removed disability from " + target.getName() + "!");
     }
 
-    private void handleMenu(CommandSender sender) {
+    private void handleMenu(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendRichMessage("<red>Only players can use this command!");
             return;
         }
-        Inventory menu = new MainDisMenu(player.getUniqueId()).createMenuInv();
-        player.openInventory(menu);
+
+        if (args.length != 1) {
+            sender.sendRichMessage("<red>No arguments needed for this command!");
+            return;
+        }
+
+        Inventory disMenuInv = new MainDisMenu(player.getUniqueId()).createMenuInv();
+        player.openInventory(disMenuInv);
     }
 
     private void handleList(CommandSender sender, String[] args) {
-        Player target = getTargetPlayer(sender, args, 1);
-        if (target == null) return;
+        if (!isAdmin(sender)) {
+            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            return;
+        }
 
-        List<Disability> disabilities = plugin.disabilityMap.getOrDefault(target.getUniqueId(), new ArrayList<>());
+        Player target;
+
+        if (args.length >= 2) {
+            target = Bukkit.getPlayer(args[1]);
+            if (target == null) {
+                sender.sendRichMessage("<red>Player not found!");
+                return;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                sender.sendRichMessage("<red>You must specify a player!");
+                return;
+            }
+            target = (Player) sender;
+        }
+
+        UUID uuid = target.getUniqueId();
+        List<Disability> disabilities = plugin.disabilityMap.get(uuid);
 
         sender.sendRichMessage("<gray>Disabilities of " + target.getName() + ":");
-        if (disabilities.isEmpty()) {
+
+        if (disabilities == null || disabilities.isEmpty()) {
             sender.sendRichMessage("<yellow>None");
             return;
         }
 
         for (Disability d : disabilities) {
-            sender.sendRichMessage("<gray>- " + (DConfig.LANGUAGE.equals("en") ? d.enName : d.deName));
+            if (DConfig.LANGUAGE.equals("en"))
+                sender.sendRichMessage("<gray>- " + d.enName);
+            else
+                sender.sendRichMessage("<gray>- " + d.deName);
         }
     }
 
@@ -155,23 +215,24 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             for (String s : new String[]{"add", "rm", "menu", "list"})
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) {
+            if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
                 for (Disability d : Disability.values()) {
                     if (d.enDataName.toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(d.enDataName);
-                    if (d.deDataName.toLowerCase().startsWith(args[1].toLowerCase()))
+                    else if (d.deDataName.toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(d.deDataName);
                 }
-            } else if (args[0].equalsIgnoreCase("list")) {
+            } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.getName().toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(p.getName());
                 }
             }
-        } else if (args.length == 3 && (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm"))) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getName().toLowerCase().startsWith(args[2].toLowerCase()))
-                    completions.add(p.getName());
+        } else if (args.length == 3) {
+            if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
+                for (Player p : Bukkit.getOnlinePlayers())
+                    if (p.getName().toLowerCase().startsWith(args[2].toLowerCase()))
+                        completions.add(p.getName());
             }
         }
 
