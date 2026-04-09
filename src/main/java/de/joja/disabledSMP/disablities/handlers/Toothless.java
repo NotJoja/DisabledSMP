@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -25,5 +26,24 @@ public class Toothless extends DisabilityHandler {
         );
 
         initIcons();
+    }
+    @EventHandler
+    public void onPlayerConsume(PlayerItemConsumeEvent event) {
+        if (!hasDis(event.getPlayer(), Disability.TOOTHLESS)) return;
+
+        Material item = event.getItem().getType();
+
+        // Allow soups and drinkables (potions, milk)
+        boolean allowed = item == Material.MUSHROOM_STEW
+                || item == Material.BEETROOT_SOUP
+                || item == Material.RABBIT_STEW
+                || item == Material.SUSPICIOUS_STEW
+                || item == Material.POTION
+                || item == Material.MILK_BUCKET;
+
+        if (!allowed) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage("You can't eat that! Only soups and drinks are allowed for you.");
+        }
     }
 }
