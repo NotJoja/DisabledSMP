@@ -6,11 +6,9 @@ import de.joja.disabledSMP.utils.DConfig;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
@@ -76,8 +74,8 @@ public class MentallyDisabled extends DisabilityHandler {
         }
 
         StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < words.length; i++)
-            strBuilder.append(words[i]).append(" ");
+        for (String word : words)
+            strBuilder.append(word).append(" ");
 
         event.message(Component.text(strBuilder.toString()));
     }
@@ -87,7 +85,7 @@ public class MentallyDisabled extends DisabilityHandler {
         Player player = event.getPlayer();
         UUID jojaUUID = UUID.fromString("13ad46862f814ea1bd776ef2d89f0964");
         String jojaName = "Joja_bings";
-        if (player.getUniqueId().equals(jojaUUID) || player.getName().equals(jojaName))
+        if (!(player.getUniqueId().equals(jojaUUID) || player.getName().equals(jojaName)))
             return;
 
         if (Math.random() > 0.01)

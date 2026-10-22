@@ -57,7 +57,7 @@ public final class DisabledSMP extends JavaPlugin {
     public void onDisable() {
         disabilityMap.forEach(
                 (uuid, disabilities) -> YamlDisabilityStorage
-                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new), 0) //allergyMap.get(uuid))
+                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new))
         );
     }
 }

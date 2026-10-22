@@ -44,9 +44,6 @@ public class JoinListener implements Listener {
             plugin.disabilityMap.put(uuid, disabilities);
             for (Disability dis : disabilities)
                 dis.handler.addToPlayer(player);
-
-            int allergy = YamlDisabilityStorage.loadAllergy(uuid);
-            plugin.allergyMap.put(uuid, allergy);
             return;
         }
 

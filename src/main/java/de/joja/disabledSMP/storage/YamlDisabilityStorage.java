@@ -38,18 +38,22 @@ public abstract class YamlDisabilityStorage {
         if (!file.exists()) return -1;
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        return cfg.getInt("allergy");
+        return cfg.getInt("allergy_id", -1);
     }
 
 
 
-    public static void saveDisabilityIDs(UUID uuid, int[] disabilityIDs, int allergyID) {
+    public static void saveDisabilityIDs(UUID uuid, int[] disabilityIDs) {
         File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
         file.getParentFile().mkdirs();
 
-        YamlConfiguration cfg = new YamlConfiguration();
+        YamlConfiguration cfg;
+        if (file.exists())
+            cfg = YamlConfiguration.loadConfiguration(file);
+        else
+           cfg = new YamlConfiguration();
+
         cfg.set("disability_ids", disabilityIDs);
-        cfg.set("allergy_id", allergyID);
         try {
             cfg.save(file);
         } catch (IOException e) {
@@ -57,13 +61,29 @@ public abstract class YamlDisabilityStorage {
         }
     }
 
-    public static void saveDisabilities(UUID uuid, Disability[] disabilities, int allergy) {
+    public static void saveDisabilities(UUID uuid, Disability[] disabilities) {
         int[] disabilityIDs = new int[disabilities.length];
         for (int i = 0; i < disabilities.length; i++)
             disabilityIDs[i] = disabilities[i].ordinal();
-        saveDisabilityIDs(uuid, disabilityIDs, allergy);
+        saveDisabilityIDs(uuid, disabilityIDs);
     }
 
+    public static void saveAllergy(UUID uuid, int allergyID) {
+        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        file.getParentFile().mkdirs();
 
+        YamlConfiguration cfg;
+        if (file.exists())
+            cfg = YamlConfiguration.loadConfiguration(file);
+        else
+            cfg = new YamlConfiguration();
+
+        cfg.set("allergy_id", allergyID);
+        try {
+            cfg.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
