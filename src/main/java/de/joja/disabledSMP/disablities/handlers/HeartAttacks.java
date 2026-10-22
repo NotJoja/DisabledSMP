@@ -42,20 +42,12 @@ public class HeartAttacks extends DisabilityHandler {
             if (!hasDis(player, Disability.HEART_ATTACKS))
                 return;
 
-            boolean randomChance = random.nextInt(300) == 0;
-            if (randomChance && player.getHealth() >= 5) {
+            // ~1 trigger every 30 minutes on average
+            boolean randomChance = random.nextInt(1200) == 0;
 
-                double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue();
-                double damage = random.nextDouble(0.4, 0.8) * maxHealth;
-                if (damage < player.getHealth()) {
-                    heartAttack(player, damage);
-                    return;
-                }
-
-                if (random.nextInt(4) == 0)
-                    heartAttack(player, damage);
-                else
-                    heartAttack(player, player.getHealth() - 1);
+            if (randomChance && player.getHealth() > 1) {
+                double damage = player.getHealth() - 1; // leave at half a heart
+                heartAttack(player, damage);
             }
 
         }, 0L, 20L);

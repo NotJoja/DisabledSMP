@@ -1,9 +1,6 @@
 package de.joja.disabledSMP;
 
-import de.joja.disabledSMP.commands.AddDisabilityCommand;
-import de.joja.disabledSMP.commands.DisMenuCommand;
-import de.joja.disabledSMP.commands.ListDisabilitiesCommand;
-import de.joja.disabledSMP.commands.RemoveDisabilityCommand;
+import de.joja.disabledSMP.commands.DisCommand;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.MenuManager;
 import de.joja.disabledSMP.listeners.CureListener;
@@ -47,10 +44,15 @@ public final class DisabledSMP extends JavaPlugin {
         for (Disability dis : Disability.values())
             pm.registerEvents(dis.handler, this);
 
-        getCommand("add_disability").setExecutor(new AddDisabilityCommand());
-        getCommand("remove_disability").setExecutor(new RemoveDisabilityCommand());
-        getCommand("list_disabilities").setExecutor(new ListDisabilitiesCommand());
-        getCommand("disabled_menu").setExecutor(new DisMenuCommand());
+        // Register the new combined command
+        getCommand("dis").setExecutor(new DisCommand());
+        getCommand("dis").setTabCompleter(new DisCommand());
+
+        // Remove old command registrations
+        // getCommand("add_disability").setExecutor(new AddDisabilityCommand());
+        // getCommand("remove_disability").setExecutor(new RemoveDisabilityCommand());
+        // getCommand("list_disabilities").setExecutor(new ListDisabilitiesCommand());
+        // getCommand("disabled_menu").setExecutor(new DisMenuCommand());
     }
 
     @Override
