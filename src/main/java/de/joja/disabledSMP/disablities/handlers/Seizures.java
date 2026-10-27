@@ -44,8 +44,9 @@ public class Seizures extends DisabilityHandler {
 
                 int seizureTime = seizureTimeMap.get(player.getUniqueId());
                 if (seizureTime <= -1) {
-                    if (Math.random() < 0.0015)
-                        seizureTimeMap.put(player.getUniqueId(), random.nextInt(100, 1000));
+                    if (Math.random() < 0.0008)
+                        seizureTimeMap.put(player.getUniqueId(), random.nextInt(100, 800));
+                    player.sendMessage("§c§lSEIZURE! §cYou move uncontrolled!");
                     continue;
                 }
 

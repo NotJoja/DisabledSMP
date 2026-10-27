@@ -58,14 +58,12 @@ public class Schizophrenia extends DisabilityHandler {
                 if (player.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
                     if (Math.random() < 0.008) {
                         player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1);
-                        player.sendMessage("GH SHOOT");
                     }
                     if (Math.random() < 0.008) {
                         player.playSound(player.getLocation(), Sound.ENTITY_GHAST_WARN, 1, 1);
-                        player.sendMessage("GH WARN");
                     }
                 } else {
-                    if (Math.random() < 0.008)
+                    if (Math.random() < 0.01)
                         player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 1);
                 }
             }

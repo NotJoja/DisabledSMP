@@ -208,8 +208,6 @@ public class ShortTermMemory extends DisabilityHandler {
         if (randomizedTime == null) return;
 
         long elapsed = System.currentTimeMillis() - randomizedTime;
-
-        // Wait until 5 minutes have passed
         if (elapsed < 5 * 60 * 1000L) return;
 
         meta.setItemModel(NamespacedKey.minecraft(item.getType().name().toLowerCase(Locale.ROOT)));
