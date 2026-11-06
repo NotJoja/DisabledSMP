@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -22,6 +23,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
@@ -57,6 +61,13 @@ public class WheelchairManager implements Listener {
     public static final Key WHEELCHAIR_MODEL = Key.key("dismp", "wheelchair");
 
     // ---------------------------------------------------------------- tuning
+
+    /**
+     * Health of the wheelchair while someone sits in it (an empty one breaks with a single hit).
+     * Player hits do vanilla damage: axes 9 (netherite 10, wooden/golden 7), diamond sword 7,
+     * iron sword 6, ... so 18 means two axe hits or three diamond sword hits break it.
+     */
+    private static final double MAX_HEALTH = 18.0;
 
     /** Same as a sprinting player (0.1 * 1.3). */
     private static final double SPEED = 0.13;
@@ -190,7 +201,6 @@ public class WheelchairManager implements Listener {
             h.setTamed(true);
             h.setInvisible(true);
             h.setSilent(true);
-            h.setInvulnerable(true);
             h.setPersistent(true);
             h.setRemoveWhenFarAway(false);
             h.getInventory().setSaddle(invisibleSaddle());
@@ -199,6 +209,8 @@ public class WheelchairManager implements Listener {
             setBase(h, Attribute.SCALE, HORSE_SCALE);
             setBase(h, Attribute.JUMP_STRENGTH, 0.0);
             setBase(h, Attribute.KNOCKBACK_RESISTANCE, 1.0);
+            setBase(h, Attribute.MAX_HEALTH, MAX_HEALTH);
+            h.setHealth(MAX_HEALTH);
             setBase(h, Attribute.STEP_HEIGHT, 1.0);
         });
 
@@ -273,19 +285,6 @@ public class WheelchairManager implements Listener {
         DisabledSMP.plugin.advancementManager.grant(player, AdvancementManager.WHEELCHAIR);
     }
 
-    private void pickUp(Player player, Horse horse) {
-        Location loc = horse.getLocation();
-
-        ItemDisplay display = getDisplay(horse);
-        if (display != null)
-            display.remove();
-        horse.remove();
-
-        // like a boat: nothing drops in creative, otherwise the item drops where the chair stood
-        if (player.getGameMode() != GameMode.CREATIVE)
-            loc.getWorld().dropItemNaturally(loc.add(0, 0.5, 0), createItem());
-    }
-
     // ---------------------------------------------------------------- events
 
     /** Place it like a boat. */
@@ -340,14 +339,71 @@ public class WheelchairManager implements Listener {
             mount(player, horse);
     }
 
-    /** Punch it to pick it up again. */
+    /**
+     * Chairs placed before it had health are invulnerable: make them breakable now. The attack is still being
+     * processed, so this already applies to the hit that triggered the event.
+     */
     @EventHandler
     public void onPunch(PrePlayerAttackEntityEvent event) {
-        if (!isWheelchair(event.getAttacked()))
+        if (!isWheelchair(event.getAttacked()) || !event.getAttacked().isInvulnerable())
             return;
 
-        event.setCancelled(true);
-        pickUp(event.getPlayer(), (Horse) event.getAttacked());
+        Horse horse = (Horse) event.getAttacked();
+        horse.setInvulnerable(false);
+        setBase(horse, Attribute.MAX_HEALTH, MAX_HEALTH);
+        horse.setHealth(MAX_HEALTH);
+    }
+
+    /** Only player hits hurt it, everything else (fire, explosions, arrows, falling, ...) is ignored. */
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (!isWheelchair(event.getEntity()))
+            return;
+
+        boolean playerHit = event instanceof EntityDamageByEntityEvent byEntity
+                && byEntity.getDamager() instanceof Player
+                && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK;
+
+        if (!playerHit) {
+            event.setCancelled(true);
+            return;
+        }
+
+        Player attacker = (Player) ((EntityDamageByEntityEvent) event).getDamager();
+        Horse horse = (Horse) event.getEntity();
+
+        // an empty wheelchair breaks with a single hit, like picking up a boat.
+        // Only while someone sits in it, it has health (also for creative players, they just get no item).
+        boolean occupied = horse.getPassengers().stream().anyMatch(e -> e instanceof Player);
+        if (!occupied) {
+            event.setDamage(horse.getHealth() + 1);
+            return;
+        }
+
+        // the horse is silent and invisible, so give some feedback
+        horse.getWorld().playSound(horse.getLocation(), Sound.BLOCK_CHAIN_HIT, 1f, 1f);
+    }
+
+    /** Broken: drops the wheelchair item (not in creative) instead of the horse's loot. */
+    @EventHandler
+    public void onBreak(EntityDeathEvent event) {
+        if (!isWheelchair(event.getEntity()))
+            return;
+
+        event.getDrops().clear();
+        event.setDroppedExp(0);
+
+        // remove the model right away, don't wait for the remove event
+        ItemDisplay display = getDisplay((Horse) event.getEntity());
+        if (display != null)
+            display.remove();
+
+        Player killer = event.getEntity().getKiller();
+        if (killer != null && killer.getGameMode() != GameMode.CREATIVE)
+            event.getDrops().add(createItem());
+
+        Location loc = event.getEntity().getLocation();
+        loc.getWorld().playSound(loc, Sound.BLOCK_CHAIN_BREAK, 1f, 1f);
     }
 
     /** No jumping with the wheelchair. */
