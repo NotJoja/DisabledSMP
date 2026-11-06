@@ -2,7 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
-import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.Lang;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -91,10 +91,7 @@ public class MentallyDisabled extends DisabilityHandler {
         if (Math.random() > 0.01)
             return;
 
-        if (DConfig.LANGUAGE.equals("en"))
-            event.message(Component.text("I'm a horny femboy :3"));
-        else if (DConfig.LANGUAGE.equals("de"))
-            event.message(Component.text("Ich bin ein geiler femboy :3"));
+        event.message(Component.text(Lang.of(player).pick("I'm a horny femboy :3", "Ich bin ein geiler femboy :3")));
     }
 
 

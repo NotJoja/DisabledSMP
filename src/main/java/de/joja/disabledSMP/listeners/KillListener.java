@@ -1,6 +1,7 @@
 package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.utils.PlayerAttack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -75,5 +76,9 @@ public class KillListener implements Listener {
         int rand = random.nextInt(killerPlayerDisabilities.size());
         diedPlayerDisabilities.add(killerPlayerDisabilities.get(rand));
         killerPlayerDisabilities.remove(rand);
+
+        // German-only: there is no English word for this
+        if (Lang.of(killerPlayer) == Lang.DE)
+            killerPlayer.sendMessage("§7Schadenfreude! Du hast eine Disability an " + diedPlayer.getName() + " weitergegeben.");
     }
 }

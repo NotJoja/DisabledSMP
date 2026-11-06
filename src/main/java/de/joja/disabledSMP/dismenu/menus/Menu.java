@@ -1,7 +1,7 @@
 package de.joja.disabledSMP.dismenu.menus;
 
 import de.joja.disabledSMP.dismenu.clickables.MenuClickable;
-import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
@@ -23,14 +23,15 @@ public abstract class Menu implements InventoryHolder {
         this.uuid = uuid;
     }
 
+    /** The language of the player this menu is for. */
+    protected Lang lang() {
+        return Lang.of(uuid);
+    }
+
     public abstract Inventory createMenuInv();
 
     protected Inventory createMenuInvHelper(String enName, String deName) {
-        Inventory menuInv = null;
-        if (DConfig.LANGUAGE.equals("en"))
-            menuInv = Bukkit.createInventory(this, this.size, Component.text(enName));
-        else if (DConfig.LANGUAGE.equals("de"))
-            menuInv = Bukkit.createInventory(this, this.size, Component.text(deName));
+        Inventory menuInv = Bukkit.createInventory(this, this.size, Component.text(lang().pick(enName, deName)));
         menuInv.setContents(this.items);
         return menuInv;
     }

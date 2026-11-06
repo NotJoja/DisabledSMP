@@ -123,7 +123,8 @@ public class ParalyzedArm extends DisabilityHandler {
             return;
 
         ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
+                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)
@@ -147,7 +148,8 @@ public class ParalyzedArm extends DisabilityHandler {
             player.dropItem(EquipmentSlot.OFF_HAND);
 
         ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
+                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)

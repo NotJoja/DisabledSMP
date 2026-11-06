@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import org.bukkit.Bukkit;
@@ -65,7 +66,9 @@ public class Seizures extends DisabilityHandler {
                     // start a seizure
                     seizureTimeMap.put(uuid, random.nextInt(100, 400));
                     cooldownMap.put(uuid, randomCooldown());
-                    player.sendMessage("§c§lSEIZURE! §cYou move uncontrolled!");
+                    player.sendMessage(Lang.of(player).pick(
+                            "§c§lSEIZURE! §cYou move uncontrolled!",
+                            "§c§lKRAMPFANFALL! §cDu bewegst dich unkontrolliert!"));
                     continue;
                 }
 

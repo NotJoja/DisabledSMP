@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 
@@ -87,7 +88,9 @@ public class PanicAttacks extends DisabilityHandler {
         if (!hasDis(player, Disability.PANIC_ATTACKS))
             return;
 
-        player.sendMessage("§c§lPANIC ATTACK! §cYou are overwhelmed by your surroundings!");
+        player.sendMessage(Lang.of(player).pick(
+                "§c§lPANIC ATTACK! §cYou are overwhelmed by your surroundings!",
+                "§c§lTORSCHLUSSPANIK! §cDu bist von deiner Umgebung überwältigt!"));
 
         player.addPotionEffect(
                 new PotionEffect(PotionEffectType.SPEED, ATTACK_DURATION * 20, 1, false, true, true)
@@ -106,7 +109,9 @@ public class PanicAttacks extends DisabilityHandler {
                 }
 
                 if (elapsedSeconds >= ATTACK_DURATION) {
-                    player.sendMessage("§aYou have calmed down. Your panic attack is over.");
+                    player.sendMessage(Lang.of(player).pick(
+                            "§aYou have calmed down. Your panic attack is over.",
+                            "§aDu hast dich beruhigt. Deine Panikattacke ist vorbei."));
                     cancel();
                     return;
                 }
@@ -128,7 +133,9 @@ public class PanicAttacks extends DisabilityHandler {
             if (heldItem.getType() != Material.AIR) {
                 player.getWorld().dropItemNaturally(player.getLocation(), heldItem.clone());
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                player.sendMessage("§cYou panic and drop the item in your hand!");
+                player.sendMessage(Lang.of(player).pick(
+                        "§cYou panic and drop the item in your hand!",
+                        "§cDu gerätst in Panik und lässt das Item in deiner Hand fallen!"));
             }
         }
 
@@ -150,12 +157,16 @@ public class PanicAttacks extends DisabilityHandler {
 
                 if (random.nextBoolean()) {
                     player.getWorld().dropItemNaturally(player.getLocation(), armorPiece);
-                    player.sendMessage("§cYou panic and drop a piece of armor!");
+                    player.sendMessage(Lang.of(player).pick(
+                            "§cYou panic and drop a piece of armor!",
+                            "§cDu gerätst in Panik und lässt ein Rüstungsteil fallen!"));
                 } else {
                     HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(armorPiece);
                     for (ItemStack item : leftover.values())
                         player.getWorld().dropItemNaturally(player.getLocation(), item);
-                    player.sendMessage("§cYou panic and take off a piece of armor!");
+                    player.sendMessage(Lang.of(player).pick(
+                            "§cYou panic and take off a piece of armor!",
+                            "§cDu gerätst in Panik und reißt dir ein Rüstungsteil vom Leib!"));
                 }
             }
         }

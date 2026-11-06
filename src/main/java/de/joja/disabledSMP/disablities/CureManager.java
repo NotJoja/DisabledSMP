@@ -1,6 +1,5 @@
 package de.joja.disabledSMP.disablities;
 
-import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.ItemUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.FoodProperties;
@@ -18,10 +17,10 @@ public abstract class CureManager { ;
     public static ItemStack createCureItem(Disability disability) {
         ItemStack cureItem = new ItemStack(Material.POTATO);
 
-        if (DConfig.LANGUAGE.equals("en"))
-            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.enName + " Cure", CURE_RGB, false);
-        else if (DConfig.LANGUAGE.equals("de"))
-            ItemUtils.configureItem(cureItem, disability.cureIcon, disability.deName + " Cure", CURE_RGB, false);
+        ItemUtils.configureItem(cureItem, disability.cureIcon,
+                ItemUtils.translatable("item.dismp.cure", "%s Cure", CURE_RGB, false,
+                        ItemUtils.disabilityName(disability.enDataName, disability.enName)),
+                null);
 
         // can be eaten even with a full hunger bar (and doesn't feed you either)
         cureItem.setData(DataComponentTypes.FOOD, FoodProperties.food()

@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.dismenu.menus;
 
+import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
@@ -72,7 +73,7 @@ public class SpecDisMenu extends Menu {
 
     private void createMenuOption(int i, String enName, String deName, List<String> enDescription, List<String> deDescription, Key icon, MenuClickable clickable) {
         ItemStack item = new ItemStack(Material.IRON_NUGGET);
-        ItemUtils.configureItem(item, icon, enName, deName, enDescription, deDescription, 0xF0F0FF, true);
+        ItemUtils.configureItem(lang(), item, icon, enName, deName, enDescription, deDescription, 0xF0F0FF, true);
         items[i] = item;
         clickables[i] = clickable;
     }

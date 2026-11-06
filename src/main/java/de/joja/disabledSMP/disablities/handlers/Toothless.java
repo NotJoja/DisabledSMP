@@ -2,7 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
-import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Material;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -66,10 +66,9 @@ public class Toothless extends DisabilityHandler {
 
         if (!fluid && !softFood) {
             event.setCancelled(true);
-            if (DConfig.LANGUAGE.equals("de"))
-                event.getPlayer().sendMessage("Du hast keine Zähne. Du kannst nur Suppen oder weiches Essen essen!");
-            else if (DConfig.LANGUAGE.equals("en"))
-                event.getPlayer().sendMessage("You have no teeth. You can only eat soups and soft food!");
+            event.getPlayer().sendMessage(Lang.of(event.getPlayer()).pick(
+                    "You have no teeth. You can only eat soups and soft food!",
+                    "Du hast keine Zähne. Du kannst nur Suppen oder weiches Essen essen!"));
             return;
         }
 
@@ -80,10 +79,9 @@ public class Toothless extends DisabilityHandler {
                         if (event.getPlayer().isOnline())
                             event.getPlayer().damage(5, DamageSource.builder(DamageType.STARVE).build());
 
-                        if (DConfig.LANGUAGE.equals("de"))
-                            event.getPlayer().sendMessage("Du hast keine Zähne. Dieses Essen fügt dir Schaden hinzu!");
-                        else if (DConfig.LANGUAGE.equals("en"))
-                            event.getPlayer().sendMessage("You have no teeth. This food hurts you!");
+                        event.getPlayer().sendMessage(Lang.of(event.getPlayer()).pick(
+                                "You have no teeth. This food hurts you!",
+                                "Du hast keine Zähne. Dieses Essen fügt dir Schaden hinzu!"));
                     },
                     null,
                     1L

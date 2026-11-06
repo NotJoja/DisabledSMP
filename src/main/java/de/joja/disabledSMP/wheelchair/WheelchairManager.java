@@ -27,8 +27,11 @@ import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Transformation;
@@ -95,6 +98,8 @@ public class WheelchairManager implements Listener {
         this.chairKey = new NamespacedKey(plugin, "wheelchair");
         this.displayKey = new NamespacedKey(plugin, "wheelchair_display");
 
+        registerRecipe();
+
         // ItemDisplay passengers don't turn with their vehicle, so copy the horse's rotation every tick
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -107,16 +112,50 @@ public class WheelchairManager implements Listener {
         }, 1L, 1L);
     }
 
+    // ---------------------------------------------------------------- recipe
+
+    private void registerRecipe() {
+        NamespacedKey key = new NamespacedKey(plugin, "wheelchair");
+
+        // don't register it twice (e.g. after a reload)
+        Bukkit.removeRecipe(key);
+
+        ShapedRecipe recipe = new ShapedRecipe(key, createItem());
+        recipe.shape(
+                " L ",
+                "#O#",
+                "I I"
+        );
+        recipe.setIngredient('L', Material.LEATHER);
+        recipe.setIngredient('#', Material.IRON_BARS);
+        recipe.setIngredient('O', Material.OAK_STAIRS);
+        recipe.setIngredient('I', Material.IRON_BLOCK);
+        recipe.setCategory(CraftingBookCategory.EQUIPMENT);
+
+        Bukkit.addRecipe(recipe);
+
+        // unlock it in the recipe book for everyone who is already online
+        for (Player player : Bukkit.getOnlinePlayers())
+            player.discoverRecipe(key);
+    }
+
+    /** ... and for everyone who joins later. */
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().discoverRecipe(new NamespacedKey(plugin, "wheelchair"));
+    }
+
     // ---------------------------------------------------------------- item
 
     public ItemStack createItem() {
         ItemStack item = new ItemStack(Material.PAPER);
         ItemUtils.configureItem(
                 item, WHEELCHAIR_MODEL,
-                "Wheelchair", "Rollstuhl",
-                List.of("Right-click on the ground to place it,", "right-click it to sit down."),
-                List.of("Rechtsklick auf den Boden zum Platzieren,", "Rechtsklick darauf zum Hinsetzen."),
-                0xC8C8C8, false
+                ItemUtils.translatable("item.dismp.wheelchair", "Wheelchair", 0xC8C8C8, false),
+                List.of(
+                        ItemUtils.translatable("item.dismp.wheelchair.lore.1", "Right-click on the ground to place it,", 0xFFFFFF, false),
+                        ItemUtils.translatable("item.dismp.wheelchair.lore.2", "right-click it to sit down.", 0xFFFFFF, false)
+                )
         );
         item.setData(DataComponentTypes.MAX_STACK_SIZE, 1);
         item.editPersistentDataContainer(pdc -> pdc.set(itemKey, PersistentDataType.BYTE, (byte) 1));
@@ -235,17 +274,16 @@ public class WheelchairManager implements Listener {
     }
 
     private void pickUp(Player player, Horse horse) {
+        Location loc = horse.getLocation();
+
         ItemDisplay display = getDisplay(horse);
         if (display != null)
             display.remove();
         horse.remove();
 
-        if (player.getGameMode() == GameMode.CREATIVE)
-            return;
-
-        ItemStack item = createItem();
-        player.getInventory().addItem(item).values()
-                .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
+        // like a boat: nothing drops in creative, otherwise the item drops where the chair stood
+        if (player.getGameMode() != GameMode.CREATIVE)
+            loc.getWorld().dropItemNaturally(loc.add(0, 0.5, 0), createItem());
     }
 
     // ---------------------------------------------------------------- events
