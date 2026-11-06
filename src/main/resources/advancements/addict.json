@@ -3,7 +3,7 @@
   "display": {
     "icon": { "id": "minecraft:paper" },
     "title": { "translate": "advancement.dismp.addict.title", "fallback": "Addict" },
-    "description": { "translate": "advancement.dismp.addict.description", "fallback": "Smoke a cigarette for the first time" },
+    "description": { "translate": "advancement.dismp.addict.description", "fallback": "Smoke a cigarette and a vape right after each other" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true
