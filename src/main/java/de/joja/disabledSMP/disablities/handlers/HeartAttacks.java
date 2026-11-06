@@ -58,10 +58,8 @@ public class HeartAttacks extends DisabilityHandler {
             // ~1 trigger every 30 minutes on average
             boolean randomChance = random.nextInt(1200) == 0;
 
-            if (randomChance && player.getHealth() > 1) {
-                double damage = player.getHealth() - 1; // leave at half a heart
-                heartAttack(player, damage);
-            }
+            if (randomChance && player.getHealth() > 1)
+                heartAttack(player);
 
         }, 0L, 20L);
 
@@ -84,7 +82,7 @@ public class HeartAttacks extends DisabilityHandler {
             old.cancel();
     }
 
-    private static void heartAttack(Player player, double damage) {
+    private static void heartAttack(Player player) {
 
         player.playSound(
                 player.getLocation(),
@@ -102,7 +100,9 @@ public class HeartAttacks extends DisabilityHandler {
                 1f
         );
 
-        player.damage(damage);
+        // always drops you to exactly half a heart (armor, resistance etc. can't reduce it, and you can't die from it)
+        player.playHurtAnimation(0f);
+        player.setHealth(1.0);
 
         // Survived if still alive a few seconds later
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
