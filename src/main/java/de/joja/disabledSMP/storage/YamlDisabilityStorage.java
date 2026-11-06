@@ -1,6 +1,7 @@
 package de.joja.disabledSMP.storage;
 
 import de.joja.disabledSMP.disablities.Disability;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -9,13 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static de.joja.disabledSMP.DisabledSMP.plugin;
 import static de.joja.disabledSMP.disablities.Disability.DISABILITIES_TOTAL_AMOUNT;
 
 public abstract class YamlDisabilityStorage {
 
+    /** Stored inside the main world folder, so deleting the world also resets everyone's disabilities. */
+    private static File file(UUID uuid) {
+        return new File(Bukkit.getWorlds().get(0).getWorldFolder(), "disabledsmp/" + uuid + ".yml");
+    }
+
     public static List<Integer> loadDisabilityIDs(UUID uuid) {
-        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        File file = file(uuid);
         if (!file.exists()) return null;
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
@@ -34,7 +39,7 @@ public abstract class YamlDisabilityStorage {
     }
 
     public static int loadAllergy(UUID uuid) {
-        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        File file = file(uuid);
         if (!file.exists()) return -1;
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
@@ -44,7 +49,7 @@ public abstract class YamlDisabilityStorage {
 
 
     public static void saveDisabilityIDs(UUID uuid, int[] disabilityIDs) {
-        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        File file = file(uuid);
         file.getParentFile().mkdirs();
 
         YamlConfiguration cfg;
@@ -69,7 +74,7 @@ public abstract class YamlDisabilityStorage {
     }
 
     public static void saveAllergy(UUID uuid, int allergyID) {
-        File file = new File(plugin.getDataFolder(), "disabilities/" + uuid + ".yml");
+        File file = file(uuid);
         file.getParentFile().mkdirs();
 
         YamlConfiguration cfg;
