@@ -1,7 +1,7 @@
 {
   "parent": "disabledsmp:root",
   "display": {
-    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dissmp:icons/cure" } },
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:icons/cure" } },
     "title": { "text": "Yummy!" },
     "description": { "text": "Eat medicine for the first time" },
     "frame": "task",
