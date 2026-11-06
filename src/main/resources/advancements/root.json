@@ -1,7 +1,7 @@
 
 {
   "display": {
-    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dissmp:pack_icon" } },
+    "icon": { "id": "minecraft:barrier" },
     "title": {
       "text": "DisabledSMP"
     },
