@@ -37,13 +37,13 @@ public class BalanceDisorder extends DisabilityHandler {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
 
                 if (!hasDis(player, Disability.BALANCE_DISORDER))
-                    return;
+                    continue;
 
                 Location loc = player.getLocation();
                 Block block = loc.clone().add(0, -1, 0).getBlock();
 
                 if (!(block.isSolid() || player.isOnGround()))
-                    return;
+                    continue;
 
                 // Directions to check
                 Vector[] directions = new Vector[] {
@@ -74,10 +74,10 @@ public class BalanceDisorder extends DisabilityHandler {
                 }
 
                 if (unsafeDirections.isEmpty())
-                    return;
+                    continue;
 
                 if (Math.random() > unsafeDirections.size()*0.01)
-                    return;
+                    continue;
 
                 // Pick random unsafe direction
                 Vector pushDir = unsafeDirections.get(
@@ -93,6 +93,7 @@ public class BalanceDisorder extends DisabilityHandler {
                     velocity.setY(0.2);
 
                 player.setVelocity(velocity);
+                plugin.advancementManager.markPushed(player);
             }
 
         }, 1L, 5L);

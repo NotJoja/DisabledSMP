@@ -67,12 +67,17 @@ public class Overweight extends DisabilityHandler {
         event.setCancelled(true);
 
         explosionImmune.add(player.getUniqueId());
-        player.getWorld().createExplosion(
-                player.getLocation(),
-                fall / 6,
-                false,
-                true
-        );
+        plugin.advancementManager.setOverweightExploder(player);
+        try {
+            player.getWorld().createExplosion(
+                    player.getLocation(),
+                    fall / 6,
+                    false,
+                    true
+            );
+        } finally {
+            plugin.advancementManager.setOverweightExploder(null);
+        }
 
         Bukkit.getScheduler().runTaskLater(plugin, () ->
                 explosionImmune.remove(player.getUniqueId()), 10L);

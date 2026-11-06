@@ -31,10 +31,10 @@ public abstract class DisabilityHandler implements Listener {
     public Material[] ritual = {Material.ANCIENT_DEBRIS, Material.DIAMOND_BLOCK, Material.HAY_BLOCK, Material.PUMPKIN, Material.MELON};
 
     public void initIcons() {
-        icon = Key.key("dissmp", "disicons/" + enDataName);
-        grayIcon = Key.key("dissmp", "gray_disicons/gray_" + enDataName);
-        cureIcon = Key.key("dissmp", "cures/" + enDataName);
-        grayCureIcon = Key.key("dissmp", "gray_cures/gray_" + enDataName);
+        icon = Key.key("dismp", "disicons/" + enDataName);
+        grayIcon = Key.key("dismp", "gray_disicons/gray_" + enDataName);
+        cureIcon = Key.key("dismp", "cures/" + enDataName);
+        grayCureIcon = Key.key("dismp", "gray_cures/gray_" + enDataName);
     }
 
     protected static String toDataName(String name) {

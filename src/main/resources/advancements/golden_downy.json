@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:getting_to_know_yourself",
+  "display": {
+    "icon": { "id": "minecraft:totem_of_undying" },
+    "title": { "text": "Golden Downy" },
+    "description": { "text": "Have every disability at once" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

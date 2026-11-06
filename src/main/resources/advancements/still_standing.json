@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:getting_to_know_yourself",
+  "display": {
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:disicons/heart_attacks" } },
+    "title": { "text": "I'm still standing!" },
+    "description": { "text": "Survive a heart attack" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.listeners;
 
+import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.Material;
@@ -16,17 +17,6 @@ import org.bukkit.persistence.PersistentDataType;
 import static de.joja.disabledSMP.DisabledSMP.plugin;
 
 public class CureListener implements Listener {
-
-    @EventHandler
-    public void onApple(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
-        ItemStack item = event.getItem();
-
-        if (item.getType() == Material.APPLE) {
-            ItemStack cureItem = CureManager.createCureItem(Disability.ALLERGY);
-            player.getInventory().addItem(cureItem);
-        }
-    }
 
     @EventHandler
     public void onConsume(PlayerItemConsumeEvent event) {
@@ -48,6 +38,7 @@ public class CureListener implements Listener {
         Disability dis = Disability.get(cureDisabilityID);
         plugin.disabilityMap.get(player.getUniqueId()).remove(dis);
         dis.handler.removeFromPlayer(player);
+        plugin.advancementManager.grant(player, AdvancementManager.YUMMY);
     }
 
 

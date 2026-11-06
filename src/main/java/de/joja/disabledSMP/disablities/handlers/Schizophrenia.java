@@ -85,11 +85,6 @@ public class Schizophrenia extends DisabilityHandler {
         fakeEntityIDs.add(entityId);
 
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        PacketContainer spawnPacket = manager.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-
-        spawnPacket.getIntegers().write(0, entityId);
-        spawnPacket.getUUIDs().write(0, UUID.randomUUID());
-        spawnPacket.getEntityTypeModifier().write(0, randomFakeMob);
 
         int distanceRange = 16;
         if (randomFakeMob == EntityType.GHAST)
@@ -105,10 +100,10 @@ public class Schizophrenia extends DisabilityHandler {
         else
             fakeMobLoc = findSpawnLocation(player, distanceRange);
 
-        spawnPacket.getDoubles()
-                .write(0, fakeMobLoc.getX())
-                .write(1, fakeMobLoc.getY())
-                .write(2, fakeMobLoc.getZ());
+        PacketContainer spawnPacket = NmsPackets.spawnEntity(
+                entityId, UUID.randomUUID(), randomFakeMob,
+                fakeMobLoc.getX(), fakeMobLoc.getY(), fakeMobLoc.getZ()
+        );
 
         manager.sendServerPacket(player, spawnPacket);
 
@@ -128,12 +123,7 @@ public class Schizophrenia extends DisabilityHandler {
         byte yawByte = (byte) (yaw * 256);
         byte pitchByte = (byte) (pitch * 256);
 
-        PacketContainer lookPacket = manager.createPacket(PacketType.Play.Server.ENTITY_LOOK);
-
-        lookPacket.getIntegers().write(0, entityId);
-        lookPacket.getBytes().write(0, yawByte);
-        lookPacket.getBytes().write(1, pitchByte);
-        lookPacket.getBooleans().write(0, true);
+        PacketContainer lookPacket = NmsPackets.entityLook(entityId, yawByte, pitchByte);
 
         manager.sendServerPacket(player, lookPacket);
 
@@ -159,10 +149,7 @@ public class Schizophrenia extends DisabilityHandler {
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             fakeEntityIDsMap.get(player.getUniqueId()).remove(entityId);
-            PacketContainer despawnPacket = manager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-            despawnPacket.getIntLists().write(0, List.of(entityId));
-
-            manager.sendServerPacket(player, despawnPacket);
+            manager.sendServerPacket(player, NmsPackets.removeEntity(entityId));
         }, 1000L);
     }
 
@@ -221,9 +208,7 @@ public class Schizophrenia extends DisabilityHandler {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         var fakeEntityIDs = fakeEntityIDsMap.get(player.getUniqueId());
         for (int id : fakeEntityIDs) {
-            PacketContainer despawnPacket = manager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-            despawnPacket.getIntLists().write(0, List.of(id));
-            manager.sendServerPacket(player, despawnPacket);
+            manager.sendServerPacket(player, NmsPackets.removeEntity(id));
         }
         fakeEntityIDs.clear();
         fakeEntityIDsMap.remove(player.getUniqueId());

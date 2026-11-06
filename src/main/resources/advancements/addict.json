@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:yummy",
+  "display": {
+    "icon": { "id": "minecraft:paper" },
+    "title": { "text": "Addict" },
+    "description": { "text": "Smoke a cigarette for the first time" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}
