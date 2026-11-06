@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
 
@@ -91,8 +92,12 @@ public class ParalyzedArm extends DisabilityHandler {
         if (offhandSwap || numKeySwap)
             event.setCancelled(true);
 
+        // slot numbers are per inventory (a crafting result or furnace slot is also "slot 0"),
+        // so only the player's own hotbar slots 0-3 and off-hand slot 40 are blocked
+        boolean ownInventory = event.getClickedInventory() instanceof PlayerInventory;
+
         boolean blockedClickType = (click == ClickType.LEFT) || (click == ClickType.DROP);
-        boolean blockSlot = (slot < 4 || slot == 40);
+        boolean blockSlot = ownInventory && (slot < 4 || slot == 40);
         if (blockedClickType && blockSlot)
             event.setCancelled(true);
     }
