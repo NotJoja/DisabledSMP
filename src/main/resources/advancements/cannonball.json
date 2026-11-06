@@ -2,8 +2,8 @@
   "parent": "disabledsmp:root",
   "display": {
     "icon": { "id": "minecraft:tnt" },
-    "title": { "text": "Fat-ality" },
-    "description": { "text": "Kill a player with the Overweight fall explosion" },
+    "title": { "translate": "advancement.dismp.cannonball.title", "fallback": "Fat-ality" },
+    "description": { "translate": "advancement.dismp.cannonball.description", "fallback": "Kill a player with the Overweight fall explosion" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true

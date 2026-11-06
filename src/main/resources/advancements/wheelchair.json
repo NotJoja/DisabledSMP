@@ -2,8 +2,8 @@
   "parent": "disabledsmp:yummy",
   "display": {
     "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:wheelchair" } },
-    "title": { "text": "Nagelneuer Benzer" },
-    "description": { "text": "Use a wheelchair for the first time" },
+    "title": { "translate": "advancement.dismp.wheelchair.title", "fallback": "Nagelneuer Benzer" },
+    "description": { "translate": "advancement.dismp.wheelchair.description", "fallback": "Use a wheelchair for the first time" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true
