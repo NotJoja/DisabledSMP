@@ -1,7 +1,7 @@
 {
   "parent": "disabledsmp:yummy",
   "display": {
-    "icon": { "id": "minecraft:minecart" },
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:wheelchair" } },
     "title": { "text": "Nagelneuer Benzer" },
     "description": { "text": "Use a wheelchair for the first time" },
     "frame": "task",

@@ -26,7 +26,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            sender.sendRichMessage("<red>Usage: /dis <add|rm|menu|list> [args]");
+            sender.sendRichMessage("<red>Usage: /dis <add|rm|menu|list" + (isAdmin(sender) ? "|admin" : "") + "> [args]");
             return true;
         }
 
@@ -37,6 +37,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "rm" -> handleRemove(sender, args);
             case "menu" -> handleMenu(sender, args);
             case "list" -> handleList(sender, args);
+            case "admin" -> handleAdmin(sender, args);
             default -> sender.sendRichMessage("<red>Unknown subcommand!");
         }
 
@@ -149,6 +150,44 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         sender.sendRichMessage("<green>Successfully removed disability from " + target.getName() + "!");
     }
 
+    private void handleAdmin(CommandSender sender, String[] args) {
+        if (!isAdmin(sender)) {
+            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            return;
+        }
+
+        if (args.length < 2) {
+            sender.sendRichMessage("<red>Usage: /dis admin <wheelchair> [player]");
+            return;
+        }
+
+        switch (args[1].toLowerCase()) {
+            case "wheelchair" -> handleAdminWheelchair(sender, args);
+            default -> sender.sendRichMessage("<red>Unknown admin subcommand!");
+        }
+    }
+
+    private void handleAdminWheelchair(CommandSender sender, String[] args) {
+        Player target;
+        if (args.length >= 3) {
+            target = Bukkit.getPlayer(args[2]);
+            if (target == null) {
+                sender.sendRichMessage("<red>Player not found!");
+                return;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                sender.sendRichMessage("<red>You must specify a player!");
+                return;
+            }
+            target = (Player) sender;
+        }
+
+        target.getInventory().addItem(plugin.wheelchairManager.createItem()).values()
+                .forEach(left -> target.getWorld().dropItemNaturally(target.getLocation(), left));
+        sender.sendRichMessage("<green>Gave a wheelchair to " + target.getName() + "!");
+    }
+
     private void handleMenu(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendRichMessage("<red>Only players can use this command!");
@@ -214,8 +253,10 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String s : new String[]{"add", "rm", "menu", "list"})
+            for (String s : new String[]{"add", "rm", "menu", "list", "admin"}) {
+                if (s.equals("admin") && !isAdmin(sender)) continue;
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
+            }
         } else if (args.length == 2) {
             if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
                 for (Disability d : Disability.values()) {
@@ -224,6 +265,9 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                     else if (d.deDataName.toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(d.deDataName);
                 }
+            } else if (args[0].equalsIgnoreCase("admin") && isAdmin(sender)) {
+                if ("wheelchair".startsWith(args[1].toLowerCase()))
+                    completions.add("wheelchair");
             } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.getName().toLowerCase().startsWith(args[1].toLowerCase()))
@@ -231,7 +275,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (args.length == 3) {
-            if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
+            if (((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm"))
+                    || (args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("wheelchair"))) && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers())
                     if (p.getName().toLowerCase().startsWith(args[2].toLowerCase()))
                         completions.add(p.getName());

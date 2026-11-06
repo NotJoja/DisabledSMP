@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.wheelchair.WheelchairManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ public final class DisabledSMP extends JavaPlugin {
 
     public static DisabledSMP plugin;
     public AdvancementManager advancementManager;
+    public WheelchairManager wheelchairManager;
 
     public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
     public Map<UUID, Integer> allergyMap = new HashMap<>();
@@ -40,7 +42,10 @@ public final class DisabledSMP extends JavaPlugin {
         advancementManager = new AdvancementManager(this);
         advancementManager.registerAdvancements();
 
+        wheelchairManager = new WheelchairManager(this);
+
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(wheelchairManager, this);
         pm.registerEvents(new MenuManager(), this);
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);
