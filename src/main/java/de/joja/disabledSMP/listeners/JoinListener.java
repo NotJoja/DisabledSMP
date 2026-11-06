@@ -1,8 +1,8 @@
 package de.joja.disabledSMP.listeners;
 
+import de.joja.disabledSMP.utils.ResourcePacks;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,12 +22,7 @@ public class JoinListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        player.setResourcePack(
-                "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/DisabledSMP.zip",
-                null,
-                Component.text("This server requires the DisabledSMP resource pack!"),
-                true
-        );
+        ResourcePacks.MAIN.send(player);
 
         // if player disabilities are already loaded, then return
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);

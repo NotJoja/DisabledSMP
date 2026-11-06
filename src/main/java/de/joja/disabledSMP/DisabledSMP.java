@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.utils.ResourcePacks;
 import de.joja.disabledSMP.wheelchair.WheelchairManager;
 
 import java.util.HashMap;
@@ -38,6 +39,8 @@ public final class DisabledSMP extends JavaPlugin {
     public void onEnable() {
 
         plugin = this;
+
+        ResourcePacks.startAutoHash();
 
         advancementManager = new AdvancementManager(this);
         advancementManager.registerAdvancements();

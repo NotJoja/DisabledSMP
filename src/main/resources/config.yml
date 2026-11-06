@@ -7,3 +7,11 @@
 
 language: "de"
 max_kill_time_s: 180
+
+# The resource packs. Everyone gets the main pack, players with Color Blindness get the colorblind pack on top.
+# sha1 "auto" = the plugin downloads the pack and works out the hash itself (every 5 minutes), so a new pack is
+# picked up automatically. You can also put in a fixed SHA-1, or "" for none.
+resource_pack_url: "https://raw.githubusercontent.com/NotJoja/DismpTP/master/DisabledSMP/dismp.zip"
+resource_pack_sha1: "auto"
+colorblind_pack_url: "https://raw.githubusercontent.com/NotJoja/DismpTP/master/Colorblind/Colorblind.zip"
+colorblind_pack_sha1: "auto"
