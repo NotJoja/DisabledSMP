@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.commands;
 
+import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
 import de.joja.disabledSMP.utils.DConfig;
@@ -161,6 +162,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         Inventory disMenuInv = new MainDisMenu(player.getUniqueId()).createMenuInv();
         player.openInventory(disMenuInv);
+        plugin.advancementManager.grant(player, AdvancementManager.GETTING_TO_KNOW_YOURSELF);
     }
 
     private void handleList(CommandSender sender, String[] args) {

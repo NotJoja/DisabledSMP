@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:root",
+  "display": {
+    "icon": { "id": "minecraft:zombie_head" },
+    "title": { "text": "Genocide!" },
+    "description": { "text": "Kill a baby zombie while having Dwarfism" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

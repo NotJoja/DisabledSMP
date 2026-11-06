@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:root",
+  "display": {
+    "icon": { "id": "minecraft:water_bucket" },
+    "title": { "text": "Clutch!" },
+    "description": { "text": "Water bucket MLG from over 15 blocks after Balance Disorder pushed you off an edge" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

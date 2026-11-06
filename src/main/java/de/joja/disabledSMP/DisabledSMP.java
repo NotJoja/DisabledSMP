@@ -10,6 +10,7 @@ import de.joja.disabledSMP.storage.YamlDisabilityStorage;
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import de.joja.disabledSMP.advancements.AdvancementManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public final class DisabledSMP extends JavaPlugin {
 
     public static DisabledSMP plugin;
+    public AdvancementManager advancementManager;
 
     public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
     public Map<UUID, Integer> allergyMap = new HashMap<>();
@@ -34,6 +36,9 @@ public final class DisabledSMP extends JavaPlugin {
     public void onEnable() {
 
         plugin = this;
+
+        advancementManager = new AdvancementManager(this);
+        advancementManager.registerAdvancements();
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new MenuManager(), this);
@@ -62,4 +67,5 @@ public final class DisabledSMP extends JavaPlugin {
                         .saveDisabilities(uuid, disabilities.toArray(Disability[]::new))
         );
     }
+
 }

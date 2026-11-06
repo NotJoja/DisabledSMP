@@ -1,6 +1,7 @@
 package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
@@ -80,6 +81,8 @@ public class Allergy extends DisabilityHandler {
     }
 
     void onAllergicReactionSecond(Player player) {
+
+        plugin.advancementManager.grant(player, AdvancementManager.ACHOO);
 
         player.addPotionEffect(PotionEffectType.POISON.createEffect(40, 2));
         player.addPotionEffect(PotionEffectType.SLOWNESS.createEffect(40, 1));

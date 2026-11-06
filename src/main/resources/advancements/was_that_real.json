@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:getting_to_know_yourself",
+  "display": {
+    "icon": { "id": "minecraft:creeper_head" },
+    "title": { "text": "Was that real?" },
+    "description": { "text": "Die to a creeper while having Schizophrenia" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}
