@@ -3,11 +3,13 @@ package de.joja.disabledSMP.commands;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
+import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,19 +182,27 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis admin <wheelchair> [player]",
-                "<red>Verwendung: /dis admin <wheelchair> [player]");
+            msg(sender, "<red>Usage: /dis admin <wheelchair|cigarette|vape> [player]",
+                "<red>Verwendung: /dis admin <wheelchair|cigarette|vape> [player]");
             return;
         }
 
         switch (args[1].toLowerCase()) {
-            case "wheelchair" -> handleAdminWheelchair(sender, args);
+            case "wheelchair" -> handleAdminGive(sender, args, plugin.wheelchairManager.createItem(),
+                    "a wheelchair", "einen Rollstuhl");
+            case "cigarette" -> handleAdminGive(sender, args,
+                    plugin.smokingManager.createItem(SmokingManager.Type.CIGARETTE, SmokingManager.Type.CIGARETTE.maxUses),
+                    "a cigarette", "eine Zigarette");
+            case "vape" -> handleAdminGive(sender, args,
+                    plugin.smokingManager.createItem(SmokingManager.Type.VAPE, SmokingManager.Type.VAPE.maxUses),
+                    "a vape", "eine Vape");
             default -> msg(sender, "<red>Unknown admin subcommand!",
                 "<red>Unbekannter Admin-Unterbefehl!");
         }
     }
 
-    private void handleAdminWheelchair(CommandSender sender, String[] args) {
+    /** Gives the item to the named player (or the sender). enItem / deItem is how it's called in the message. */
+    private void handleAdminGive(CommandSender sender, String[] args, ItemStack item, String enItem, String deItem) {
         Player target;
         if (args.length >= 3) {
             target = Bukkit.getPlayer(args[2]);
@@ -210,10 +220,10 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             target = (Player) sender;
         }
 
-        target.getInventory().addItem(plugin.wheelchairManager.createItem()).values()
+        target.getInventory().addItem(item).values()
                 .forEach(left -> target.getWorld().dropItemNaturally(target.getLocation(), left));
-        msg(sender, "<green>Gave a wheelchair to " + target.getName() + "!",
-                "<green>" + target.getName() + " hat einen Rollstuhl bekommen!");
+        msg(sender, "<green>Gave " + enItem + " to " + target.getName() + "!",
+                "<green>" + target.getName() + " hat " + deItem + " bekommen!");
     }
 
     private void handleMenu(CommandSender sender, String[] args) {
@@ -298,8 +308,9 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                         completions.add(d.deDataName);
                 }
             } else if (args[0].equalsIgnoreCase("admin") && isAdmin(sender)) {
-                if ("wheelchair".startsWith(args[1].toLowerCase()))
-                    completions.add("wheelchair");
+                for (String item : new String[]{"wheelchair", "cigarette", "vape"})
+                    if (item.startsWith(args[1].toLowerCase()))
+                        completions.add(item);
             } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.getName().toLowerCase().startsWith(args[1].toLowerCase()))
@@ -308,7 +319,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 3) {
             if (((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm"))
-                    || (args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("wheelchair"))) && isAdmin(sender)) {
+                    || args[0].equalsIgnoreCase("admin")) && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers())
                     if (p.getName().toLowerCase().startsWith(args[2].toLowerCase()))
                         completions.add(p.getName());
