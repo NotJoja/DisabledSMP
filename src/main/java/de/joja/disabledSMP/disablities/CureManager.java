@@ -2,6 +2,8 @@ package de.joja.disabledSMP.disablities;
 
 import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.ItemUtils;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.FoodProperties;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +22,13 @@ public abstract class CureManager { ;
             ItemUtils.configureItem(cureItem, disability.cureIcon, disability.enName + " Cure", CURE_RGB, false);
         else if (DConfig.LANGUAGE.equals("de"))
             ItemUtils.configureItem(cureItem, disability.cureIcon, disability.deName + " Cure", CURE_RGB, false);
+
+        // can be eaten even with a full hunger bar (and doesn't feed you either)
+        cureItem.setData(DataComponentTypes.FOOD, FoodProperties.food()
+                .nutrition(0)
+                .saturation(0f)
+                .canAlwaysEat(true)
+                .build());
 
         ItemMeta meta = cureItem.getItemMeta();
         meta.getPersistentDataContainer().set(
