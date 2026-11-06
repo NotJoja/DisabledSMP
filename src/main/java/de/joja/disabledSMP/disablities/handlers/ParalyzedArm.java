@@ -93,12 +93,12 @@ public class ParalyzedArm extends DisabilityHandler {
             event.setCancelled(true);
 
         // slot numbers are per inventory (a crafting result or furnace slot is also "slot 0"),
-        // so only the player's own hotbar slots 0-3 and off-hand slot 40 are blocked
+        // so only the player's own hotbar slots 0-3 and off-hand slot 40 are locked.
+        // Every click type is blocked there (shift-click, right-click, number keys, drop, ...),
+        // otherwise the BLOCKED items could be moved around.
         boolean ownInventory = event.getClickedInventory() instanceof PlayerInventory;
-
-        boolean blockedClickType = (click == ClickType.LEFT) || (click == ClickType.DROP);
-        boolean blockSlot = ownInventory && (slot < 4 || slot == 40);
-        if (blockedClickType && blockSlot)
+        boolean lockedSlot = ownInventory && (slot < 4 || slot == 40);
+        if (lockedSlot)
             event.setCancelled(true);
     }
 
