@@ -1,5 +1,7 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import de.joja.disabledSMP.utils.Lang;
+import de.joja.disabledSMP.utils.ResourcePacks;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -24,23 +26,14 @@ public class ColorBlindness extends DisabilityHandler {
         initIcons();
     }
 
+    /** The colorblind pack is added on top of the main pack (which everyone has), not instead of it. */
     @Override
     public void addToPlayer(Player player) {
-        player.setResourcePack(
-                "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/ColorBlindness.zip",
-                null,
-                Component.text("Every colorblind player must use this resource pack!"),
-                true
-        );
+        ResourcePacks.COLORBLIND.send(player);
     }
 
     @Override
     public void removeFromPlayer(Player player) {
-        player.setResourcePack(
-                "https://raw.githubusercontent.com/NotJoja/DisabledSMP/main/src/main/resources/DisabledSMP.zip",
-                null,
-                Component.text("This server requires the DisabledSMP resource pack!"),
-                true
-        );
+        ResourcePacks.COLORBLIND.remove(player);
     }
 }

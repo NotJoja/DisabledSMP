@@ -1,6 +1,8 @@
 package de.joja.disabledSMP.listeners;
 
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.utils.PlayerAttack;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -72,8 +74,25 @@ public class KillListener implements Listener {
             return;
         List<Disability> diedPlayerDisabilities = plugin.disabilityMap.get(diedPlayer.getUniqueId());
         List<Disability> killerPlayerDisabilities = plugin.disabilityMap.get(killerPlayer.getUniqueId());
+        if (killerPlayerDisabilities.isEmpty())
+            return;
+
+        // the minimum / maximum amount of disabilities of the server also counts for the transfer
+        if (DConfig.MIN_DISABILITIES >= 0 && killerPlayerDisabilities.size() - 1 < DConfig.MIN_DISABILITIES) {
+            DConfig.debug("Transfer skipped: " + killerPlayer.getName() + " would go below the minimum");
+            return;
+        }
+        if (DConfig.MAX_DISABILITIES >= 0 && diedPlayerDisabilities.size() + 1 > DConfig.MAX_DISABILITIES) {
+            DConfig.debug("Transfer skipped: " + diedPlayer.getName() + " would go above the maximum");
+            return;
+        }
+
         int rand = random.nextInt(killerPlayerDisabilities.size());
         diedPlayerDisabilities.add(killerPlayerDisabilities.get(rand));
         killerPlayerDisabilities.remove(rand);
+
+        // German-only: there is no English word for this
+        if (Lang.of(killerPlayer) == Lang.DE)
+            killerPlayer.sendMessage("§7Schadenfreude! Du hast eine Disability an " + diedPlayer.getName() + " weitergegeben.");
     }
 }

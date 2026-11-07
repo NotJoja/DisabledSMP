@@ -21,7 +21,8 @@ public class MenuManager implements Listener {
 
         event.setCancelled(true);
         int slot = event.getRawSlot();
-        if (slot >= menu.size)
+        // -999 = clicked outside of the inventory window
+        if (slot < 0 || slot >= menu.size)
             return;
 
         MenuClickable clickable = menu.clickables[slot];

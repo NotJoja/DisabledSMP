@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
 
@@ -91,9 +92,13 @@ public class ParalyzedArm extends DisabilityHandler {
         if (offhandSwap || numKeySwap)
             event.setCancelled(true);
 
-        boolean blockedClickType = (click == ClickType.LEFT) || (click == ClickType.DROP);
-        boolean blockSlot = (slot < 4 || slot == 40);
-        if (blockedClickType && blockSlot)
+        // slot numbers are per inventory (a crafting result or furnace slot is also "slot 0"),
+        // so only the player's own hotbar slots 0-3 and off-hand slot 40 are locked.
+        // Every click type is blocked there (shift-click, right-click, number keys, drop, ...),
+        // otherwise the BLOCKED items could be moved around.
+        boolean ownInventory = event.getClickedInventory() instanceof PlayerInventory;
+        boolean lockedSlot = ownInventory && (slot < 4 || slot == 40);
+        if (lockedSlot)
             event.setCancelled(true);
     }
 
@@ -118,7 +123,8 @@ public class ParalyzedArm extends DisabilityHandler {
             return;
 
         ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
+                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)
@@ -142,7 +148,8 @@ public class ParalyzedArm extends DisabilityHandler {
             player.dropItem(EquipmentSlot.OFF_HAND);
 
         ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"), "BLOCKED", 0xF00A0A, true);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
+                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)

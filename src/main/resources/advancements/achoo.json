@@ -2,8 +2,8 @@
   "parent": "disabledsmp:getting_to_know_yourself",
   "display": {
     "icon": { "id": "minecraft:poisonous_potato" },
-    "title": { "text": "Achoo!" },
-    "description": { "text": "Get hit by your allergy for the first time" },
+    "title": { "translate": "advancement.dismp.achoo.title", "fallback": "Achoo!" },
+    "description": { "translate": "advancement.dismp.achoo.description", "fallback": "Get hit by your allergy for the first time" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true

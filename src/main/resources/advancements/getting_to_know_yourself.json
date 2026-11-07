@@ -2,8 +2,8 @@
   "parent": "disabledsmp:root",
   "display": {
     "icon": { "id": "minecraft:knowledge_book" },
-    "title": { "text": "Getting to know yourself" },
-    "description": { "text": "Open the /dis menu for the first time" },
+    "title": { "translate": "advancement.dismp.getting_to_know_yourself.title", "fallback": "Getting to know yourself" },
+    "description": { "translate": "advancement.dismp.getting_to_know_yourself.description", "fallback": "Open the /dis menu for the first time" },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true

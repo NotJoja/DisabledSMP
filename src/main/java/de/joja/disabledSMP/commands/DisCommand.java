@@ -3,11 +3,13 @@ package de.joja.disabledSMP.commands;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
-import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.smoking.SmokingManager;
+import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,9 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            sender.sendRichMessage("<red>Usage: /dis <add|rm|menu|list" + (isAdmin(sender) ? "|admin" : "") + "> [args]");
+            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin" : "");
+            msg(sender, "<red>Usage: /dis <" + subs + "> [args]",
+                    "<red>Verwendung: /dis <" + subs + "> [args]");
             return true;
         }
 
@@ -38,10 +42,16 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "menu" -> handleMenu(sender, args);
             case "list" -> handleList(sender, args);
             case "admin" -> handleAdmin(sender, args);
-            default -> sender.sendRichMessage("<red>Unknown subcommand!");
+            default -> msg(sender, "<red>Unknown subcommand!",
+                "<red>Unbekannter Unterbefehl!");
         }
 
         return true;
+    }
+
+    /** Sends a message in the sender's language. */
+    private static void msg(CommandSender sender, String en, String de) {
+        sender.sendRichMessage(Lang.of(sender).pick(en, de));
     }
 
     private boolean isAdmin(CommandSender sender) {
@@ -50,12 +60,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
     private void handleAdd(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
-            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
             return;
         }
 
         if (args.length < 2) {
-            sender.sendRichMessage("<red>Usage: /dis add <disability> [player]");
+            msg(sender, "<red>Usage: /dis add <disability> [player]",
+                "<red>Verwendung: /dis add <disability> [player]");
             return;
         }
 
@@ -66,7 +78,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                 dis = d;
 
         if (dis == null) {
-            sender.sendRichMessage("<red>Disability not found!");
+            msg(sender, "<red>Disability not found!",
+                "<red>Disability nicht gefunden!");
             return;
         }
 
@@ -74,12 +87,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 3) {
             target = Bukkit.getPlayer(args[2]);
             if (target == null) {
-                sender.sendRichMessage("<red>Player not found!");
+                msg(sender, "<red>Player not found!",
+                "<red>Spieler nicht gefunden!");
                 return;
             }
         } else {
             if (!(sender instanceof Player)) {
-                sender.sendRichMessage("<red>You must specify a player!");
+                msg(sender, "<red>You must specify a player!",
+                "<red>Du musst einen Spieler angeben!");
                 return;
             }
             target = (Player) sender;
@@ -93,22 +108,26 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (disabilities.contains(dis)) {
-            sender.sendRichMessage("<yellow>Player already has that disability!");
+            msg(sender, "<yellow>Player already has that disability!",
+                "<yellow>Der Spieler hat diese Disability bereits!");
         } else {
             disabilities.add(dis);
             dis.handler.addToPlayer(target);
-            sender.sendRichMessage("<green>Successfully added disability to " + target.getName() + "!");
+            msg(sender, "<green>Successfully added disability to " + target.getName() + "!",
+                "<green>Disability erfolgreich zu " + target.getName() + " hinzugefügt!");
         }
     }
 
     private void handleRemove(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
-            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
             return;
         }
 
         if (args.length < 2) {
-            sender.sendRichMessage("<red>Usage: /dis rm <disability> [player]");
+            msg(sender, "<red>Usage: /dis rm <disability> [player]",
+                "<red>Verwendung: /dis rm <disability> [player]");
             return;
         }
 
@@ -119,7 +138,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                 dis = d;
 
         if (dis == null) {
-            sender.sendRichMessage("<red>Disability not found!");
+            msg(sender, "<red>Disability not found!",
+                "<red>Disability nicht gefunden!");
             return;
         }
 
@@ -127,12 +147,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 3) {
             target = Bukkit.getPlayer(args[2]);
             if (target == null) {
-                sender.sendRichMessage("<red>Player not found!");
+                msg(sender, "<red>Player not found!",
+                "<red>Spieler nicht gefunden!");
                 return;
             }
         } else {
             if (!(sender instanceof Player)) {
-                sender.sendRichMessage("<red>You must specify a player!");
+                msg(sender, "<red>You must specify a player!",
+                "<red>Du musst einen Spieler angeben!");
                 return;
             }
             target = (Player) sender;
@@ -141,61 +163,79 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         UUID uuid = target.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
         if (disabilities == null || !disabilities.contains(dis)) {
-            sender.sendRichMessage("<yellow>Player does not have that disability!");
+            msg(sender, "<yellow>Player does not have that disability!",
+                "<yellow>Der Spieler hat diese Disability nicht!");
             return;
         }
 
         disabilities.remove(dis);
         dis.handler.removeFromPlayer(target);
-        sender.sendRichMessage("<green>Successfully removed disability from " + target.getName() + "!");
+        msg(sender, "<green>Successfully removed disability from " + target.getName() + "!",
+                "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
     }
 
     private void handleAdmin(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
-            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
             return;
         }
 
         if (args.length < 2) {
-            sender.sendRichMessage("<red>Usage: /dis admin <wheelchair> [player]");
+            msg(sender, "<red>Usage: /dis admin <wheelchair|cigarette|vape> [player]",
+                "<red>Verwendung: /dis admin <wheelchair|cigarette|vape> [player]");
             return;
         }
 
         switch (args[1].toLowerCase()) {
-            case "wheelchair" -> handleAdminWheelchair(sender, args);
-            default -> sender.sendRichMessage("<red>Unknown admin subcommand!");
+            case "wheelchair" -> handleAdminGive(sender, args, plugin.wheelchairManager.createItem(),
+                    "a wheelchair", "einen Rollstuhl");
+            case "cigarette" -> handleAdminGive(sender, args,
+                    plugin.smokingManager.createItem(SmokingManager.Type.CIGARETTE, SmokingManager.Type.CIGARETTE.maxUses),
+                    "a cigarette", "eine Zigarette");
+            case "vape" -> handleAdminGive(sender, args,
+                    plugin.smokingManager.createItem(SmokingManager.Type.VAPE, SmokingManager.Type.VAPE.maxUses),
+                    "a vape", "eine Vape");
+            default -> msg(sender, "<red>Unknown admin subcommand!",
+                "<red>Unbekannter Admin-Unterbefehl!");
         }
     }
 
-    private void handleAdminWheelchair(CommandSender sender, String[] args) {
+    /** Gives the item to the named player (or the sender). enItem / deItem is how it's called in the message. */
+    private void handleAdminGive(CommandSender sender, String[] args, ItemStack item, String enItem, String deItem) {
         Player target;
         if (args.length >= 3) {
             target = Bukkit.getPlayer(args[2]);
             if (target == null) {
-                sender.sendRichMessage("<red>Player not found!");
+                msg(sender, "<red>Player not found!",
+                "<red>Spieler nicht gefunden!");
                 return;
             }
         } else {
             if (!(sender instanceof Player)) {
-                sender.sendRichMessage("<red>You must specify a player!");
+                msg(sender, "<red>You must specify a player!",
+                "<red>Du musst einen Spieler angeben!");
                 return;
             }
             target = (Player) sender;
         }
 
-        target.getInventory().addItem(plugin.wheelchairManager.createItem()).values()
+        target.getInventory().addItem(item).values()
                 .forEach(left -> target.getWorld().dropItemNaturally(target.getLocation(), left));
-        sender.sendRichMessage("<green>Gave a wheelchair to " + target.getName() + "!");
+        msg(sender, "<green>Gave " + enItem + " to " + target.getName() + "!",
+                "<green>" + target.getName() + " hat " + deItem + " bekommen!");
     }
 
     private void handleMenu(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendRichMessage("<red>Only players can use this command!");
+            msg(sender, "<red>Only players can use this command!",
+                "<red>Nur Spieler können diesen Befehl benutzen!");
             return;
         }
 
         if (args.length != 1) {
-            sender.sendRichMessage("<red>No arguments needed for this command!");
+            msg(sender, "<red>No arguments needed for this command!",
+                "<red>Dieser Befehl braucht keine Argumente!");
             return;
         }
 
@@ -206,7 +246,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
     private void handleList(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
-            sender.sendRichMessage("<red>You don't have permission to use this command!");
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
             return;
         }
 
@@ -215,12 +256,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 2) {
             target = Bukkit.getPlayer(args[1]);
             if (target == null) {
-                sender.sendRichMessage("<red>Player not found!");
+                msg(sender, "<red>Player not found!",
+                "<red>Spieler nicht gefunden!");
                 return;
             }
         } else {
             if (!(sender instanceof Player)) {
-                sender.sendRichMessage("<red>You must specify a player!");
+                msg(sender, "<red>You must specify a player!",
+                "<red>Du musst einen Spieler angeben!");
                 return;
             }
             target = (Player) sender;
@@ -229,18 +272,17 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         UUID uuid = target.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
 
-        sender.sendRichMessage("<gray>Disabilities of " + target.getName() + ":");
+        msg(sender, "<gray>Disabilities of " + target.getName() + ":",
+                "<gray>Disabilities von " + target.getName() + ":");
 
         if (disabilities == null || disabilities.isEmpty()) {
-            sender.sendRichMessage("<yellow>None");
+            msg(sender, "<yellow>None",
+                "<yellow>Keine");
             return;
         }
 
         for (Disability d : disabilities) {
-            if (DConfig.LANGUAGE.equals("en"))
-                sender.sendRichMessage("<gray>- " + d.enName);
-            else
-                sender.sendRichMessage("<gray>- " + d.deName);
+            sender.sendRichMessage("<gray>- " + Lang.of(sender).pick(d.enName, d.deName));
         }
     }
 
@@ -266,8 +308,9 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                         completions.add(d.deDataName);
                 }
             } else if (args[0].equalsIgnoreCase("admin") && isAdmin(sender)) {
-                if ("wheelchair".startsWith(args[1].toLowerCase()))
-                    completions.add("wheelchair");
+                for (String item : new String[]{"wheelchair", "cigarette", "vape"})
+                    if (item.startsWith(args[1].toLowerCase()))
+                        completions.add(item);
             } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.getName().toLowerCase().startsWith(args[1].toLowerCase()))
@@ -276,7 +319,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 3) {
             if (((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm"))
-                    || (args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("wheelchair"))) && isAdmin(sender)) {
+                    || args[0].equalsIgnoreCase("admin")) && isAdmin(sender)) {
                 for (Player p : Bukkit.getOnlinePlayers())
                     if (p.getName().toLowerCase().startsWith(args[2].toLowerCase()))
                         completions.add(p.getName());

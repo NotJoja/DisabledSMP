@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.utils.ResourcePacks;
+import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.wheelchair.WheelchairManager;
 
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public final class DisabledSMP extends JavaPlugin {
     public static DisabledSMP plugin;
     public AdvancementManager advancementManager;
     public WheelchairManager wheelchairManager;
+    public SmokingManager smokingManager;
 
     public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
     public Map<UUID, Integer> allergyMap = new HashMap<>();
@@ -32,6 +35,32 @@ public final class DisabledSMP extends JavaPlugin {
     @Override
     public void onLoad() {
         saveDefaultConfig();
+        resetResourcePackConfig();
+    }
+
+    /**
+     * An old config.yml (saveDefaultConfig never overwrites it) can still hold an outdated pack url or a fixed sha1,
+     * which makes clients load a stale/wrong pack. The pack settings are always put back to the defaults from the jar.
+     */
+    private void resetResourcePackConfig() {
+        if (getConfig().getBoolean("allow_custom_pack_urls", false))
+            return;
+
+        var defaults = getConfig().getDefaults();
+        if (defaults == null)
+            return;
+
+        boolean changed = false;
+        for (String key : List.of("resource_pack_url", "resource_pack_sha1", "colorblind_pack_url", "colorblind_pack_sha1")) {
+            Object wanted = defaults.get(key);
+            if (wanted != null && !wanted.equals(getConfig().get(key))) {
+                getLogger().warning("config.yml: resetting '" + key + "' from '" + getConfig().get(key) + "' to '" + wanted + "'");
+                getConfig().set(key, wanted);
+                changed = true;
+            }
+        }
+        if (changed)
+            saveConfig();
     }
 
     @Override
@@ -39,13 +68,17 @@ public final class DisabledSMP extends JavaPlugin {
 
         plugin = this;
 
+        ResourcePacks.startAutoHash();
+
         advancementManager = new AdvancementManager(this);
         advancementManager.registerAdvancements();
 
         wheelchairManager = new WheelchairManager(this);
+        smokingManager = new SmokingManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(wheelchairManager, this);
+        pm.registerEvents(smokingManager, this);
         pm.registerEvents(new MenuManager(), this);
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);

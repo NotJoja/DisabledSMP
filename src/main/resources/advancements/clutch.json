@@ -2,8 +2,8 @@
   "parent": "disabledsmp:root",
   "display": {
     "icon": { "id": "minecraft:water_bucket" },
-    "title": { "text": "Clutch!" },
-    "description": { "text": "Water bucket MLG from over 15 blocks after Balance Disorder pushed you off an edge" },
+    "title": { "translate": "advancement.dismp.clutch.title", "fallback": "Clutch!" },
+    "description": { "translate": "advancement.dismp.clutch.description", "fallback": "Water bucket MLG from over 15 blocks after Balance Disorder pushed you off an edge" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true

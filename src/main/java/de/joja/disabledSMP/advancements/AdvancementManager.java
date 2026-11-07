@@ -49,7 +49,7 @@ public class AdvancementManager implements Listener {
 
     public static final String CANNONBALL = "cannonball";
     public static final String CLUTCH = "clutch";
-    public static final String GENOCIDE = "genocide";
+    public static final String HOMICIDE = "homicide";
 
     public static final String YUMMY = "yummy";
     public static final String WHEELCHAIR = "wheelchair";   // not implemented yet -> call grant() when it is
@@ -59,7 +59,7 @@ public class AdvancementManager implements Listener {
     private static final List<String> ALL = List.of(
             ROOT,
             GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING,
-            CANNONBALL, CLUTCH, GENOCIDE,
+            CANNONBALL, CLUTCH, HOMICIDE,
             YUMMY, WHEELCHAIR, ADDICT
     );
 
@@ -83,12 +83,10 @@ public class AdvancementManager implements Listener {
 
     public void registerAdvancements() {
 
+        boolean needsReload = false;
+
         for (String id : ALL) {
             NamespacedKey key = new NamespacedKey(plugin, id);
-
-            // Don't register it twice
-            if (Bukkit.getAdvancement(key) != null)
-                continue;
 
             try (InputStream stream = plugin.getResource("advancements/" + id + ".json")) {
                 if (stream == null) {
@@ -96,11 +94,26 @@ public class AdvancementManager implements Listener {
                     continue;
                 }
                 String json = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+
+                // Paper saves loaded advancements into the world's datapacks/bukkit folder and loads them from there
+                // on the next start, so an advancement from an older version of the plugin (old icon, ...) is already
+                // registered. Overwrite the saved copy and reload the data once so the new one is used.
+                if (Bukkit.getAdvancement(key) != null) {
+                    if (refreshSavedAdvancement(key, json))
+                        needsReload = true;
+                    continue;
+                }
+
                 Bukkit.getUnsafe().loadAdvancement(key, json);
             } catch (IOException | IllegalArgumentException e) {
                 plugin.getLogger().severe("Failed to register advancement '" + id + "'!");
                 e.printStackTrace();
             }
+        }
+
+        if (needsReload) {
+            plugin.getLogger().info("Updated outdated advancements, reloading data...");
+            Bukkit.getScheduler().runTask(plugin, Bukkit::reloadData);
         }
 
         plugin.getLogger().info("Registered DisabledSMP advancements!");
@@ -112,6 +125,28 @@ public class AdvancementManager implements Listener {
             for (Player player : Bukkit.getOnlinePlayers())
                 checkDisabilityAdvancements(player);
         }, 40L, 40L);
+    }
+
+    /** Overwrites the copy Paper saved in world/datapacks/bukkit if it differs. Returns true if it was changed. */
+    private boolean refreshSavedAdvancement(NamespacedKey key, String json) {
+        if (Bukkit.getWorlds().isEmpty())
+            return false;
+
+        java.nio.file.Path file = Bukkit.getWorlds().get(0).getWorldFolder().toPath()
+                .resolve("datapacks").resolve("bukkit").resolve("data").resolve(key.getNamespace())
+                .resolve("advancements").resolve(key.getKey() + ".json");
+
+        try {
+            if (java.nio.file.Files.exists(file) && java.nio.file.Files.readString(file, StandardCharsets.UTF_8).equals(json))
+                return false;
+
+            java.nio.file.Files.createDirectories(file.getParent());
+            java.nio.file.Files.writeString(file, json, StandardCharsets.UTF_8);
+            return true;
+        } catch (IOException e) {
+            plugin.getLogger().warning("Could not update the saved advancement '" + key.getKey() + "': " + e);
+            return false;
+        }
     }
 
     // ------------------------------------------------------------------ granting
@@ -199,7 +234,7 @@ public class AdvancementManager implements Listener {
 
         Player killer = zombie.getKiller();
         if (killer != null && hasDis(killer, Disability.DWARFISM))
-            grant(killer, GENOCIDE);
+            grant(killer, HOMICIDE);
     }
 
     /** Clutch! -> place water from high enough up and actually land in it, after a Balance Disorder push. */

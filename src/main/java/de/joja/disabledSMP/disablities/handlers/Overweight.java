@@ -2,6 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.utils.DConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -44,7 +45,7 @@ public class Overweight extends DisabilityHandler {
                 if (!hasDis(player, Disability.OVERWEIGHT))
                     continue;
 
-                player.setExhaustion(player.getExhaustion() + 0.03f);
+                player.setExhaustion(player.getExhaustion() + (float) DConfig.OVERWEIGHT_HUNGER_DRAIN);
             }
         }, 20L, 20L);
     }
@@ -61,7 +62,7 @@ public class Overweight extends DisabilityHandler {
             return;
 
         float fall = player.getFallDistance();
-        if (fall < 18)
+        if (fall < DConfig.OVERWEIGHT_EXPLOSION_MIN_FALL)
             return;
 
         event.setCancelled(true);
@@ -99,8 +100,8 @@ public class Overweight extends DisabilityHandler {
 
     @Override
     public void addToPlayer(Player player) {
-        Objects.requireNonNull(player.getAttribute(Attribute.MOVEMENT_SPEED)).setBaseValue(0.08);
-        Objects.requireNonNull(player.getAttribute(Attribute.JUMP_STRENGTH)).setBaseValue(0.36);
+        Objects.requireNonNull(player.getAttribute(Attribute.MOVEMENT_SPEED)).setBaseValue(DConfig.OVERWEIGHT_MOVEMENT_SPEED);
+        Objects.requireNonNull(player.getAttribute(Attribute.JUMP_STRENGTH)).setBaseValue(DConfig.OVERWEIGHT_JUMP_STRENGTH);
     }
 
     @Override

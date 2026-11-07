@@ -39,17 +39,17 @@ public class RitualMenu extends Menu {
 
         ItemStack ritualInfoItem = new ItemStack(Material.IRON_NUGGET);
         if (cure)
-            ItemUtils.configureItem(ritualInfoItem, disability.icon,
+            ItemUtils.configureItem(lang(), ritualInfoItem, disability.icon,
                     disability.enName + " Cure Ritual", disability.deName + " Heilmittel Ritual",
                     null, null, CURE_RGB, false);
         else
-            ItemUtils.configureItem(ritualInfoItem, disability.icon,
+            ItemUtils.configureItem(lang(), ritualInfoItem, disability.icon,
                     disability.enName + " Add Ritual", disability.deName + " hinzufügen Ritual",
                     null, null, DIS_RED_RGB, false);
         items[4] = ritualInfoItem;
 
         ItemStack goBackItem = new ItemStack(Material.IRON_NUGGET);
-        ItemUtils.configureItem(goBackItem, GO_BACK_ICON, "Go Back", "Zurück", null, null, 0xFFFFFF, true);
+        ItemUtils.configureItem(lang(), goBackItem, GO_BACK_ICON, "Go Back", "Zurück", null, null, 0xFFFFFF, true);
         items[0] = goBackItem;
         PlayerDisabilityExecutable goBackExe = (player, disability) ->
                 player.openInventory(new SpecDisMenu(uuid, disability).createMenuInv());

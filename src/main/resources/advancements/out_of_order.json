@@ -2,8 +2,8 @@
   "parent": "disabledsmp:getting_to_know_yourself",
   "display": {
     "icon": { "id": "minecraft:leather_boots" },
-    "title": { "text": "Nimm 2" },
-    "description": { "text": "Have Paralyzed Leg and Paralyzed Arm at the same time" },
+    "title": { "translate": "advancement.dismp.out_of_order.title", "fallback": "Nimm 2" },
+    "description": { "translate": "advancement.dismp.out_of_order.description", "fallback": "Have Paralyzed Leg and Paralyzed Arm at the same time" },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true

@@ -44,7 +44,7 @@ public class MainDisMenu extends Menu {
             int rgb = playerHasDis ? DIS_RED_RGB : DIS_GRAY_RGB;
             Key icon = playerHasDis ? dis.icon : dis.grayIcon;
 
-            ItemUtils.configureItem(item, icon, dis.enName, dis.deName, dis.enDescription, dis.deDescription, rgb, true);
+            ItemUtils.configureItem(lang(), item, icon, dis.enName, dis.deName, dis.enDescription, dis.deDescription, rgb, true);
 
             this.items[i] = item;
             this.clickables[i] = new DisabilityClickable(dis, MainDisMenu::onClickDisItem);
