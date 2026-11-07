@@ -33,6 +33,7 @@ public abstract class DConfig {
     public static final double ASTHMA_MAX_LIMIT_S = plugin.getConfig().getDouble("asthma.max_limit_s", 30);
     public static final double ASTHMA_SPRINT_GAIN = plugin.getConfig().getDouble("asthma.sprint_gain", 1.0);
     public static final double ASTHMA_REST_RECOVERY = plugin.getConfig().getDouble("asthma.rest_recovery", 0.5);
+    public static final double ASTHMA_WINDED_RECOVERY = plugin.getConfig().getDouble("asthma.winded_recovery", 0.75);
     public static final boolean ASTHMA_BLOCK_SPRINT = plugin.getConfig().getBoolean("asthma.block_sprint", true);
 
     // ---- Mentally Disabled
