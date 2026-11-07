@@ -2,7 +2,7 @@
   "parent": "disabledsmp:root",
   "display": {
     "icon": { "id": "minecraft:zombie_head" },
-    "title": { "text": "Genocide!" },
+    "title": { "text": "Homicide!" },
     "description": { "text": "Kill a baby zombie while having Dwarfism" },
     "frame": "challenge",
     "show_toast": true,
