@@ -5,9 +5,11 @@ import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -39,6 +41,26 @@ public class CureListener implements Listener {
         plugin.disabilityMap.get(player.getUniqueId()).remove(dis);
         dis.handler.removeFromPlayer(player);
         plugin.advancementManager.grant(player, AdvancementManager.YUMMY);
+    }
+
+    /** Cures dropped on the ground survive fire, lava and explosions. */
+    @EventHandler
+    public void onItemDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Item item))
+            return;
+
+        switch (event.getCause()) {
+            case FIRE, FIRE_TICK, LAVA, HOT_FLOOR, BLOCK_EXPLOSION, ENTITY_EXPLOSION -> {
+            }
+            default -> {
+                return;
+            }
+        }
+
+        ItemStack stack = item.getItemStack();
+        if (stack.getType() == Material.POTATO && stack.hasItemMeta()
+                && stack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin, "cure"), PersistentDataType.INTEGER))
+            event.setCancelled(true);
     }
 
 
