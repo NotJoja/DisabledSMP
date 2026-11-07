@@ -66,6 +66,7 @@ public class Toothless extends DisabilityHandler {
                 || item == Material.POTATO
                 || item == Material.BEETROOT
                 || item == Material.CHORUS_FRUIT
+                || item == Material.GOLDEN_CARROT
                 || item == Material.DRIED_KELP;
 
         if (!fluid && !softFood) {
