@@ -2,6 +2,8 @@ package de.joja.disabledSMP.wheelchair;
 
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.utils.ItemUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
@@ -10,6 +12,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.NamespacedKey;
@@ -95,6 +98,9 @@ public class WheelchairManager implements Listener {
      * has to end up there. Increase/decrease if the player sits too low/high in the wheelchair.
      */
     private static final float MODEL_Y_OFFSET = -SEAT_TOP_Y * MODEL_SCALE;
+
+    /** How long an overweight player can sit in the wheelchair before it breaks. */
+    private static final long COLLAPSE_DELAY_TICKS = 6;
 
     // ---------------------------------------------------------------- keys
 
@@ -335,8 +341,35 @@ public class WheelchairManager implements Listener {
             return;
 
         boolean taken = horse.getPassengers().stream().anyMatch(e -> e instanceof Player);
-        if (!taken)
-            mount(player, horse);
+        if (taken)
+            return;
+
+        mount(player, horse);
+
+        // too heavy: they can sit for a split second, then the wheelchair gives way
+        if (DisabilityHandler.hasDis(player, Disability.OVERWEIGHT))
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (horse.isValid())
+                    destroy(horse);
+            }, COLLAPSE_DELAY_TICKS);
+    }
+
+    /** Destroys the wheelchair: tool break sound, some particles and the crafting materials drop. */
+    private void destroy(Horse horse) {
+        Location loc = horse.getLocation().add(0, 0.6, 0);
+
+        // what the recipe needs (see registerRecipe)
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.LEATHER));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BARS, 2));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.OAK_STAIRS));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BLOCK, 2));
+
+        loc.getWorld().playSound(loc, Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+        loc.getWorld().spawnParticle(Particle.ITEM, loc, 30, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.IRON_BLOCK));
+        loc.getWorld().spawnParticle(Particle.ITEM, loc, 15, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.LEATHER));
+
+        // remove() doesn't fire a death event (no wheelchair item), and onRemove() takes the model with it
+        horse.remove();
     }
 
     /**
