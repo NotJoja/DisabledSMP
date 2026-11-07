@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.listeners;
 
+import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.ResourcePacks;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
@@ -46,7 +47,10 @@ public class JoinListener implements Listener {
         List<Disability> possibleDisabilities = new ArrayList<>(Arrays.asList(Disability.values()));
         List<Disability> generatedDisabilities = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
 
-        for (int i = 0; i < DISABILITIES_TOTAL_AMOUNT/2; i++) {
+        int amount = firstJoinAmount();
+        DConfig.debug(player.getName() + " is new, gets " + amount + " disabilities");
+
+        for (int i = 0; i < amount; i++) {
             int randomIndex = random.nextInt(possibleDisabilities.size());
             generatedDisabilities.add(possibleDisabilities.get(randomIndex));
             possibleDisabilities.remove(randomIndex);
@@ -58,5 +62,17 @@ public class JoinListener implements Listener {
             dis.handler.addToPlayer(player);
     }
 
+
+    /** How many disabilities a new player gets: the config value (-1 = half of all), within min and max. */
+    private static int firstJoinAmount() {
+        int amount = DConfig.FIRST_JOIN_DISABILITIES >= 0 ? DConfig.FIRST_JOIN_DISABILITIES : DISABILITIES_TOTAL_AMOUNT / 2;
+
+        if (DConfig.MIN_DISABILITIES >= 0)
+            amount = Math.max(amount, DConfig.MIN_DISABILITIES);
+        if (DConfig.MAX_DISABILITIES >= 0)
+            amount = Math.min(amount, DConfig.MAX_DISABILITIES);
+
+        return Math.max(0, Math.min(amount, DISABILITIES_TOTAL_AMOUNT));
+    }
 
 }

@@ -43,6 +43,9 @@ public final class DisabledSMP extends JavaPlugin {
      * which makes clients load a stale/wrong pack. The pack settings are always put back to the defaults from the jar.
      */
     private void resetResourcePackConfig() {
+        if (getConfig().getBoolean("allow_custom_pack_urls", false))
+            return;
+
         var defaults = getConfig().getDefaults();
         if (defaults == null)
             return;

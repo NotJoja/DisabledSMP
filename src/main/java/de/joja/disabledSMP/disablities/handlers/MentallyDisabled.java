@@ -2,6 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
@@ -50,7 +51,7 @@ public class MentallyDisabled extends DisabilityHandler {
     }
 
     /** Chance that taking the result out of the crafting grid gives a different item. */
-    private static final double MISCRAFT_CHANCE = 0.5;
+    private static final double MISCRAFT_CHANCE = DConfig.MENTALLY_DISABLED_MISCRAFT_CHANCE;
 
     /** Safety net for shift-clicking (a full 3x3 grid of stackable items is at most 64 crafts). */
     private static final int MAX_SHIFT_CRAFTS = 64 * 9;
@@ -83,11 +84,13 @@ public class MentallyDisabled extends DisabilityHandler {
             return;
 
         ItemStack[] matrix = inventory.getMatrix();
-        Recipe chosen = pickAlternative(matrix, event.getRecipe().getResult().getType());
+        Recipe original = event.getRecipe();
+        Recipe chosen = pickAlternative(matrix, original.getResult().getType());
         if (chosen == null)
             return;     // nothing else is possible with these items, craft normally
 
         ItemStack result = chosen.getResult().clone();
+        DConfig.debug(player.getName() + " miscrafted " + original.getResult().getType() + " -> " + result.getType());
 
         // the result goes onto the cursor for a normal click, and straight into the inventory otherwise
         ClickType click = event.getClick();
@@ -302,7 +305,7 @@ public class MentallyDisabled extends DisabilityHandler {
     public void onChat(AsyncChatEvent event) {
 
         Player player = event.getPlayer();
-        if (!hasDis(player, Disability.MENTALLY_DISABLED))
+        if (!DConfig.MENTALLY_DISABLED_CHAT_SHUFFLE || !hasDis(player, Disability.MENTALLY_DISABLED))
             return;
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());

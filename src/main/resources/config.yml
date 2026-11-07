@@ -17,3 +17,78 @@ resource_pack_url: "https://raw.githubusercontent.com/NotJoja/DismpTP/master/Dis
 resource_pack_sha1: "auto"
 colorblind_pack_url: "https://raw.githubusercontent.com/NotJoja/DismpTP/master/Colorblind/Colorblind.zip"
 colorblind_pack_sha1: "auto"
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Housekeeping
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Prints extra information to the console (new players, fake mobs that couldn't be placed, miscrafts, ...).
+debug: false
+
+# The plugin puts the four resource pack settings above back to their defaults on every start, so an old config
+# can't keep a stale pack. Set this to true to use your own urls / hashes.
+allow_custom_pack_urls: false
+
+# ----------------------------------------------------------------------------------------------------------------------
+# How many disabilities a player has
+# ----------------------------------------------------------------------------------------------------------------------
+
+# How many random disabilities a new player gets on their first join. -1 = half of all disabilities.
+first_join_disabilities: -1
+
+# The least / most disabilities a player can have. -1 = off.
+# min: cures can't be used below it, and Schadenfreude (passing one on after a kill) is skipped if the killer would drop
+#      below it. max: Schadenfreude is skipped if the killed player would go above it. Both also limit the first join.
+# Admin commands (/dis add, /dis rm) ignore these.
+min_disabilities: -1
+max_disabilities: -1
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Tuning of the disabilities
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Asthma: sprinting fills a "breath" value (sprint_gain per second), resting empties it (rest_recovery per second,
+# keep it lower than the gain). At a random limit between min_limit_s and max_limit_s the player is out of breath
+# (Weakness + Slowness) until the value is back at 0.
+asthma:
+  min_limit_s: 20
+  max_limit_s: 40
+  sprint_gain: 1.0
+  rest_recovery: 0.5
+  # true = the client can't sprint while out of breath (the hunger bar looks low during that time)
+  block_sprint: true
+
+mentally_disabled:
+  # Chance that taking the result out of the crafting grid gives another item (0.0 - 1.0)
+  miscraft_chance: 0.5
+  # Shuffle the words of every chat message
+  chat_shuffle: true
+
+# Schizophrenia: chances are per second
+schizophrenia:
+  fake_mob_chance: 0.05
+  fake_mob_chance_nether: 0.10
+  # at this food level or less, most fake mobs are cows (hoglins in the nether)
+  hungry_food_level: 6
+  hungry_mob_chance: 0.7
+  # a few ores near the player look like diamond ore for a while
+  fake_ore_chance: 0.012
+  fake_ore_radius: 10
+  fake_ore_max_amount: 3
+  fake_ore_duration_s: 45
+
+overweight:
+  # extra exhaustion per second
+  hunger_drain: 0.03
+  # normal: 0.1 and 0.42
+  movement_speed: 0.08
+  jump_strength: 0.36
+  # falling from at least this far causes an explosion
+  explosion_min_fall_distance: 18
+
+dwarfism:
+  # normal: scale 1.0, ranges 3.0 (entities) and 4.5 (blocks), max health 20
+  scale: 0.6
+  entity_range: 2.25
+  block_range: 3.3
+  max_health: 12

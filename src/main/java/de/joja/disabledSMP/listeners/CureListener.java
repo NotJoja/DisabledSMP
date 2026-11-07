@@ -3,6 +3,8 @@ package de.joja.disabledSMP.listeners;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.utils.DConfig;
+import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
@@ -35,6 +37,16 @@ public class CureListener implements Listener {
 
         if (!pdc.has(cureKey, PersistentDataType.INTEGER))
             return;
+
+        // the server has a minimum amount of disabilities: the cure can't be used below it
+        var disabilities = plugin.disabilityMap.get(player.getUniqueId());
+        if (DConfig.MIN_DISABILITIES >= 0 && disabilities.size() <= DConfig.MIN_DISABILITIES) {
+            event.setCancelled(true);
+            player.sendMessage(Lang.of(player).pick(
+                    "You can't be cured, you need at least " + DConfig.MIN_DISABILITIES + " disabilities!",
+                    "Du kannst nicht geheilt werden, du brauchst mindestens " + DConfig.MIN_DISABILITIES + " Disabilities!"));
+            return;
+        }
 
         int cureDisabilityID = pdc.get(cureKey, PersistentDataType.INTEGER);
         Disability dis = Disability.get(cureDisabilityID);
