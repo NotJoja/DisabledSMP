@@ -189,7 +189,9 @@ public enum Disability {
     SCHIZOPHRENIA(new Schizophrenia()),
     SEIZURES(new Seizures()),
     SHORT_TERM_MEMORY(new ShortTermMemory()),
-    TOOTHLESS(new Toothless());
+    TOOTHLESS(new Toothless()),
+    // keep new ones at the end: the ordinal is saved in the player data and on cure items
+    ASTHMA(new Asthma());
 
 
 
