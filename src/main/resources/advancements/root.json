@@ -1,7 +1,7 @@
 
 {
   "display": {
-    "icon": { "id": "minecraft:barrier" },
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:pack_icon" } },
     "title": { "translate": "advancement.dismp.root.title", "fallback": "DisabledSMP" },
     "description": { "translate": "advancement.dismp.root.description", "fallback": "Your journey begins here." },
     "background": "minecraft:gui/advancements/backgrounds/adventure",

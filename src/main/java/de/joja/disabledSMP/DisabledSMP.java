@@ -35,6 +35,29 @@ public final class DisabledSMP extends JavaPlugin {
     @Override
     public void onLoad() {
         saveDefaultConfig();
+        resetResourcePackConfig();
+    }
+
+    /**
+     * An old config.yml (saveDefaultConfig never overwrites it) can still hold an outdated pack url or a fixed sha1,
+     * which makes clients load a stale/wrong pack. The pack settings are always put back to the defaults from the jar.
+     */
+    private void resetResourcePackConfig() {
+        var defaults = getConfig().getDefaults();
+        if (defaults == null)
+            return;
+
+        boolean changed = false;
+        for (String key : List.of("resource_pack_url", "resource_pack_sha1", "colorblind_pack_url", "colorblind_pack_sha1")) {
+            Object wanted = defaults.get(key);
+            if (wanted != null && !wanted.equals(getConfig().get(key))) {
+                getLogger().warning("config.yml: resetting '" + key + "' from '" + getConfig().get(key) + "' to '" + wanted + "'");
+                getConfig().set(key, wanted);
+                changed = true;
+            }
+        }
+        if (changed)
+            saveConfig();
     }
 
     @Override
