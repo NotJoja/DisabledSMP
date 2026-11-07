@@ -49,7 +49,7 @@ public class AdvancementManager implements Listener {
 
     public static final String CANNONBALL = "cannonball";
     public static final String CLUTCH = "clutch";
-    public static final String GENOCIDE = "genocide";
+    public static final String HOMICIDE = "homicide";
 
     public static final String YUMMY = "yummy";
     public static final String WHEELCHAIR = "wheelchair";   // not implemented yet -> call grant() when it is
@@ -59,7 +59,7 @@ public class AdvancementManager implements Listener {
     private static final List<String> ALL = List.of(
             ROOT,
             GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING,
-            CANNONBALL, CLUTCH, GENOCIDE,
+            CANNONBALL, CLUTCH, HOMICIDE,
             YUMMY, WHEELCHAIR, ADDICT
     );
 
@@ -234,7 +234,7 @@ public class AdvancementManager implements Listener {
 
         Player killer = zombie.getKiller();
         if (killer != null && hasDis(killer, Disability.DWARFISM))
-            grant(killer, GENOCIDE);
+            grant(killer, HOMICIDE);
     }
 
     /** Clutch! -> place water from high enough up and actually land in it, after a Balance Disorder push. */

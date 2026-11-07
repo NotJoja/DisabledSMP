@@ -46,11 +46,11 @@ public class ShortTermMemory extends DisabilityHandler {
                 if (!hasDis(player, Disability.SHORT_TERM_MEMORY))
                     continue;
 
-                if (random.nextFloat() < 0.24)
+                if (random.nextFloat() < 0.25)
                     randomizeName(player, random.nextInt(36), 6000);
-                if (random.nextFloat() < 0.18)
+                if (random.nextFloat() < 0.2)
                     shuffleInventory(player);
-                if (random.nextFloat() < 0.18)
+                if (random.nextFloat() < 0.15)
                     randomizeTexture(player, 6000);
 
             }
@@ -75,7 +75,7 @@ public class ShortTermMemory extends DisabilityHandler {
             "norway", "russian", "gold", "ingot", "anus", "cock", "cow", "mum", "daddy", "dominant",
             "husband", "pickaxe", "bow", "hammer", "amazing", "grand", "unimaginable", "racist", "TNT",
             "kid", "keyboard", "table", "chair", "book", "carrot", "cake", "8ygubr3ewiouly", "block", "nugget",
-            "wooden", "soap", "card", "paper", "spiky", "dangerous", "hole", "tom", "adolf", "enormous", "joja",
+            "wooden", "soap", "card", "paper", "spiky", "dangerous", "hole", "tim", "adolf", "enormous", "joja",
             "black", "power", "hate", "button", "door", "hoe", "whore", "burning", "sand", "orbital cannon", "penetrated",
             "coal", "trident", "meth", "spawn egg", "armor", "mace", "tsundere", "naughty", "washing machine", "birch"
     );

@@ -1,18 +1,14 @@
 package de.joja.disabledSMP.disablities.handlers;
 
-import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 
@@ -43,22 +39,33 @@ public class PanicAttacks extends DisabilityHandler {
 
         Bukkit.getScheduler().runTaskTimer(
                 plugin,
-                this::checkPlayers,
+                this::checkPanicAttack,
                 20L,
                 100L
         );
+        Bukkit.getScheduler().runTaskTimer(
+                plugin,
+                () -> {
+                    for (Player player : plugin.getServer().getOnlinePlayers())
+                        updatePanicAttack(player);
+                },
+                20L,
+                UPDATE_PANIC_ATTACK_TICKS
+        );
     }
+
+    private final HashMap<UUID, Integer> panicAttacksTimeMap = new HashMap<>();
+
     private final Random random = new Random();
+
+    private static final int UPDATE_PANIC_ATTACK_TICKS = 2;
 
     private static final double DETECTION_RADIUS = 10.0;
 
     private static final double MOB_CHANCE = 0.005;
     private static final double MAX_CHANCE = 0.9;
 
-    private static final int ATTACK_DURATION = 20;
-    private static final double DROP_CHANCE = 0.1;
-
-    private void checkPlayers() {
+    private void checkPanicAttack() {
         for (Player player : Bukkit.getOnlinePlayers()) {
 
             if (!hasDis(player, Disability.PANIC_ATTACKS))
@@ -79,97 +86,41 @@ public class PanicAttacks extends DisabilityHandler {
             double chance = playerChance + nearbyMobs * MOB_CHANCE;
             chance = Math.min(chance, MAX_CHANCE);
 
-            if (random.nextDouble() < chance)
-                startPanicAttack(player, nearbyPlayers, nearbyMobs);
+            if (random.nextDouble() < chance) {
+                String locale = player.getLocale();
+                if (locale.startsWith("de"))
+                    player.sendMessage("§c§lPANIC ATTACK! §cYou move and shake randomly!");
+                else
+                    player.sendMessage("§c§lPANIK ATTACKE! §cDu bewegst und zitterst zufällig!");
+                panicAttacksTimeMap.put(player.getUniqueId(), random.nextInt(10*20, 30*20));
+            }
         }
     }
 
-    private void startPanicAttack(Player player, int nearbyPlayers, int nearbyMobs) {
-        if (!hasDis(player, Disability.PANIC_ATTACKS))
+    private void updatePanicAttack(Player player) {
+
+        UUID uuid = player.getUniqueId();
+        int seizureTime = panicAttacksTimeMap.getOrDefault(uuid, 0);
+
+        if (seizureTime <= 0)
             return;
 
-        player.sendMessage(Lang.of(player).pick(
-                "§c§lPANIC ATTACK! §cYou are overwhelmed by your surroundings!",
-                "§c§lTORSCHLUSSPANIK! §cDu bist von deiner Umgebung überwältigt!"));
+        double walkFactor = 0.2;
+        if (!player.isOnGround())
+            walkFactor = 0.1;
 
-        player.addPotionEffect(
-                new PotionEffect(PotionEffectType.SPEED, ATTACK_DURATION * 20, 1, false, true, true)
-        );
+        double vx = (Math.random() - 0.5) * walkFactor;
+        double vy = 0;
+        double vz = (Math.random() - 0.5) * walkFactor;
 
-        new BukkitRunnable() {
+        if (player.isOnGround() && Math.random() < 0.08)
+            vy = player.getAttribute(Attribute.JUMP_STRENGTH).getBaseValue();
 
-            private int elapsedSeconds = 0;
+        org.bukkit.util.Vector velocity = player.getVelocity();
+        velocity.add(new Vector(vx, vy, vz));
 
-            @Override
-            public void run() {
-
-                if (!player.isOnline()) {
-                    cancel();
-                    return;
-                }
-
-                if (elapsedSeconds >= ATTACK_DURATION) {
-                    player.sendMessage(Lang.of(player).pick(
-                            "§aYou have calmed down. Your panic attack is over.",
-                            "§aDu hast dich beruhigt. Deine Panikattacke ist vorbei."));
-                    cancel();
-                    return;
-                }
-
-                dropRandomThing(player);
-
-                elapsedSeconds++;
-            }
-
-        }.runTaskTimer(plugin, 0L, 20L);
-    }
-
-    private void dropRandomThing(Player player) {
-        Random random = new Random();
-
-        if (random.nextDouble() < 0.05) {
-            ItemStack heldItem = player.getInventory().getItemInMainHand();
-
-            if (heldItem.getType() != Material.AIR) {
-                player.getWorld().dropItemNaturally(player.getLocation(), heldItem.clone());
-                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                player.sendMessage(Lang.of(player).pick(
-                        "§cYou panic and drop the item in your hand!",
-                        "§cDu gerätst in Panik und lässt das Item in deiner Hand fallen!"));
-            }
-        }
-
-        if (random.nextDouble() < 0.03) {
-            ItemStack[] armor = player.getInventory().getArmorContents();
-            List<Integer> equippedSlots = new ArrayList<>();
-
-            for (int i = 0; i < armor.length; i++)
-                if (armor[i] != null && armor[i].getType() != Material.AIR)
-                    equippedSlots.add(i);
-
-            if (!equippedSlots.isEmpty()) {
-
-                int slot = equippedSlots.get(random.nextInt(equippedSlots.size()));
-
-                ItemStack armorPiece = armor[slot].clone();
-                armor[slot] = new ItemStack(Material.AIR);
-                player.getInventory().setArmorContents(armor);
-
-                if (random.nextBoolean()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), armorPiece);
-                    player.sendMessage(Lang.of(player).pick(
-                            "§cYou panic and drop a piece of armor!",
-                            "§cDu gerätst in Panik und lässt ein Rüstungsteil fallen!"));
-                } else {
-                    HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(armorPiece);
-                    for (ItemStack item : leftover.values())
-                        player.getWorld().dropItemNaturally(player.getLocation(), item);
-                    player.sendMessage(Lang.of(player).pick(
-                            "§cYou panic and take off a piece of armor!",
-                            "§cDu gerätst in Panik und reißt dir ein Rüstungsteil vom Leib!"));
-                }
-            }
-        }
+        player.setVelocity(velocity);
+        panicAttacksTimeMap.put(uuid, seizureTime - UPDATE_PANIC_ATTACK_TICKS);
     }
 
 }

@@ -2,8 +2,8 @@
   "parent": "disabledsmp:root",
   "display": {
     "icon": { "id": "minecraft:zombie_head" },
-    "title": { "translate": "advancement.dismp.genocide.title", "fallback": "Genocide!" },
-    "description": { "translate": "advancement.dismp.genocide.description", "fallback": "Kill a baby zombie while having Dwarfism" },
+    "title": { "text": "Homicide!" },
+    "description": { "text": "Kill a baby zombie while having Dwarfism" },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true
