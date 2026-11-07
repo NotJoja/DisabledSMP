@@ -167,6 +167,12 @@ public class SmokingManager implements Listener {
         return item;
     }
 
+    /** Whether the item is a cigarette or a vape (smoking isn't eating, so e.g. Toothless doesn't apply). */
+    public static boolean isSmokable(ItemStack item) {
+        return item != null && item.getType() == BASE_MATERIAL
+                && item.getPersistentDataContainer().has(new NamespacedKey(DisabledSMP.plugin, "smoking_type"), PersistentDataType.STRING);
+    }
+
     private Type getType(ItemStack item) {
         if (item == null || item.getType() != BASE_MATERIAL)
             return null;

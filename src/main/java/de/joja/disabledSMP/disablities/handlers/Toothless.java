@@ -2,6 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Material;
 import org.bukkit.damage.DamageSource;
@@ -36,6 +37,9 @@ public class Toothless extends DisabilityHandler {
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent event) {
         if (!hasDis(event.getPlayer(), Disability.TOOTHLESS)) return;
+
+        // cigarettes and vapes are smoked, not eaten
+        if (SmokingManager.isSmokable(event.getItem())) return;
 
         Material item = event.getItem().getType();
 
