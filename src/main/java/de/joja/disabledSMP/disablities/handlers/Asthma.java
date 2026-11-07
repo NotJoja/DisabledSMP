@@ -29,7 +29,7 @@ import static de.joja.disabledSMP.utils.Utils.random;
 
 /**
  * Every player with asthma has a "breath" value: it goes up while sprinting and down (slower) while not sprinting.
- * When it reaches the player's limit (somewhere between 20 and 40 seconds of sprinting) they get winded: Weakness and
+ * When it reaches the player's limit (somewhere between 20 and 30 seconds of sprinting) they get winded: Weakness and
  * Slowness (and no sprinting) until the value is back at 0, so short breaks don't reset it.
  */
 public class Asthma extends DisabilityHandler {

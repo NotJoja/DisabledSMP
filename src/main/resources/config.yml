@@ -52,7 +52,7 @@ max_disabilities: -1
 # (Weakness + Slowness) until the value is back at 0.
 asthma:
   min_limit_s: 20
-  max_limit_s: 40
+  max_limit_s: 30
   sprint_gain: 1.0
   rest_recovery: 0.5
   # true = the client can't sprint while out of breath (the hunger bar looks low during that time)
