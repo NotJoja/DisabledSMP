@@ -38,7 +38,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.persistence.PersistentDataType;
@@ -168,7 +170,7 @@ public class WheelchairManager implements Listener {
         );
         recipe.setIngredient('L', Material.LEATHER);
         recipe.setIngredient('#', Material.IRON_BARS);
-        recipe.setIngredient('O', Material.OAK_STAIRS);
+        recipe.setIngredient('O', new RecipeChoice.MaterialChoice(Tag.WOODEN_STAIRS));
         recipe.setIngredient('I', Material.IRON_BLOCK);
         recipe.setCategory(CraftingBookCategory.EQUIPMENT);
 
