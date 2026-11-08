@@ -13,7 +13,5 @@ public abstract class Icons {
     public static final Key GRAY_WITHDRAW_CURE_ICON = Key.key("dismp", "icons/gray_cure");
     public static final Key EXTRA_INFO_ICON = Key.key("dismp", "icons/info");
     public static final Key GRAY_EXTRA_INFO_ICON = Key.key("dismp", "icons/gray_info");
-    public static final Key CURE_RITUAL_ICON = Key.key("dismp", "icons/cure_ritual");
-    public static final Key ADD_RITUAL_ICON = Key.key("dismp", "icons/add_ritual");
 
 }

@@ -3,7 +3,6 @@ package de.joja.disabledSMP.disablities.handlers.base;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.Menu;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -27,8 +26,6 @@ public abstract class DisabilityHandler implements Listener {
     public Key grayCureIcon;
 
     public Menu specifcInfoMenu = null;
-
-    public Material[] ritual = {Material.ANCIENT_DEBRIS, Material.DIAMOND_BLOCK, Material.HAY_BLOCK, Material.PUMPKIN, Material.MELON};
 
     public void initIcons() {
         icon = Key.key("dismp", "disicons/" + enDataName);

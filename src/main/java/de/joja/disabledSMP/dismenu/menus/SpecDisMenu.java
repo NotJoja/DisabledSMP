@@ -5,7 +5,6 @@ import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.clickables.DisabilityClickable;
 import de.joja.disabledSMP.dismenu.clickables.MenuClickable;
-import de.joja.disabledSMP.dismenu.clickables.PlayerDisabilityExecutable;
 import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
@@ -58,14 +57,6 @@ public class SpecDisMenu extends Menu {
             createMenuOption(4, "No Extra Disability Info", "Keine Extra Disability Info", GRAY_EXTRA_INFO_ICON, extraDisInfo);
         else
             createMenuOption(4, "Extra Disability Info", "Extra Disability Info", EXTRA_INFO_ICON, extraDisInfo);
-
-        DisabilityClickable cureRitual = new DisabilityClickable(disability, SpecDisMenu::cureRitualExe);
-        createMenuOption(6, "Cure Disability Ritual", "Disability Heilmittel Ritual", CURE_RITUAL_ICON, cureRitual);
-
-        PlayerDisabilityExecutable addRitualExe = (player, disability) ->
-                player.openInventory(new RitualMenu(player.getUniqueId(), disability, false).createMenuInv());
-        DisabilityClickable addRitual = new DisabilityClickable(disability, addRitualExe);
-        createMenuOption(8, "Add Disability Ritual", "Disability hinzufügen Ritual", ADD_RITUAL_ICON, addRitual);
     }
 
     private void createMenuOption(int i, String enName, String deName, Key icon, MenuClickable clickable) {
@@ -92,11 +83,6 @@ public class SpecDisMenu extends Menu {
             player.closeInventory();
         }
     }
-
-    private static void cureRitualExe(Player player, Disability disability) {
-        player.openInventory(new RitualMenu(player.getUniqueId(), disability, true).createMenuInv());
-    }
-
 
 
     private static void extraDisInfoExe(Player player, Disability disability) {

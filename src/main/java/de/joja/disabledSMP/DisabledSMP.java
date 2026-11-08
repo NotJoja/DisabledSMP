@@ -93,7 +93,7 @@ public final class DisabledSMP extends JavaPlugin {
         for (Disability dis : Disability.values())
             pm.registerEvents(dis.handler, this);
 
-        // safety net for every place that changes disabilities (menus, rituals, ...): save every 5 minutes
+        // safety net for every place that changes disabilities (menus, ...): save every 5 minutes
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (UUID uuid : disabilityMap.keySet())
                 saveDisabilities(uuid);
