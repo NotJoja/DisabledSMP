@@ -173,7 +173,7 @@ public final class DisMenus {
             return result;
         for (int i = 0; i < lines.size(); i++) {
             if (i > 0)
-                result = result.appendNewline();
+                result = result.append(text(" ", 0xFFFFFF, false));
             result = result.append(text(lines.get(i), 0xFFFFFF, false));
         }
         return result;
