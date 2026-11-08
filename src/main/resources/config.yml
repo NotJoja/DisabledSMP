@@ -73,11 +73,10 @@ schizophrenia:
   # at this food level or less, most fake mobs are cows (hoglins in the nether)
   hungry_food_level: 6
   hungry_mob_chance: 0.7
-  # a few ores near the player look like diamond ore for a while
-  fake_ore_chance: 0.012
-  fake_ore_radius: 10
-  fake_ore_max_amount: 3
-  fake_ore_duration_s: 45
+  # ore veins near the player look like diamond ore (the whole vein, until the disability is removed)
+  fake_ore_chance: 0.04
+  fake_ore_radius: 16
+  fake_ore_max_amount: 2     # max veins per event
 
 overweight:
   # extra exhaustion per second
