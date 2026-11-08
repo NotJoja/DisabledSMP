@@ -2,7 +2,6 @@ package de.joja.disabledSMP;
 
 import de.joja.disabledSMP.commands.DisCommand;
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.MenuManager;
 import de.joja.disabledSMP.listeners.CureListener;
 import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.listeners.JoinListener;
@@ -84,7 +83,6 @@ public final class DisabledSMP extends JavaPlugin {
         pm.registerEvents(smokingManager, this);
         nailsManager = new NailsManager(this);
         pm.registerEvents(nailsManager, this);
-        pm.registerEvents(new MenuManager(), this);
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);
         pm.registerEvents(new CureListener(), this);

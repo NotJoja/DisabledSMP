@@ -2,7 +2,9 @@ package de.joja.disabledSMP.disablities;
 
 import de.joja.disabledSMP.disablities.handlers.*;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
-import de.joja.disabledSMP.dismenu.menus.Menu;
+import io.papermc.paper.dialog.Dialog;
+import org.bukkit.entity.Player;
+import java.util.function.Function;
 import net.kyori.adventure.key.Key;
 
 import java.util.List;
@@ -46,7 +48,7 @@ public enum Disability {
     public final Key cureIcon;
     public final Key grayCureIcon;
 
-    public final Menu specificInfoMenu;
+    public final Function<Player, Dialog> specificInfoDialog;
 
     Disability(DisabilityHandler handler) {
         this.handler = handler;
@@ -64,7 +66,7 @@ public enum Disability {
         this.cureIcon = handler.cureIcon;
         this.grayCureIcon = handler.grayCureIcon;
 
-        this.specificInfoMenu = handler.specifcInfoMenu;
+        this.specificInfoDialog = handler.specificInfoDialog;
     }
 
     public static final int DISABILITIES_TOTAL_AMOUNT = values().length;

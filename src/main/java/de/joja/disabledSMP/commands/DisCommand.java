@@ -2,14 +2,13 @@ package de.joja.disabledSMP.commands;
 
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
+import de.joja.disabledSMP.dismenu.DisMenus;
 import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -310,8 +309,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        Inventory disMenuInv = new MainDisMenu(player.getUniqueId()).createMenuInv();
-        player.openInventory(disMenuInv);
+        DisMenus.openMain(player);
         plugin.advancementManager.grant(player, AdvancementManager.GETTING_TO_KNOW_YOURSELF);
     }
 

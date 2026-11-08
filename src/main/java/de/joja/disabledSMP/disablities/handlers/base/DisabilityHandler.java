@@ -1,7 +1,9 @@
 package de.joja.disabledSMP.disablities.handlers.base;
 
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.menus.Menu;
+import io.papermc.paper.dialog.Dialog;
+import org.bukkit.entity.Player;
+import java.util.function.Function;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -25,7 +27,7 @@ public abstract class DisabilityHandler implements Listener {
     public Key cureIcon;
     public Key grayCureIcon;
 
-    public Menu specifcInfoMenu = null;
+    public Function<Player, Dialog> specificInfoDialog = null; // optional extra info page for the /dis menu
 
     public void initIcons() {
         icon = Key.key("dismp", "disicons/" + enDataName);
