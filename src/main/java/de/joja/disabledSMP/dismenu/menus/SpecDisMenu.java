@@ -42,7 +42,8 @@ public class SpecDisMenu extends Menu {
         createMenuOption(0, "Go Back", "Zurück", GO_BACK_ICON, SpecDisMenu::goBackExe);
 
         MenuClickable withdrawCure = new DisabilityClickable(disability, SpecDisMenu::withdrawCureExe);
-        if (plugin.disabilityMap.get(uuid).contains(disability))
+        List<Disability> ownDisabilities = plugin.disabilityMap.get(uuid);
+        if (ownDisabilities != null && ownDisabilities.contains(disability))
             createMenuOption(2,
                     "Withdraw Cure",
                     "Heilmittel Extrahieren",

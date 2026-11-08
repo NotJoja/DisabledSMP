@@ -118,6 +118,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                     d.handler.addToPlayer(target);
                     added++;
                 }
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Added " + added + " disabilities to " + target.getName() + "!",
                 "<green>" + added + " Disabilities zu " + target.getName() + " hinzugefügt!");
             return;
@@ -129,6 +130,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         } else {
             disabilities.add(dis);
             dis.handler.addToPlayer(target);
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Successfully added disability to " + target.getName() + "!",
                 "<green>Disability erfolgreich zu " + target.getName() + " hinzugefügt!");
         }
@@ -189,6 +191,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             for (Disability d : new ArrayList<>(disabilities))
                 d.handler.removeFromPlayer(target);
             disabilities.clear();
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Removed " + removed + " disabilities from " + target.getName() + "!",
                 "<green>" + removed + " Disabilities von " + target.getName() + " entfernt!");
             return;
@@ -202,6 +205,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         disabilities.remove(dis);
         dis.handler.removeFromPlayer(target);
+        plugin.saveDisabilities(uuid);
         msg(sender, "<green>Successfully removed disability from " + target.getName() + "!",
                 "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
     }

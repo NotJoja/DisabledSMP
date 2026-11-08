@@ -46,7 +46,8 @@ public abstract class DisabilityHandler implements Listener {
 
 
     public static boolean hasDis(Player player, Disability dis) {
-        return plugin.disabilityMap.get(player.getUniqueId()).contains(dis);
+        List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
+        return disabilities != null && disabilities.contains(dis);
     }
 
     public void addToPlayer(Player player) {}

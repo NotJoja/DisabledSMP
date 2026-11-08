@@ -93,6 +93,12 @@ public final class DisabledSMP extends JavaPlugin {
         for (Disability dis : Disability.values())
             pm.registerEvents(dis.handler, this);
 
+        // safety net for every place that changes disabilities (menus, rituals, ...): save every 5 minutes
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            for (UUID uuid : disabilityMap.keySet())
+                saveDisabilities(uuid);
+        }, 20L * 60 * 5, 20L * 60 * 5);
+
         // Register the new combined command
         getCommand("dis").setExecutor(new DisCommand());
         getCommand("dis").setTabCompleter(new DisCommand());
@@ -106,10 +112,20 @@ public final class DisabledSMP extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        disabilityMap.forEach(
-                (uuid, disabilities) -> YamlDisabilityStorage
-                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new))
-        );
+        for (UUID uuid : disabilityMap.keySet())
+            saveDisabilities(uuid);
+    }
+
+    /** Writes the disabilities of one player to disk. A failing file never stops the others from being saved. */
+    public void saveDisabilities(UUID uuid) {
+        List<Disability> disabilities = disabilityMap.get(uuid);
+        if (disabilities == null)
+            return;
+        try {
+            YamlDisabilityStorage.saveDisabilities(uuid, disabilities.toArray(Disability[]::new));
+        } catch (RuntimeException e) {
+            getLogger().severe("Could not save the disabilities of " + uuid + ": " + e);
+        }
     }
 
 }

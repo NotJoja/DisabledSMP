@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,9 @@ public class KillListener implements Listener {
 
         if (System.currentTimeMillis() - last.getTime() <= MAX_KILL_TIME_MS) {
             killer = Bukkit.getPlayer(last.getAttackerUUID());
-            onPlayerKilledPlayer(died, killer);
+            // the attacker may have logged off in the meantime
+            if (killer != null)
+                onPlayerKilledPlayer(died, killer);
             lastAttackMap.remove(died.getUniqueId());
             return;
         }
@@ -74,8 +77,16 @@ public class KillListener implements Listener {
             return;
         List<Disability> diedPlayerDisabilities = plugin.disabilityMap.get(diedPlayer.getUniqueId());
         List<Disability> killerPlayerDisabilities = plugin.disabilityMap.get(killerPlayer.getUniqueId());
-        if (killerPlayerDisabilities.isEmpty())
+        if (diedPlayerDisabilities == null || killerPlayerDisabilities == null || killerPlayerDisabilities.isEmpty())
             return;
+
+        // only disabilities the victim doesn't have yet can be passed on (no duplicates)
+        List<Disability> transferable = new ArrayList<>(killerPlayerDisabilities);
+        transferable.removeAll(diedPlayerDisabilities);
+        if (transferable.isEmpty()) {
+            DConfig.debug("Transfer skipped: " + diedPlayer.getName() + " already has all of them");
+            return;
+        }
 
         // the minimum / maximum amount of disabilities of the server also counts for the transfer
         if (DConfig.MIN_DISABILITIES >= 0 && killerPlayerDisabilities.size() - 1 < DConfig.MIN_DISABILITIES) {
@@ -87,9 +98,14 @@ public class KillListener implements Listener {
             return;
         }
 
-        int rand = random.nextInt(killerPlayerDisabilities.size());
-        diedPlayerDisabilities.add(killerPlayerDisabilities.get(rand));
-        killerPlayerDisabilities.remove(rand);
+        Disability transferred = transferable.get(random.nextInt(transferable.size()));
+        killerPlayerDisabilities.remove(transferred);
+        transferred.handler.removeFromPlayer(killerPlayer);
+        diedPlayerDisabilities.add(transferred);
+        transferred.handler.addToPlayer(diedPlayer);
+
+        plugin.saveDisabilities(killerPlayer.getUniqueId());
+        plugin.saveDisabilities(diedPlayer.getUniqueId());
 
         // German-only: there is no English word for this
         if (Lang.of(killerPlayer) == Lang.DE)

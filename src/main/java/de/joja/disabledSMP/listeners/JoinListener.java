@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
@@ -60,6 +61,14 @@ public class JoinListener implements Listener {
 
         for (Disability dis : generatedDisabilities)
             dis.handler.addToPlayer(player);
+
+        // saved right away: otherwise a crash would roll new disabilities on the next join
+        plugin.saveDisabilities(uuid);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.saveDisabilities(event.getPlayer().getUniqueId());
     }
 
 
