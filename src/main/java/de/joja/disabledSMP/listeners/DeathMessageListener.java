@@ -1,8 +1,6 @@
 package de.joja.disabledSMP.listeners;
 
-import de.joja.disabledSMP.utils.Lang;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Custom death messages for deaths caused by a disability. Everyone gets the message in their own language.
+ * Custom death messages for deaths caused by a disability. Everyone sees the message in their own language (lang files of the resource pack).
  * The handlers note down when something happened with {@link #markToothlessFood} / {@link #markHeartAttack},
  * a death shortly afterwards uses the matching message.
  */
@@ -65,24 +63,21 @@ public class DeathMessageListener implements Listener {
             return;
 
         // the one that happened last is the cause
-        String name = player.getName();
-        String en;
-        String de;
+        String key;
+        String fallback;
         if (nailsTime >= foodTime && nailsTime >= heartTime) {
-            en = name + " got nailed";
-            de = name + " wurde genagelt";
+            key = "death.dismp.nails";
+            fallback = "%s got nailed";
         } else if (foodTime >= heartTime) {
-            en = name + " forgot to chew";
-            de = name + " hat vergessen zu kauen";
+            key = "death.dismp.toothless";
+            fallback = "%s forgot to chew";
         } else {
-            en = name + "'s heart rage quit";
-            de = name + "'s Herz ist geragequitted";
+            key = "death.dismp.heart_attack";
+            fallback = "%s's heart rage quit";
         }
 
-        // sent to everyone separately (their own language), so the normal broadcast is switched off
-        event.deathMessage(null);
-        for (Player online : Bukkit.getOnlinePlayers())
-            online.sendMessage(Component.text(Lang.of(online).pick(en, de)));
-        Bukkit.getConsoleSender().sendMessage(Component.text(Lang.defaultLang().pick(en, de)));
+        // translated by the client with the lang files of the resource pack, so the normal death broadcast
+        // does the job; the english fallback is used without the pack
+        event.deathMessage(Component.translatable(key, fallback, player.name()));
     }
 }
