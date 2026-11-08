@@ -68,18 +68,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis add <disability> [player]",
-                "<red>Verwendung: /dis add <disability> [player]");
+            msg(sender, "<red>Usage: /dis add <disability|everything> [player]",
+                "<red>Verwendung: /dis add <disability|alles> [player]");
             return;
         }
 
         String disName = args[1];
+        boolean all = isEverything(disName);
         Disability dis = null;
         for (Disability d : Disability.values())
             if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
                 dis = d;
 
-        if (dis == null) {
+        if (dis == null && !all) {
             msg(sender, "<red>Disability not found!",
                 "<red>Disability nicht gefunden!");
             return;
@@ -109,6 +110,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             plugin.disabilityMap.put(uuid, disabilities);
         }
 
+        if (all) {
+            int added = 0;
+            for (Disability d : Disability.values())
+                if (!disabilities.contains(d)) {
+                    disabilities.add(d);
+                    d.handler.addToPlayer(target);
+                    added++;
+                }
+            msg(sender, "<green>Added " + added + " disabilities to " + target.getName() + "!",
+                "<green>" + added + " Disabilities zu " + target.getName() + " hinzugefügt!");
+            return;
+        }
+
         if (disabilities.contains(dis)) {
             msg(sender, "<yellow>Player already has that disability!",
                 "<yellow>Der Spieler hat diese Disability bereits!");
@@ -128,18 +142,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis rm <disability> [player]",
-                "<red>Verwendung: /dis rm <disability> [player]");
+            msg(sender, "<red>Usage: /dis rm <disability|everything> [player]",
+                "<red>Verwendung: /dis rm <disability|alles> [player]");
             return;
         }
 
         String disName = args[1];
+        boolean all = isEverything(disName);
         Disability dis = null;
         for (Disability d : Disability.values())
             if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
                 dis = d;
 
-        if (dis == null) {
+        if (dis == null && !all) {
             msg(sender, "<red>Disability not found!",
                 "<red>Disability nicht gefunden!");
             return;
@@ -164,6 +179,21 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         UUID uuid = target.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
+        if (all) {
+            if (disabilities == null || disabilities.isEmpty()) {
+                msg(sender, "<yellow>Player has no disabilities!",
+                    "<yellow>Der Spieler hat keine Disabilities!");
+                return;
+            }
+            int removed = disabilities.size();
+            for (Disability d : new ArrayList<>(disabilities))
+                d.handler.removeFromPlayer(target);
+            disabilities.clear();
+            msg(sender, "<green>Removed " + removed + " disabilities from " + target.getName() + "!",
+                "<green>" + removed + " Disabilities von " + target.getName() + " entfernt!");
+            return;
+        }
+
         if (disabilities == null || !disabilities.contains(dis)) {
             msg(sender, "<yellow>Player does not have that disability!",
                 "<yellow>Der Spieler hat diese Disability nicht!");
@@ -174,6 +204,11 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         dis.handler.removeFromPlayer(target);
         msg(sender, "<green>Successfully removed disability from " + target.getName() + "!",
                 "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
+    }
+
+    /** "everything" (or "alles") instead of a disability name means all of them. */
+    private static boolean isEverything(String name) {
+        return name.equalsIgnoreCase("everything") || name.equalsIgnoreCase("alles");
     }
 
     /** Reads config.yml again. Values that are used while playing apply right away. */
@@ -328,6 +363,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 2) {
             if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
+                if ("everything".startsWith(args[1].toLowerCase()))
+                    completions.add("everything");
                 for (Disability d : Disability.values()) {
                     if (d.enDataName.toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(d.enDataName);
