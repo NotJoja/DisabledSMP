@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,6 +49,7 @@ public class CoagulationDisorder extends DisabilityHandler {
     }
 
     private final NamespacedKey bandageKey = new NamespacedKey("dismp", "bandage_key");
+    private final NamespacedKey recipeKey = new NamespacedKey("dismp", "bandage_recipe");
     private final Set<UUID> healingPlayers = new HashSet<>();
 
     @EventHandler
@@ -94,8 +96,10 @@ public class CoagulationDisorder extends DisabilityHandler {
     }
 
     private void registerBandageRecipe() {
+        Bukkit.removeRecipe(recipeKey);
+
         ItemStack bandage = createBandage();
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey("dismp", "bandage_recipe"), bandage);
+        ShapedRecipe recipe = new ShapedRecipe(recipeKey, bandage);
         recipe.shape(
                 "#P#",
                 "PRP",
@@ -104,6 +108,15 @@ public class CoagulationDisorder extends DisabilityHandler {
         recipe.setIngredient('P', Material.PAPER);
         recipe.setIngredient('R', Material.RED_WOOL);
         Bukkit.addRecipe(recipe);
+
+        // unlock it in the recipe book for everyone who is already online
+        for (Player player : Bukkit.getOnlinePlayers())
+            player.discoverRecipe(recipeKey);
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().discoverRecipe(recipeKey);
     }
 
     // Create bandage item
