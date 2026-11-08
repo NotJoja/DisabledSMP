@@ -51,16 +51,8 @@ public class CoagulationDisorder extends DisabilityHandler {
     public void onRegainHealth(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED) {
+        if (!healingPlayers.contains(player.getUniqueId()))
             event.setCancelled(true);
-            return;
-        }
-
-        if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN) {
-            if (!healingPlayers.contains(player.getUniqueId())) {
-                event.setCancelled(true);
-            }
-        }
     }
 
     // Detect bandage consumption
@@ -103,7 +95,7 @@ public class CoagulationDisorder extends DisabilityHandler {
 
     // Create bandage item
     public ItemStack createBandage() {
-        ItemStack bandage = new ItemStack(Material.POTION);
+        ItemStack bandage = new ItemStack(Material.MILK_BUCKET);
         ItemMeta meta = bandage.getItemMeta();
 
         meta.setDisplayName("Bandage");
