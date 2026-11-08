@@ -3,6 +3,7 @@ package de.joja.disabledSMP.disablities.handlers;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.listeners.DeathMessageListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -103,6 +104,7 @@ public class HeartAttacks extends DisabilityHandler {
         // always drops you to exactly half a heart (armor, resistance etc. can't reduce it, and you can't die from it)
         player.playHurtAnimation(0f);
         player.setHealth(1.0);
+        DeathMessageListener.markHeartAttack(player);
 
         // Survived if still alive a few seconds later
         Bukkit.getScheduler().runTaskLater(plugin, () -> {

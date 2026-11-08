@@ -4,6 +4,7 @@ import de.joja.disabledSMP.commands.DisCommand;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.MenuManager;
 import de.joja.disabledSMP.listeners.CureListener;
+import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.listeners.JoinListener;
 import de.joja.disabledSMP.listeners.KillListener;
 import de.joja.disabledSMP.storage.YamlDisabilityStorage;
@@ -83,6 +84,7 @@ public final class DisabledSMP extends JavaPlugin {
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);
         pm.registerEvents(new CureListener(), this);
+        pm.registerEvents(new DeathMessageListener(), this);
 
         for (Disability dis : Disability.values())
             pm.registerEvents(dis.handler, this);
