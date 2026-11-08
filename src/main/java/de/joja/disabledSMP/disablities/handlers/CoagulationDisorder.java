@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.disablities.handlers;
 
+import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
@@ -55,6 +56,9 @@ public class CoagulationDisorder extends DisabilityHandler {
     @EventHandler
     public void onRegainHealth(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
+
+        // handlers listen for everyone, so only block players who actually have the disability
+        if (!hasDis(player, Disability.COAGULATION_DISORDER)) return;
 
         if (!healingPlayers.contains(player.getUniqueId()))
             event.setCancelled(true);
