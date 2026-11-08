@@ -4,6 +4,7 @@ import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
 import de.joja.disabledSMP.smoking.SmokingManager;
+import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -28,7 +29,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin" : "");
+            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin|reload" : "");
             msg(sender, "<red>Usage: /dis <" + subs + "> [args]",
                     "<red>Verwendung: /dis <" + subs + "> [args]");
             return true;
@@ -42,6 +43,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "menu" -> handleMenu(sender, args);
             case "list" -> handleList(sender, args);
             case "admin" -> handleAdmin(sender, args);
+            case "reload" -> handleReload(sender);
             default -> msg(sender, "<red>Unknown subcommand!",
                 "<red>Unbekannter Unterbefehl!");
         }
@@ -174,6 +176,31 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                 "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
     }
 
+    /** Reads config.yml again. Values that are used while playing apply right away. */
+    private void handleReload(CommandSender sender) {
+        if (!isAdmin(sender)) {
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
+            return;
+        }
+
+        DConfig.reload();
+
+        // attribute based disabilities only apply their values when they are added: apply them again
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
+            if (disabilities == null)
+                continue;
+            if (disabilities.contains(Disability.OVERWEIGHT))
+                Disability.OVERWEIGHT.handler.addToPlayer(player);
+            if (disabilities.contains(Disability.DWARFISM))
+                Disability.DWARFISM.handler.addToPlayer(player);
+        }
+
+        msg(sender, "<green>Config reloaded! (Resource pack settings apply the next time a player joins.)",
+                "<green>Config neu geladen! (Resource-Pack-Einstellungen gelten beim nächsten Beitritt.)");
+    }
+
     private void handleAdmin(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
             msg(sender, "<red>You don't have permission to use this command!",
@@ -295,8 +322,8 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String s : new String[]{"add", "rm", "menu", "list", "admin"}) {
-                if (s.equals("admin") && !isAdmin(sender)) continue;
+            for (String s : new String[]{"add", "rm", "menu", "list", "admin", "reload"}) {
+                if ((s.equals("admin") || s.equals("reload")) && !isAdmin(sender)) continue;
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
             }
         } else if (args.length == 2) {

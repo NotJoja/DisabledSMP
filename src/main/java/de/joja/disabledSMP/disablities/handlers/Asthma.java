@@ -34,16 +34,7 @@ import static de.joja.disabledSMP.utils.Utils.random;
  */
 public class Asthma extends DisabilityHandler {
 
-    // all values are in "seconds of sprinting"
-    private static final double MIN_LIMIT = Math.min(DConfig.ASTHMA_MIN_LIMIT_S, DConfig.ASTHMA_MAX_LIMIT_S);
-    private static final double MAX_LIMIT = Math.max(DConfig.ASTHMA_MIN_LIMIT_S, DConfig.ASTHMA_MAX_LIMIT_S);
-
-    /** Breath gained per second of sprinting. */
-    private static final double SPRINT_GAIN = DConfig.ASTHMA_SPRINT_GAIN;
-    /** Breath recovered per second of not sprinting (slower than the gain). */
-    private static final double REST_RECOVERY = DConfig.ASTHMA_REST_RECOVERY;
-    /** Breath recovered per second while out of breath (a bit faster, so the effects don't last forever). */
-    private static final double WINDED_RECOVERY = DConfig.ASTHMA_WINDED_RECOVERY;
+    // all values are in "seconds of sprinting" and read from the config every time (so /dis reload works)
 
     /** The food level the client is told about while winded (sprinting needs more than 6). */
     private static final int NO_SPRINT_FOOD_LEVEL = 6;
@@ -103,7 +94,9 @@ public class Asthma extends DisabilityHandler {
     }
 
     private static double nextLimit() {
-        return MIN_LIMIT + random.nextDouble() * (MAX_LIMIT - MIN_LIMIT);
+        double min = Math.min(DConfig.ASTHMA_MIN_LIMIT_S, DConfig.ASTHMA_MAX_LIMIT_S);
+        double max = Math.max(DConfig.ASTHMA_MIN_LIMIT_S, DConfig.ASTHMA_MAX_LIMIT_S);
+        return min + random.nextDouble() * (max - min);
     }
 
     private void tick(Player player, Breath b) {
@@ -111,9 +104,9 @@ public class Asthma extends DisabilityHandler {
 
         if (!b.winded) {
             if (sprinting)
-                b.value += SPRINT_GAIN * SECONDS_PER_TICK;
+                b.value += DConfig.ASTHMA_SPRINT_GAIN * SECONDS_PER_TICK;
             else
-                b.value = Math.max(0, b.value - REST_RECOVERY * SECONDS_PER_TICK);
+                b.value = Math.max(0, b.value - DConfig.ASTHMA_REST_RECOVERY * SECONDS_PER_TICK);
 
             if (b.value >= b.limit) {
                 b.winded = true;
@@ -124,7 +117,7 @@ public class Asthma extends DisabilityHandler {
             }
         } else {
             // recovering (sprinting isn't possible now): it's only over when the value is back at 0
-            b.value = Math.max(0, b.value - WINDED_RECOVERY * SECONDS_PER_TICK);
+            b.value = Math.max(0, b.value - DConfig.ASTHMA_WINDED_RECOVERY * SECONDS_PER_TICK);
 
             if (b.value <= 0) {
                 b.winded = false;
