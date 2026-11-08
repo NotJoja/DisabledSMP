@@ -1,5 +1,6 @@
 package de.joja.disabledSMP.wheelchair;
 
+import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.utils.ItemUtils;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
@@ -304,6 +305,8 @@ public class NailsManager implements Listener {
                     else
                         living.setHealth(left);
                 } else {
+                    if (living instanceof Player p)
+                        DeathMessageListener.markNails(p);
                     living.damage(DAMAGE);
                 }
                 living.getWorld().playSound(living.getLocation(), Sound.BLOCK_CHAIN_STEP, 1f, 1f);
