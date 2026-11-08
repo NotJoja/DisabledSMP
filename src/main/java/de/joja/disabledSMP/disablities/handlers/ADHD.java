@@ -3,6 +3,7 @@ package de.joja.disabledSMP.disablities.handlers;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,10 @@ public class ADHD extends DisabilityHandler {
                 UUID uuid = player.getUniqueId();
 
                 if (!hasDis(player, Disability.ADHD))
+                    continue;
+
+                // setHealth ignores creative invulnerability, so skip these players explicitly
+                if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
                     continue;
 
                 if (!lastMoveTime.containsKey(uuid))
