@@ -9,12 +9,7 @@ import io.papermc.paper.datacomponent.item.FoodProperties;
 import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -205,6 +200,30 @@ public class SmokingManager implements Listener {
             event.setReplacement(createItem(type, usesLeft));
 
         smokeCloud(player);
+
+        if (item.getPersistentDataContainer().has(typeKey, PersistentDataType.STRING)) {
+            String smokeItemType = item.getPersistentDataContainer().get(typeKey, PersistentDataType.STRING);
+            System.out.println(smokeItemType);
+            if (smokeItemType.equals(Type.VAPE.id))
+                player.playSound(
+                        player.getLocation(),
+                        "dismp:vape",
+                        SoundCategory.PLAYERS,
+                        1.0f, // Volume
+                        1.0f  // Pitch
+                );
+            else if (smokeItemType.equals(Type.CIGARETTE.id))
+                player.playSound(
+                        player.getLocation(),
+                        "dismp:zigaretten",
+                        SoundCategory.PLAYERS,
+                        4.5f, // Volume
+                        1.0f  // Pitch
+                );
+            System.out.println("sound");
+        }
+        System.out.println("after if sound");
+
 
         trackAddict(player, type);
     }

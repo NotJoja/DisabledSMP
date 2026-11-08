@@ -29,14 +29,14 @@ public class HeartAttacks extends DisabilityHandler {
         this.enDataName = toDataName(enName);
         this.enDescription = List.of(
                 "You may randomly suffer sudden damage",
-                "up to 8 hearts"
+                "and get set to 1 hp"
         );
 
         this.deName = "Herzinfarkte";
         this.deDataName = toDataName(deName);
         this.deDescription = List.of(
-                "Du erleidest zufällig Schaden",
-                "bis zu 8 Herzen"
+                "Du erleidest plötzlich zufällig Schaden",
+                "und hast dann nur noch 1 hp"
         );
 
         initIcons();
@@ -99,6 +99,12 @@ public class HeartAttacks extends DisabilityHandler {
                 5f,
                 1f
         );
+
+        String locale = player.getLocale();
+        if (locale.startsWith("de"))
+            player.sendMessage("§c§lHEART ATTACK! §c");
+        else
+            player.sendMessage("§c§lHERZINFARKT! §c");
 
         // always drops you to exactly half a heart (armor, resistance etc. can't reduce it, and you can't die from it)
         player.playHurtAnimation(0f);
