@@ -50,9 +50,6 @@ public class MentallyDisabled extends DisabilityHandler {
         initIcons();
     }
 
-    /** Chance that taking the result out of the crafting grid gives a different item. */
-    private static final double MISCRAFT_CHANCE = DConfig.MENTALLY_DISABLED_MISCRAFT_CHANCE;
-
     /** Safety net for shift-clicking (a full 3x3 grid of stackable items is at most 64 crafts). */
     private static final int MAX_SHIFT_CRAFTS = 64 * 9;
 
@@ -80,7 +77,7 @@ public class MentallyDisabled extends DisabilityHandler {
             return;
         }
 
-        if (random.nextDouble() >= MISCRAFT_CHANCE)
+        if (random.nextDouble() >= DConfig.MENTALLY_DISABLED_MISCRAFT_CHANCE)
             return;
 
         ItemStack[] matrix = inventory.getMatrix();
@@ -135,7 +132,7 @@ public class MentallyDisabled extends DisabilityHandler {
             if (recipe == null)
                 break;
 
-            Recipe chosen = random.nextDouble() < MISCRAFT_CHANCE
+            Recipe chosen = random.nextDouble() < DConfig.MENTALLY_DISABLED_MISCRAFT_CHANCE
                     ? pickAlternative(matrix, recipe.getResult().getType())
                     : null;
             boolean miscraft = chosen != null;

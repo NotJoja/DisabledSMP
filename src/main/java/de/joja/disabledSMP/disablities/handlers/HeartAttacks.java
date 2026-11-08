@@ -3,6 +3,7 @@ package de.joja.disabledSMP.disablities.handlers;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.listeners.DeathMessageListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -29,14 +30,14 @@ public class HeartAttacks extends DisabilityHandler {
         this.enDataName = toDataName(enName);
         this.enDescription = List.of(
                 "You may randomly suffer sudden damage",
-                "up to 8 hearts"
+                "and get set to 1 hp"
         );
 
         this.deName = "Herzinfarkte";
         this.deDataName = toDataName(deName);
         this.deDescription = List.of(
-                "Du erleidest zufällig Schaden",
-                "bis zu 8 Herzen"
+                "Du erleidest plötzlich zufällig Schaden",
+                "und hast dann nur noch 1 hp"
         );
 
         initIcons();
@@ -100,9 +101,16 @@ public class HeartAttacks extends DisabilityHandler {
                 1f
         );
 
+        String locale = player.getLocale();
+        if (locale.startsWith("de"))
+            player.sendMessage("§c§lHEART ATTACK! §c");
+        else
+            player.sendMessage("§c§lHERZINFARKT! §c");
+
         // always drops you to exactly half a heart (armor, resistance etc. can't reduce it, and you can't die from it)
         player.playHurtAnimation(0f);
         player.setHealth(1.0);
+        DeathMessageListener.markHeartAttack(player);
 
         // Survived if still alive a few seconds later
         Bukkit.getScheduler().runTaskLater(plugin, () -> {

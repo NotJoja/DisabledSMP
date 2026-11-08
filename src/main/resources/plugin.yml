@@ -6,7 +6,7 @@ api-version: '26.3'
 commands:
   dis:
     description: Manage disabilities
-    usage: /dis <add|rm|menu|list|admin> [args]
+    usage: /dis <add|rm|menu|list|admin|reload> [args]
 
 permissions:
   disabledSMP.disability_admin:

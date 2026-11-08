@@ -4,6 +4,7 @@ import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
 import de.joja.disabledSMP.smoking.SmokingManager;
+import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -28,7 +29,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin" : "");
+            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin|reload" : "");
             msg(sender, "<red>Usage: /dis <" + subs + "> [args]",
                     "<red>Verwendung: /dis <" + subs + "> [args]");
             return true;
@@ -42,6 +43,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "menu" -> handleMenu(sender, args);
             case "list" -> handleList(sender, args);
             case "admin" -> handleAdmin(sender, args);
+            case "reload" -> handleReload(sender);
             default -> msg(sender, "<red>Unknown subcommand!",
                 "<red>Unbekannter Unterbefehl!");
         }
@@ -66,18 +68,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis add <disability> [player]",
-                "<red>Verwendung: /dis add <disability> [player]");
+            msg(sender, "<red>Usage: /dis add <disability|everything> [player]",
+                "<red>Verwendung: /dis add <disability|alles> [player]");
             return;
         }
 
         String disName = args[1];
+        boolean all = isEverything(disName);
         Disability dis = null;
         for (Disability d : Disability.values())
             if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
                 dis = d;
 
-        if (dis == null) {
+        if (dis == null && !all) {
             msg(sender, "<red>Disability not found!",
                 "<red>Disability nicht gefunden!");
             return;
@@ -107,6 +110,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             plugin.disabilityMap.put(uuid, disabilities);
         }
 
+        if (all) {
+            int added = 0;
+            for (Disability d : Disability.values())
+                if (!disabilities.contains(d)) {
+                    disabilities.add(d);
+                    d.handler.addToPlayer(target);
+                    added++;
+                }
+            msg(sender, "<green>Added " + added + " disabilities to " + target.getName() + "!",
+                "<green>" + added + " Disabilities zu " + target.getName() + " hinzugefügt!");
+            return;
+        }
+
         if (disabilities.contains(dis)) {
             msg(sender, "<yellow>Player already has that disability!",
                 "<yellow>Der Spieler hat diese Disability bereits!");
@@ -126,18 +142,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis rm <disability> [player]",
-                "<red>Verwendung: /dis rm <disability> [player]");
+            msg(sender, "<red>Usage: /dis rm <disability|everything> [player]",
+                "<red>Verwendung: /dis rm <disability|alles> [player]");
             return;
         }
 
         String disName = args[1];
+        boolean all = isEverything(disName);
         Disability dis = null;
         for (Disability d : Disability.values())
             if (d.enDataName.equalsIgnoreCase(disName) || d.deDataName.equalsIgnoreCase(disName))
                 dis = d;
 
-        if (dis == null) {
+        if (dis == null && !all) {
             msg(sender, "<red>Disability not found!",
                 "<red>Disability nicht gefunden!");
             return;
@@ -162,6 +179,21 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         UUID uuid = target.getUniqueId();
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
+        if (all) {
+            if (disabilities == null || disabilities.isEmpty()) {
+                msg(sender, "<yellow>Player has no disabilities!",
+                    "<yellow>Der Spieler hat keine Disabilities!");
+                return;
+            }
+            int removed = disabilities.size();
+            for (Disability d : new ArrayList<>(disabilities))
+                d.handler.removeFromPlayer(target);
+            disabilities.clear();
+            msg(sender, "<green>Removed " + removed + " disabilities from " + target.getName() + "!",
+                "<green>" + removed + " Disabilities von " + target.getName() + " entfernt!");
+            return;
+        }
+
         if (disabilities == null || !disabilities.contains(dis)) {
             msg(sender, "<yellow>Player does not have that disability!",
                 "<yellow>Der Spieler hat diese Disability nicht!");
@@ -174,6 +206,36 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                 "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
     }
 
+    /** "everything" (or "alles") instead of a disability name means all of them. */
+    private static boolean isEverything(String name) {
+        return name.equalsIgnoreCase("everything") || name.equalsIgnoreCase("alles");
+    }
+
+    /** Reads config.yml again. Values that are used while playing apply right away. */
+    private void handleReload(CommandSender sender) {
+        if (!isAdmin(sender)) {
+            msg(sender, "<red>You don't have permission to use this command!",
+                "<red>Du hast keine Berechtigung für diesen Befehl!");
+            return;
+        }
+
+        DConfig.reload();
+
+        // attribute based disabilities only apply their values when they are added: apply them again
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
+            if (disabilities == null)
+                continue;
+            if (disabilities.contains(Disability.OVERWEIGHT))
+                Disability.OVERWEIGHT.handler.addToPlayer(player);
+            if (disabilities.contains(Disability.DWARFISM))
+                Disability.DWARFISM.handler.addToPlayer(player);
+        }
+
+        msg(sender, "<green>Config reloaded! (Resource pack settings apply the next time a player joins.)",
+                "<green>Config neu geladen! (Resource-Pack-Einstellungen gelten beim nächsten Beitritt.)");
+    }
+
     private void handleAdmin(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
             msg(sender, "<red>You don't have permission to use this command!",
@@ -182,14 +244,19 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis admin <wheelchair|cigarette|vape> [player]",
-                "<red>Verwendung: /dis admin <wheelchair|cigarette|vape> [player]");
+            msg(sender, "<red>Usage: /dis admin <wheelchair|nails|bandage|cigarette|vape> [player]",
+                "<red>Verwendung: /dis admin <wheelchair|nails|cigarette|vape> [player]");
             return;
         }
 
         switch (args[1].toLowerCase()) {
             case "wheelchair" -> handleAdminGive(sender, args, plugin.wheelchairManager.createItem(),
                     "a wheelchair", "einen Rollstuhl");
+            case "nails" -> handleAdminGive(sender, args, plugin.nailsManager.createItem(),
+                    "nails", "Nägel");
+            case "bandage" -> handleAdminGive(sender, args,
+                    ((de.joja.disabledSMP.disablities.handlers.CoagulationDisorder) de.joja.disabledSMP.disablities.Disability.COAGULATION_DISORDER.handler).createBandage(),
+                    "a bandage", "eine Bandage");
             case "cigarette" -> handleAdminGive(sender, args,
                     plugin.smokingManager.createItem(SmokingManager.Type.CIGARETTE, SmokingManager.Type.CIGARETTE.maxUses),
                     "a cigarette", "eine Zigarette");
@@ -295,12 +362,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String s : new String[]{"add", "rm", "menu", "list", "admin"}) {
-                if (s.equals("admin") && !isAdmin(sender)) continue;
+            for (String s : new String[]{"add", "rm", "menu", "list", "admin", "reload"}) {
+                if ((s.equals("admin") || s.equals("reload")) && !isAdmin(sender)) continue;
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
             }
         } else if (args.length == 2) {
             if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("rm")) && isAdmin(sender)) {
+                if ("everything".startsWith(args[1].toLowerCase()))
+                    completions.add("everything");
                 for (Disability d : Disability.values()) {
                     if (d.enDataName.toLowerCase().startsWith(args[1].toLowerCase()))
                         completions.add(d.enDataName);
@@ -308,7 +377,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                         completions.add(d.deDataName);
                 }
             } else if (args[0].equalsIgnoreCase("admin") && isAdmin(sender)) {
-                for (String item : new String[]{"wheelchair", "cigarette", "vape"})
+                for (String item : new String[]{"wheelchair", "nails", "bandage", "cigarette", "vape"})
                     if (item.startsWith(args[1].toLowerCase()))
                         completions.add(item);
             } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {
