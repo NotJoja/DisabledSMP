@@ -13,7 +13,6 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
@@ -148,8 +147,6 @@ public class NailsManager implements Listener {
     private void spawn(Location loc) {
         // lie rotated by a random multiple of 90 degrees, parallel to the blocks
         float yaw = 90f * ThreadLocalRandom.current().nextInt(4);
-        Block block = loc.getBlock();
-        Display.Brightness brightness = new Display.Brightness(block.getLightFromBlocks(), block.getLightFromSky());
 
         Interaction hitbox = loc.getWorld().spawn(loc, Interaction.class, i -> {
             i.setInteractionWidth(WIDTH);
@@ -169,7 +166,6 @@ public class NailsManager implements Listener {
                     new Vector3f(1f, 1f, 1f), new Quaternionf()));
             d.setPersistent(true);
             d.setRotation(yaw, 0f);
-            d.setBrightness(brightness);
         });
 
         hitbox.getPersistentDataContainer().set(displayKey, PersistentDataType.STRING, display.getUniqueId().toString());
