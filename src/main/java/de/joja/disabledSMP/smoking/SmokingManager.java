@@ -206,17 +206,17 @@ public class SmokingManager implements Listener {
             System.out.println(smokeItemType);
             if (smokeItemType.equals(Type.VAPE.id))
                 player.playSound(
-                        player.getLocation(),
+                        player,
                         "dismp:vape",
-                        SoundCategory.PLAYERS,
-                        1.0f, // Volume
+                        SoundCategory.HOSTILE,
+                        1.4f, // Volume
                         1.0f  // Pitch
                 );
             else if (smokeItemType.equals(Type.CIGARETTE.id))
                 player.playSound(
-                        player.getLocation(),
+                        player,
                         "dismp:zigaretten",
-                        SoundCategory.PLAYERS,
+                        SoundCategory.HOSTILE,
                         4.5f, // Volume
                         1.0f  // Pitch
                 );
