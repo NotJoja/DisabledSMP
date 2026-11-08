@@ -5,7 +5,10 @@ import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,6 +73,16 @@ public class CoagulationDisorder extends DisabilityHandler {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
+        // A bandage is a milk bucket, so vanilla would hand back an empty bucket for every one of a stack.
+        // Take one away ourselves instead.
+        event.setCancelled(true);
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            ItemStack held = player.getInventory().getItem(event.getHand());
+            held.setAmount(held.getAmount() - 1);
+            player.getInventory().setItem(event.getHand(), held.getAmount() <= 0 ? null : held);
+        }
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 0.5f, 1f);
+
         healingPlayers.add(uuid);
 
         player.setFoodLevel(20);
@@ -103,6 +116,7 @@ public class CoagulationDisorder extends DisabilityHandler {
 
         meta.getPersistentDataContainer().set(bandageKey, PersistentDataType.BYTE, (byte) 1);
         bandage.setItemMeta(meta);
+        bandage.setData(DataComponentTypes.MAX_STACK_SIZE, 16);
 
         return bandage;
     }
