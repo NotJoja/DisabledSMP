@@ -18,6 +18,7 @@ import org.bukkit.Sound;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -29,6 +30,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
@@ -124,9 +126,30 @@ public class WheelchairManager implements Listener {
                     ItemDisplay display = getDisplay(horse);
                     if (display != null)
                         display.setRotation(horse.getLocation().getYaw(), 0f);
+                    updateNailsSlow(horse);
                 }
             }
         }, 1L, 1L);
+    }
+
+    // ---------------------------------------------------------------- nails
+
+    private static final double NAILS_SLOW = -0.75;
+
+    /** Like sweet berry bushes: it is slowed down while it is in nails (the damage comes from NailsManager). */
+    private void updateNailsSlow(Horse horse) {
+        AttributeInstance speed = horse.getAttribute(Attribute.MOVEMENT_SPEED);
+        if (speed == null)
+            return;
+
+        NamespacedKey key = new NamespacedKey(plugin, "nails_slow");
+        boolean slowed = speed.getModifier(key) != null;
+        boolean inNails = DisabledSMP.plugin.nailsManager.isOnNails(horse);
+
+        if (inNails && !slowed)
+            speed.addTransientModifier(new AttributeModifier(key, NAILS_SLOW, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        else if (!inNails && slowed)
+            speed.removeModifier(key);
     }
 
     // ---------------------------------------------------------------- recipe
@@ -393,6 +416,10 @@ public class WheelchairManager implements Listener {
         if (!isWheelchair(event.getEntity()))
             return;
 
+        // damage dealt by the plugin itself (nails)
+        if (event.getCause() == EntityDamageEvent.DamageCause.CUSTOM)
+            return;
+
         boolean playerHit = event instanceof EntityDamageByEntityEvent byEntity
                 && byEntity.getDamager() instanceof Player
                 && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK;
@@ -437,6 +464,13 @@ public class WheelchairManager implements Listener {
 
         Location loc = event.getEntity().getLocation();
         loc.getWorld().playSound(loc, Sound.BLOCK_CHAIN_BREAK, 1f, 1f);
+    }
+
+    /** No knockback at all (nails, hits, ...). */
+    @EventHandler
+    public void onKnockback(EntityKnockbackEvent event) {
+        if (isWheelchair(event.getEntity()))
+            event.setCancelled(true);
     }
 
     /** No jumping with the wheelchair. */
