@@ -75,9 +75,7 @@ public class CoagulationDisorder extends DisabilityHandler {
         player.setFoodLevel(20);
 
         // Allow regeneration for 8 seconds
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            healingPlayers.remove(uuid);
-        }, 20L * 10);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> healingPlayers.remove(uuid), 20L * 10);
     }
 
     private void registerBandageRecipe() {
