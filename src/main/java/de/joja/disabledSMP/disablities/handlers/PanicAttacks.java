@@ -23,16 +23,14 @@ public class PanicAttacks extends DisabilityHandler {
         this.enDataName = toDataName(enName);
         this.enDescription = List.of(
                 "If too many players or mobs are nearby,",
-                "items can fall out of your inventory",
-                "and you will get blindness and speed"
+                "you move and shake randomly"
         );
 
         this.deName = "Panikattacken";
         this.deDataName = toDataName(deName);
         this.deDescription = List.of(
-                "Wenn zu viele Spieler oder Mobs in deiner Nähe",
-                "sind, können Items aus deinem Inventar fallen",
-                "und du wirst blind und schneller"
+                "Wenn zu viele Spieler oder Mobs in deiner Nähe sind,",
+                "fängst du an dich zufällig zu bewegen und zu zittern"
         );
 
         initIcons();
