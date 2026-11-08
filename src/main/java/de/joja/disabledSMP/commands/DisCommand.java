@@ -3,6 +3,7 @@ package de.joja.disabledSMP.commands;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.DisMenus;
+import de.joja.disabledSMP.dismenu.InfoMenu;
 import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
@@ -28,7 +29,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin|reload" : "");
+            String subs = "add|rm|menu|info|list" + (isAdmin(sender) ? "|admin|reload" : "");
             msg(sender, "<red>Usage: /dis <" + subs + "> [args]",
                     "<red>Verwendung: /dis <" + subs + "> [args]");
             return true;
@@ -40,6 +41,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "add" -> handleAdd(sender, args);
             case "rm" -> handleRemove(sender, args);
             case "menu" -> handleMenu(sender, args);
+            case "info" -> handleInfo(sender);
             case "list" -> handleList(sender, args);
             case "admin" -> handleAdmin(sender, args);
             case "reload" -> handleReload(sender);
@@ -313,6 +315,15 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         plugin.advancementManager.grant(player, AdvancementManager.GETTING_TO_KNOW_YOURSELF);
     }
 
+    private void handleInfo(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            msg(sender, "<red>Only players can use this command!",
+                "<red>Nur Spieler können diesen Befehl benutzen!");
+            return;
+        }
+        InfoMenu.open(player);
+    }
+
     private void handleList(CommandSender sender, String[] args) {
         if (!isAdmin(sender)) {
             msg(sender, "<red>You don't have permission to use this command!",
@@ -364,7 +375,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String s : new String[]{"add", "rm", "menu", "list", "admin", "reload"}) {
+            for (String s : new String[]{"add", "rm", "menu", "info", "list", "admin", "reload"}) {
                 if ((s.equals("admin") || s.equals("reload")) && !isAdmin(sender)) continue;
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
             }
