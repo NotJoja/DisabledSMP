@@ -2,6 +2,8 @@ package de.joja.disabledSMP.wheelchair;
 
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.utils.ItemUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
@@ -10,11 +12,13 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -26,6 +30,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
@@ -96,6 +101,9 @@ public class WheelchairManager implements Listener {
      */
     private static final float MODEL_Y_OFFSET = -SEAT_TOP_Y * MODEL_SCALE;
 
+    /** How long an overweight player can sit in the wheelchair before it breaks. */
+    private static final long COLLAPSE_DELAY_TICKS = 6;
+
     // ---------------------------------------------------------------- keys
 
     private final JavaPlugin plugin;
@@ -118,9 +126,30 @@ public class WheelchairManager implements Listener {
                     ItemDisplay display = getDisplay(horse);
                     if (display != null)
                         display.setRotation(horse.getLocation().getYaw(), 0f);
+                    updateNailsSlow(horse);
                 }
             }
         }, 1L, 1L);
+    }
+
+    // ---------------------------------------------------------------- nails
+
+    private static final double NAILS_SLOW = -0.75;
+
+    /** Like sweet berry bushes: it is slowed down while it is in nails (the damage comes from NailsManager). */
+    private void updateNailsSlow(Horse horse) {
+        AttributeInstance speed = horse.getAttribute(Attribute.MOVEMENT_SPEED);
+        if (speed == null)
+            return;
+
+        NamespacedKey key = new NamespacedKey(plugin, "nails_slow");
+        boolean slowed = speed.getModifier(key) != null;
+        boolean inNails = DisabledSMP.plugin.nailsManager.isOnNails(horse);
+
+        if (inNails && !slowed)
+            speed.addTransientModifier(new AttributeModifier(key, NAILS_SLOW, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        else if (!inNails && slowed)
+            speed.removeModifier(key);
     }
 
     // ---------------------------------------------------------------- recipe
@@ -335,8 +364,35 @@ public class WheelchairManager implements Listener {
             return;
 
         boolean taken = horse.getPassengers().stream().anyMatch(e -> e instanceof Player);
-        if (!taken)
-            mount(player, horse);
+        if (taken)
+            return;
+
+        mount(player, horse);
+
+        // too heavy: they can sit for a split second, then the wheelchair gives way
+        if (DisabilityHandler.hasDis(player, Disability.OVERWEIGHT))
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (horse.isValid())
+                    destroy(horse);
+            }, COLLAPSE_DELAY_TICKS);
+    }
+
+    /** Destroys the wheelchair: tool break sound, some particles and the crafting materials drop. */
+    private void destroy(Horse horse) {
+        Location loc = horse.getLocation().add(0, 0.6, 0);
+
+        // what the recipe needs (see registerRecipe)
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.LEATHER));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BARS, 2));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.OAK_STAIRS));
+        loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BLOCK, 2));
+
+        loc.getWorld().playSound(loc, Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+        loc.getWorld().spawnParticle(Particle.ITEM, loc, 30, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.IRON_BLOCK));
+        loc.getWorld().spawnParticle(Particle.ITEM, loc, 15, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.LEATHER));
+
+        // remove() doesn't fire a death event (no wheelchair item), and onRemove() takes the model with it
+        horse.remove();
     }
 
     /**
@@ -358,6 +414,10 @@ public class WheelchairManager implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (!isWheelchair(event.getEntity()))
+            return;
+
+        // damage dealt by the plugin itself (nails)
+        if (event.getCause() == EntityDamageEvent.DamageCause.CUSTOM)
             return;
 
         boolean playerHit = event instanceof EntityDamageByEntityEvent byEntity
@@ -404,6 +464,13 @@ public class WheelchairManager implements Listener {
 
         Location loc = event.getEntity().getLocation();
         loc.getWorld().playSound(loc, Sound.BLOCK_CHAIN_BREAK, 1f, 1f);
+    }
+
+    /** No knockback at all (nails, hits, ...). */
+    @EventHandler
+    public void onKnockback(EntityKnockbackEvent event) {
+        if (isWheelchair(event.getEntity()))
+            event.setCancelled(true);
     }
 
     /** No jumping with the wheelchair. */

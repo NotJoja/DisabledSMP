@@ -31,8 +31,6 @@ public class Schizophrenia extends DisabilityHandler {
     static final EntityType[] POSSIBLE_FAKE_MOBS_NETHER = new EntityType[] {EntityType.GHAST, EntityType.HOGLIN, EntityType.ZOMBIFIED_PIGLIN, EntityType.SKELETON, EntityType.ENDERMAN, EntityType.PIGLIN_BRUTE};
 
     /** Hungry players (this food level or less) mostly see food: cows, or hoglins in the nether. */
-    private static final int HUNGRY_FOOD_LEVEL = DConfig.SCHIZOPHRENIA_HUNGRY_FOOD_LEVEL;
-    private static final double HUNGRY_FOOD_MOB_CHANCE = DConfig.SCHIZOPHRENIA_HUNGRY_MOB_CHANCE;
 
     /** Ores that can look like diamond ore (only on the client of the player). */
     private static final Set<Material> FAKEABLE_ORES = Set.of(
@@ -42,16 +40,12 @@ public class Schizophrenia extends DisabilityHandler {
             Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_REDSTONE_ORE, Material.DEEPSLATE_LAPIS_ORE);
 
     /** Chance per second that a fake mob appears. The nether has fewer mobs to choose from and less room. */
-    private static final double FAKE_MOB_CHANCE = DConfig.SCHIZOPHRENIA_FAKE_MOB_CHANCE;
-    private static final double FAKE_MOB_CHANCE_NETHER = DConfig.SCHIZOPHRENIA_FAKE_MOB_CHANCE_NETHER;
 
-    /** Chance per second that a hallucination of fake diamond ores starts (about once every 1-2 minutes). */
-    private static final double FAKE_ORE_CHANCE = DConfig.SCHIZOPHRENIA_FAKE_ORE_CHANCE;
-    private static final int FAKE_ORE_RADIUS = DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS;
-    private static final int FAKE_ORE_MAX_AMOUNT = Math.max(1, DConfig.SCHIZOPHRENIA_FAKE_ORE_MAX_AMOUNT);
-    private static final long FAKE_ORE_TICKS = 20L * DConfig.SCHIZOPHRENIA_FAKE_ORE_DURATION_S;
+    /** Chance per second that a hallucination of fake diamond ores starts (about once every 25 seconds). */
+    /** A vein never gets bigger than this (the search is cut off). */
+    private static final int MAX_VEIN_SIZE = 60;
 
-    /** The blocks that currently look like diamond ore for a player (so they can be reset). */
+    /** The blocks that look like diamond ore for a player, they stay that way (until the disability is removed). */
     private final Map<UUID, Set<Location>> fakeOresMap = new HashMap<>();
 
     private static final AtomicInteger CURRENT_ENTITY_ID = new AtomicInteger(1_000_000);
@@ -85,10 +79,10 @@ public class Schizophrenia extends DisabilityHandler {
                     continue;
 
                 boolean nether = player.getWorld().getEnvironment().equals(World.Environment.NETHER);
-                if (Math.random() < (nether ? FAKE_MOB_CHANCE_NETHER : FAKE_MOB_CHANCE))
+                if (Math.random() < (nether ? DConfig.SCHIZOPHRENIA_FAKE_MOB_CHANCE_NETHER : DConfig.SCHIZOPHRENIA_FAKE_MOB_CHANCE))
                     spawnFakeMob(player);
 
-                if (Math.random() < FAKE_ORE_CHANCE)
+                if (Math.random() < DConfig.SCHIZOPHRENIA_FAKE_ORE_CHANCE)
                     showFakeDiamondOres(player);
 
                 if (player.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
@@ -108,8 +102,8 @@ public class Schizophrenia extends DisabilityHandler {
 
     private void spawnFakeMob(Player player) {
 
-        boolean hungry = player.getFoodLevel() <= HUNGRY_FOOD_LEVEL;
-        boolean seesFood = hungry && random.nextDouble() < HUNGRY_FOOD_MOB_CHANCE;
+        boolean hungry = player.getFoodLevel() <= DConfig.SCHIZOPHRENIA_HUNGRY_FOOD_LEVEL;
+        boolean seesFood = hungry && random.nextDouble() < DConfig.SCHIZOPHRENIA_HUNGRY_MOB_CHANCE;
 
         EntityType randomFakeMob;
         if (player.getWorld().getEnvironment().equals(World.Environment.NORMAL))
@@ -226,7 +220,7 @@ public class Schizophrenia extends DisabilityHandler {
 
 
 
-    /** Some ores nearby look like diamond ore for a while, they aren't. */
+    /** Some ore veins nearby look like diamond ore (the whole vein), they aren't. */
     private void showFakeDiamondOres(Player player) {
         if (!player.getWorld().getEnvironment().equals(World.Environment.NORMAL))
             return;
@@ -235,9 +229,9 @@ public class Schizophrenia extends DisabilityHandler {
         World world = center.getWorld();
 
         List<Block> candidates = new ArrayList<>();
-        for (int x = -FAKE_ORE_RADIUS; x <= FAKE_ORE_RADIUS; x++)
-            for (int y = -FAKE_ORE_RADIUS; y <= FAKE_ORE_RADIUS; y++)
-                for (int z = -FAKE_ORE_RADIUS; z <= FAKE_ORE_RADIUS; z++) {
+        for (int x = -DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; x <= DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; x++)
+            for (int y = -DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; y <= DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; y++)
+                for (int z = -DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; z <= DConfig.SCHIZOPHRENIA_FAKE_ORE_RADIUS; z++) {
                     int bx = center.getBlockX() + x;
                     int by = center.getBlockY() + y;
                     int bz = center.getBlockZ() + z;
@@ -255,19 +249,44 @@ public class Schizophrenia extends DisabilityHandler {
         }
 
         Collections.shuffle(candidates, random);
-        int amount = 1 + random.nextInt(FAKE_ORE_MAX_AMOUNT);
+        int veins = 1 + random.nextInt(Math.max(1, DConfig.SCHIZOPHRENIA_FAKE_ORE_MAX_AMOUNT));
         var fakeOres = fakeOresMap.computeIfAbsent(player.getUniqueId(), id -> new HashSet<>());
 
-        for (Block block : candidates.subList(0, Math.min(amount, candidates.size()))) {
-            Location loc = block.getLocation();
-            Material fake = block.getType().name().startsWith("DEEPSLATE_")
-                    ? Material.DEEPSLATE_DIAMOND_ORE : Material.DIAMOND_ORE;
+        int blocks = 0;
+        for (Block start : candidates.subList(0, Math.min(veins, candidates.size())))
+            for (Block block : findVein(start)) {
+                Location loc = block.getLocation();
+                if (!fakeOres.add(loc))
+                    continue;       // already looks like diamond ore
 
-            fakeOres.add(loc);
-            player.sendBlockChange(loc, fake.createBlockData());
+                Material fake = block.getType().name().startsWith("DEEPSLATE_")
+                        ? Material.DEEPSLATE_DIAMOND_ORE : Material.DIAMOND_ORE;
+                player.sendBlockChange(loc, fake.createBlockData());
+                blocks++;
+            }
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> resetFakeOre(player, loc), FAKE_ORE_TICKS);
+        DConfig.debug("Fake diamond ores for " + player.getName() + ": " + blocks + " blocks in up to " + veins + " veins");
+    }
+
+    /** The whole vein: all ores of the same type that touch each other (diagonals too), up to a maximum size. */
+    private static List<Block> findVein(Block start) {
+        Material type = start.getType();
+        Set<Block> vein = new LinkedHashSet<>();
+        Deque<Block> queue = new ArrayDeque<>();
+        vein.add(start);
+        queue.add(start);
+
+        while (!queue.isEmpty() && vein.size() < MAX_VEIN_SIZE) {
+            Block current = queue.poll();
+            for (int x = -1; x <= 1; x++)
+                for (int y = -1; y <= 1; y++)
+                    for (int z = -1; z <= 1; z++) {
+                        Block next = current.getRelative(x, y, z);
+                        if (vein.size() < MAX_VEIN_SIZE && next.getType() == type && vein.add(next))
+                            queue.add(next);
+                    }
         }
+        return new ArrayList<>(vein);
     }
 
     /** Only blocks you can actually see (a side that touches something see-through). */
@@ -277,15 +296,6 @@ public class Schizophrenia extends DisabilityHandler {
             if (!block.getRelative(face).getType().isOccluding())
                 return true;
         return false;
-    }
-
-    private void resetFakeOre(Player player, Location loc) {
-        var fakeOres = fakeOresMap.get(player.getUniqueId());
-        if (fakeOres == null || !fakeOres.remove(loc))
-            return;     // already reset
-
-        if (player.isOnline())
-            player.sendBlockChange(loc, loc.getBlock().getBlockData());
     }
 
     private Location findSpawnLocation(Player player, int distanceRange) {

@@ -2,6 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
+import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Material;
@@ -81,8 +82,10 @@ public class Toothless extends DisabilityHandler {
             event.getPlayer().getScheduler().runDelayed(
                     plugin,
                     task -> {
-                        if (event.getPlayer().isOnline())
+                        if (event.getPlayer().isOnline()) {
+                            DeathMessageListener.markToothlessFood(event.getPlayer());
                             event.getPlayer().damage(5, DamageSource.builder(DamageType.STARVE).build());
+                        }
 
                         event.getPlayer().sendMessage(Lang.of(event.getPlayer()).pick(
                                 "You have no teeth. This food hurts you!",
