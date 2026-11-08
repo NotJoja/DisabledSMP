@@ -25,6 +25,12 @@ public abstract class DConfig {
     public static volatile int MIN_DISABILITIES;
     public static volatile int MAX_DISABILITIES;
 
+    // ---- Smoke gives disabilities
+    public static volatile boolean SMOKE_DISABILITY_ENABLED;
+    public static volatile double SMOKE_DISABILITY_SECONDS;
+    public static volatile double SMOKE_DISABILITY_MIN_FACTOR;
+    public static volatile int SMOKE_DISABILITY_COOLDOWN_S;
+
     // ---- Asthma
     public static volatile double ASTHMA_MIN_LIMIT_S;
     public static volatile double ASTHMA_MAX_LIMIT_S;
@@ -64,6 +70,10 @@ public abstract class DConfig {
 
     /** Reads every value from the config (again). */
     private static void load() {
+        SMOKE_DISABILITY_ENABLED = plugin.getConfig().getBoolean("smoke_disability.enabled", true);
+        SMOKE_DISABILITY_SECONDS = plugin.getConfig().getDouble("smoke_disability.seconds_without_disabilities", 15);
+        SMOKE_DISABILITY_MIN_FACTOR = plugin.getConfig().getDouble("smoke_disability.min_factor", 0.05);
+        SMOKE_DISABILITY_COOLDOWN_S = plugin.getConfig().getInt("smoke_disability.cooldown_s", 600);
         LANGUAGE = plugin.getConfig().getString("language");
         RESOURCE_PACK_URL = plugin.getConfig().getString("resource_pack_url", "https://raw.githubusercontent.com/NotJoja/DismpTP/master/DisabledSMP/dismp.zip");
         RESOURCE_PACK_SHA1 = plugin.getConfig().getString("resource_pack_sha1", "auto");

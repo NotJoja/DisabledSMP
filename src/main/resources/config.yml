@@ -93,3 +93,18 @@ dwarfism:
   entity_range: 2.25
   block_range: 3.3
   max_health: 12
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Disabilities from smoke
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Standing in the smoke of a cigarette or vape (about 3 blocks around it, for a few seconds) can give a new random
+# disability. Every second in smoke adds up (also over several times in smoke, it is not lost in between). With no
+# disabilities it takes seconds_without_disabilities seconds in total; the more they have the longer it takes, down to
+# min_factor of that speed once they have as many as a new player starts with (first_join_disabilities, or half of all).
+# After getting one there is a cooldown. max_disabilities is respected.
+smoke_disability:
+  enabled: true
+  seconds_without_disabilities: 15
+  min_factor: 0.05
+  cooldown_s: 600

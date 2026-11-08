@@ -64,7 +64,7 @@ public class JoinListener implements Listener {
 
 
     /** How many disabilities a new player gets: the config value (-1 = half of all), within min and max. */
-    private static int firstJoinAmount() {
+    public static int firstJoinAmount() {
         int amount = DConfig.FIRST_JOIN_DISABILITIES >= 0 ? DConfig.FIRST_JOIN_DISABILITIES : DISABILITIES_TOTAL_AMOUNT / 2;
 
         if (DConfig.MIN_DISABILITIES >= 0)
