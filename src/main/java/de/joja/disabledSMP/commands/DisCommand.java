@@ -244,14 +244,16 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 2) {
-            msg(sender, "<red>Usage: /dis admin <wheelchair|cigarette|vape> [player]",
-                "<red>Verwendung: /dis admin <wheelchair|cigarette|vape> [player]");
+            msg(sender, "<red>Usage: /dis admin <wheelchair|nails|cigarette|vape> [player]",
+                "<red>Verwendung: /dis admin <wheelchair|nails|cigarette|vape> [player]");
             return;
         }
 
         switch (args[1].toLowerCase()) {
             case "wheelchair" -> handleAdminGive(sender, args, plugin.wheelchairManager.createItem(),
                     "a wheelchair", "einen Rollstuhl");
+            case "nails" -> handleAdminGive(sender, args, plugin.nailsManager.createItem(),
+                    "nails", "Nägel");
             case "cigarette" -> handleAdminGive(sender, args,
                     plugin.smokingManager.createItem(SmokingManager.Type.CIGARETTE, SmokingManager.Type.CIGARETTE.maxUses),
                     "a cigarette", "eine Zigarette");
@@ -372,7 +374,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                         completions.add(d.deDataName);
                 }
             } else if (args[0].equalsIgnoreCase("admin") && isAdmin(sender)) {
-                for (String item : new String[]{"wheelchair", "cigarette", "vape"})
+                for (String item : new String[]{"wheelchair", "nails", "cigarette", "vape"})
                     if (item.startsWith(args[1].toLowerCase()))
                         completions.add(item);
             } else if (args[0].equalsIgnoreCase("list") && isAdmin(sender)) {

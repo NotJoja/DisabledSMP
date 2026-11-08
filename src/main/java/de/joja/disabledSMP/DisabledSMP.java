@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.utils.ResourcePacks;
 import de.joja.disabledSMP.smoking.SmokingManager;
+import de.joja.disabledSMP.wheelchair.NailsManager;
 import de.joja.disabledSMP.wheelchair.WheelchairManager;
 
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public final class DisabledSMP extends JavaPlugin {
     public static DisabledSMP plugin;
     public AdvancementManager advancementManager;
     public WheelchairManager wheelchairManager;
+    public NailsManager nailsManager;
     public SmokingManager smokingManager;
 
     public Map<UUID, List<Disability>> disabilityMap = new HashMap<>();
@@ -80,6 +82,8 @@ public final class DisabledSMP extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(wheelchairManager, this);
         pm.registerEvents(smokingManager, this);
+        nailsManager = new NailsManager(this);
+        pm.registerEvents(nailsManager, this);
         pm.registerEvents(new MenuManager(), this);
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);
