@@ -139,7 +139,7 @@ public final class DisMenus {
 
     // ------------------------------------------------------------ helpers
 
-    private static void show(Player player, Component title, List<DialogBody> body, DialogType type) {
+    static void show(Player player, Component title, List<DialogBody> body, DialogType type) {
         Dialog dialog = Dialog.create(factory -> factory.empty()
                 .base(DialogBase.builder(title)
                         .body(body)
@@ -151,7 +151,7 @@ public final class DisMenus {
         player.showDialog(dialog);
     }
 
-    private static ActionButton button(Component label, Component tooltip, int width, Consumer<Player> onClick) {
+    static ActionButton button(Component label, Component tooltip, int width, Consumer<Player> onClick) {
         DialogActionCallback callback = (view, audience) -> {
             if (audience instanceof Player p)
                 onClick.accept(p);
@@ -179,7 +179,7 @@ public final class DisMenus {
         return result;
     }
 
-    private static Component text(String text, int rgb, boolean bold) {
+    static Component text(String text, int rgb, boolean bold) {
         return Component.text(text)
                 .color(TextColor.color(rgb))
                 .decoration(TextDecoration.BOLD, bold)
