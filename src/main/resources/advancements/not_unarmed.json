@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:disabilities",
+  "display": {
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:disicons/paralyzed_arm" } },
+    "title": { "translate": "advancement.dismp.not_unarmed.title", "fallback": "They weren't unarmed..." },
+    "description": { "translate": "advancement.dismp.not_unarmed.description", "fallback": "Get killed by someone with a paralyzed arm" },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

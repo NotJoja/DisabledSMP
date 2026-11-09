@@ -16,7 +16,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.SheepDyeWoolEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.Tag;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +57,8 @@ public class AdvancementManager implements Listener {
     public static final String ACHOO = "achoo";
     public static final String WAS_THAT_REAL = "was_that_real";
     public static final String STILL_STANDING = "still_standing";
+    public static final String WHY = "why";
+    public static final String NOT_UNARMED = "not_unarmed";
 
     public static final String CANNONBALL = "cannonball";
     public static final String CLUTCH = "clutch";
@@ -64,7 +72,7 @@ public class AdvancementManager implements Listener {
     /** Parents have to be listed before their children. */
     private static final List<String> ALL = List.of(
             ROOT, LIFESTYLE, CHALLENGES, DISABILITIES,
-            GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING,
+            GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING, WHY, NOT_UNARMED,
             CANNONBALL, CLUTCH, HOMICIDE, NAILS_WHEELCHAIR,
             YUMMY, WHEELCHAIR, ADDICT
     );
@@ -226,11 +234,58 @@ public class AdvancementManager implements Listener {
                 grant(overweightExploder, CANNONBALL);
         }
 
+        // They weren't unarmed... -> killed by someone with a paralyzed arm
+        Player killer = died.getKiller();
+        if (killer != null && killer != died && hasDis(killer, Disability.PARALYZED_ARM))
+            grant(died, NOT_UNARMED);
+
         // Was that real?
         if (hasDis(died, Disability.SCHIZOPHRENIA)
                 && died.getLastDamageCause() instanceof EntityDamageByEntityEvent byEntity
                 && byEntity.getDamager() instanceof Creeper)
             grant(died, WAS_THAT_REAL);
+    }
+
+    // ------------------------------------------------------------------ Why?
+
+    /** Why? -> dye something while colorblind (not together with coagulation disorder). */
+    private void grantWhy(Player player) {
+        if (hasDis(player, Disability.COLOR_BLINDNESS) && !hasDis(player, Disability.COAGULATION_DISORDER))
+            grant(player, WHY);
+    }
+
+    private static boolean isDye(ItemStack item) {
+        return item != null && item.getType().name().endsWith("_DYE");
+    }
+
+    /** Dyeing in the crafting grid: leather armor, wool, banners, shulker boxes, beds, ... (not mixing dyes). */
+    @EventHandler(ignoreCancelled = true)
+    public void onCraftDye(CraftItemEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player))
+            return;
+        ItemStack result = event.getRecipe().getResult();
+        if (isDye(result))
+            return;
+        for (ItemStack ingredient : event.getInventory().getMatrix())
+            if (isDye(ingredient)) {
+                grantWhy(player);
+                return;
+            }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onSheepDye(SheepDyeWoolEvent event) {
+        if (event.getPlayer() != null)
+            grantWhy(event.getPlayer());
+    }
+
+    /** Dyeing a sign. */
+    @EventHandler
+    public void onSignDye(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null)
+            return;
+        if (Tag.ALL_SIGNS.isTagged(event.getClickedBlock().getType()) && isDye(event.getItem()))
+            grantWhy(event.getPlayer());
     }
 
     /** Genocide! -> kill a baby zombie while having dwarfism. */
