@@ -128,7 +128,7 @@ public class MentallyDisabled extends DisabilityHandler {
         ItemStack[] matrix = inventory.getMatrix();
 
         for (int i = 0; i < MAX_SHIFT_CRAFTS; i++) {
-            Recipe recipe = Bukkit.getCraftingRecipe(matrix, player.getWorld());
+            Recipe recipe = Bukkit.getCraftingRecipe(asGrid(matrix, false), player.getWorld());
             if (recipe == null)
                 break;
 
@@ -142,9 +142,7 @@ public class MentallyDisabled extends DisabilityHandler {
             if (miscraft) {
                 result = chosen.getResult().clone();
             } else {
-                ItemStack[] copy = new ItemStack[matrix.length];
-                for (int slot = 0; slot < matrix.length; slot++)
-                    copy[slot] = matrix[slot] == null ? null : matrix[slot].clone();
+                ItemStack[] copy = asGrid(matrix, true);
 
                 result = Bukkit.craftItem(copy, player.getWorld(), player);
                 if (result.getType().isAir())
@@ -175,6 +173,19 @@ public class MentallyDisabled extends DisabilityHandler {
 
         inventory.setMatrix(matrix);
         player.updateInventory();
+    }
+
+    /**
+     * The server wants the items as a 3x3 grid (see Bukkit.getCraftingRecipe): the 2x2 grid of the player's own
+     * inventory has to be put into the top left corner, otherwise no recipe is found and shift-clicking does nothing.
+     */
+    private static ItemStack[] asGrid(ItemStack[] matrix, boolean clone) {
+        ItemStack[] grid = new ItemStack[9];
+        for (int slot = 0; slot < matrix.length; slot++) {
+            int target = matrix.length == 4 ? slot + (slot / 2) : slot;     // 2x2: 0 1 / 2 3 -> 0 1 / 3 4
+            grid[target] = clone && matrix[slot] != null ? matrix[slot].clone() : matrix[slot];
+        }
+        return grid;
     }
 
     /** Uses up the ingredients of the recipe only (one item each) and returns what is left over (buckets, ...). */
