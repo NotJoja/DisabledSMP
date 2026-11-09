@@ -40,6 +40,11 @@ public class AdvancementManager implements Listener {
     // ---- advancement ids (= file names in resources/advancements, without .json) ----
     public static final String ROOT = "root";
 
+    // the three paths of the DisabledSMP tab
+    public static final String LIFESTYLE = "lifestyle";
+    public static final String CHALLENGES = "challenges";
+    public static final String DISABILITIES = "disabilities";
+
     public static final String GETTING_TO_KNOW_YOURSELF = "getting_to_know_yourself";
     public static final String GOLDEN_DOWNY = "golden_downy";
     public static final String OUT_OF_ORDER = "out_of_order";
@@ -58,7 +63,7 @@ public class AdvancementManager implements Listener {
 
     /** Parents have to be listed before their children. */
     private static final List<String> ALL = List.of(
-            ROOT,
+            ROOT, LIFESTYLE, CHALLENGES, DISABILITIES,
             GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING,
             CANNONBALL, CLUTCH, HOMICIDE, NAILS_WHEELCHAIR,
             YUMMY, WHEELCHAIR, ADDICT
@@ -197,8 +202,9 @@ public class AdvancementManager implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        // The root has to be granted for the tab to show up
-        grant(event.getPlayer(), ROOT);
+        // The root has to be granted for the tab to show up, the paths for their branches to show
+        for (String id : List.of(ROOT, LIFESTYLE, CHALLENGES, DISABILITIES))
+            grant(event.getPlayer(), id);
     }
 
     @EventHandler

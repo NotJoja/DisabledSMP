@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:challenges",
   "display": {
     "icon": { "id": "minecraft:zombie_head" },
     "title": { "text": "Homicide!" },

@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:challenges",
   "display": {
     "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:nails" } },
     "title": { "translate": "advancement.dismp.nails_wheelchair.title", "fallback": "NAGELneuer Benzer" },

@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:challenges",
   "display": {
     "icon": { "id": "minecraft:water_bucket" },
     "title": { "translate": "advancement.dismp.clutch.title", "fallback": "Clutch!" },

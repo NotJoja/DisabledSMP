@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:lifestyle",
   "display": {
     "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:icons/cure" } },
     "title": { "translate": "advancement.dismp.yummy.title", "fallback": "Yummy!" },
