@@ -7,14 +7,16 @@ import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -22,9 +24,9 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
 
-public class ParalyzedArm extends DisabilityHandler {
-
 import static de.joja.disabledSMP.DisabledSMP.plugin;
+
+public class ParalyzedArm extends DisabilityHandler {
 
     public ParalyzedArm() {
         this.enName = "Paralyzed Arm";
@@ -41,8 +43,6 @@ import static de.joja.disabledSMP.DisabledSMP.plugin;
         );
 
         initIcons();
-    }
-
 
         // The client can lose track of a BLOCKED item (e.g. swapping to a blocked slot and dropping right away: the
         // client already removed it, the server never did), so every few seconds the inventory is sent again.
@@ -67,6 +67,8 @@ import static de.joja.disabledSMP.DisabledSMP.plugin;
             event.setCancelled(true);
             Bukkit.getScheduler().runTask(plugin, player::updateInventory);
         }
+    }
+
 
 
     @EventHandler
@@ -102,6 +104,12 @@ import static de.joja.disabledSMP.DisabledSMP.plugin;
         boolean offHand = event.getHand() == EquipmentSlot.OFF_HAND;
         boolean blockedSlot = player.getInventory().getHeldItemSlot() < 4;
         if (offHand || blockedSlot)
+            event.setCancelled(true);
+
+        // A (powered or chained) shelf swaps the player's whole hotbar with what is on the shelf, which would put the
+        // BLOCKED items on it and let anyone take them. Shelves can't be used at all.
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
+                && Tag.WOODEN_SHELVES.isTagged(event.getClickedBlock().getType()))
             event.setCancelled(true);
     }
 
