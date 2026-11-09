@@ -50,6 +50,7 @@ public class AdvancementManager implements Listener {
     public static final String CANNONBALL = "cannonball";
     public static final String CLUTCH = "clutch";
     public static final String HOMICIDE = "homicide";
+    public static final String NAILS_WHEELCHAIR = "nails_wheelchair";
 
     public static final String YUMMY = "yummy";
     public static final String WHEELCHAIR = "wheelchair";   // not implemented yet -> call grant() when it is
@@ -59,7 +60,7 @@ public class AdvancementManager implements Listener {
     private static final List<String> ALL = List.of(
             ROOT,
             GETTING_TO_KNOW_YOURSELF, GOLDEN_DOWNY, OUT_OF_ORDER, ACHOO, WAS_THAT_REAL, STILL_STANDING,
-            CANNONBALL, CLUTCH, HOMICIDE,
+            CANNONBALL, CLUTCH, HOMICIDE, NAILS_WHEELCHAIR,
             YUMMY, WHEELCHAIR, ADDICT
     );
 
