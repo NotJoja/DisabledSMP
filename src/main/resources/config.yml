@@ -33,7 +33,7 @@ allow_custom_pack_urls: false
 # How many disabilities a player has
 # ----------------------------------------------------------------------------------------------------------------------
 
-# How many random disabilities a new player gets on their first join. -1 = half of all disabilities.
+# How many random disabilities a new player gets on their first join. -1 = a third of all disabilities (rounded up).
 first_join_disabilities: -1
 
 # The least / most disabilities a player can have. -1 = off.
@@ -101,7 +101,7 @@ dwarfism:
 # Standing in the smoke of a cigarette or vape (about 3 blocks around it, for a few seconds) can give a new random
 # disability. Every second in smoke adds up (also over several times in smoke, it is not lost in between). With no
 # disabilities it takes seconds_without_disabilities seconds in total; the more they have the longer it takes, down to
-# min_factor of that speed once they have as many as a new player starts with (first_join_disabilities, or half of all).
+# min_factor of that speed once they have as many as a new player starts with (first_join_disabilities, or a third of all, rounded up).
 # After getting one there is a cooldown. max_disabilities is respected.
 smoke_disability:
   enabled: true
