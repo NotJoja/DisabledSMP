@@ -90,6 +90,7 @@ public class KillListener implements Listener {
         // only disabilities the victim doesn't have yet can be passed on (no duplicates)
         List<Disability> transferable = new ArrayList<>(killerPlayerDisabilities);
         transferable.removeAll(diedPlayerDisabilities);
+        transferable.removeIf(dis -> !dis.isEnabled());
         if (transferable.isEmpty()) {
             DConfig.debug("Transfer skipped: " + diedPlayer.getName() + " already has all of them");
             notifyFailed(killerPlayer, diedPlayer, msg("fail.has_all",

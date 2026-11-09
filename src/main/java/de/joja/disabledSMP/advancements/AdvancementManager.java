@@ -177,7 +177,7 @@ public class AdvancementManager implements Listener {
         if (disabilities == null)
             return;
 
-        if (!has(player, GOLDEN_DOWNY) && disabilities.containsAll(List.of(Disability.values())))
+        if (!has(player, GOLDEN_DOWNY) && !Disability.enabled().isEmpty() && disabilities.containsAll(Disability.enabled()))
             grant(player, GOLDEN_DOWNY);
 
         if (!has(player, OUT_OF_ORDER)

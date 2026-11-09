@@ -44,6 +44,33 @@ min_disabilities: -1
 max_disabilities: -1
 
 # ----------------------------------------------------------------------------------------------------------------------
+# Which disabilities exist
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Turn single disabilities off with false. A turned off disability is not handed out any more (new players, passing on
+# after a kill, /dis menu, /dis add everything) and has no effect for players who have it: it stays saved for them and
+# works again when it is turned back on. /dis reload applies this to players that are online.
+disabilities:
+  adhd: true
+  allergy: true
+  asthma: true
+  balance_disorder: true
+  coagulation_disorder: true
+  color_blindness: true
+  dwarfism: true
+  heart_attacks: true
+  mentally_disabled: true
+  nearsighted: true
+  overweight: true
+  panic_attacks: true
+  paralyzed_arm: true
+  paralyzed_leg: true
+  racism: true
+  schizophrenia: true
+  short_term_memory: true
+  toothless: true
+
+# ----------------------------------------------------------------------------------------------------------------------
 # Tuning of the disabilities
 # ----------------------------------------------------------------------------------------------------------------------
 

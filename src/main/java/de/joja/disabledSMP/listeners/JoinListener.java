@@ -29,8 +29,7 @@ public class JoinListener implements Listener {
         // if player disabilities are already loaded, then return
         List<Disability> disabilities = plugin.disabilityMap.get(uuid);
         if (disabilities != null) {
-            for (Disability dis : disabilities)
-                dis.handler.addToPlayer(player);
+            applyAll(player, disabilities);
             return;
         }
 
@@ -39,13 +38,12 @@ public class JoinListener implements Listener {
         if (disabilities != null) {
 
             plugin.disabilityMap.put(uuid, disabilities);
-            for (Disability dis : disabilities)
-                dis.handler.addToPlayer(player);
+            applyAll(player, disabilities);
             return;
         }
 
         // disabilities do not exist yet, it is a new player, then generate their disabilities
-        List<Disability> possibleDisabilities = new ArrayList<>(Arrays.asList(Disability.values()));
+        List<Disability> possibleDisabilities = new ArrayList<>(Disability.enabled());
         List<Disability> generatedDisabilities = new ArrayList<>(DISABILITIES_TOTAL_AMOUNT);
 
         int amount = firstJoinAmount();
@@ -66,6 +64,16 @@ public class JoinListener implements Listener {
         plugin.saveDisabilities(uuid);
     }
 
+    /** Turned on disabilities are applied, turned off ones are cleaned up (items, attributes) but stay saved. */
+    private static void applyAll(Player player, List<Disability> disabilities) {
+        for (Disability dis : disabilities) {
+            if (dis.isEnabled())
+                dis.handler.addToPlayer(player);
+            else
+                dis.handler.removeFromPlayer(player);
+        }
+    }
+
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         plugin.saveDisabilities(event.getPlayer().getUniqueId());
@@ -74,14 +82,14 @@ public class JoinListener implements Listener {
 
     /** How many disabilities a new player gets: the config value (-1 = a third of all, rounded up), within min and max. */
     public static int firstJoinAmount() {
-        int amount = DConfig.FIRST_JOIN_DISABILITIES >= 0 ? DConfig.FIRST_JOIN_DISABILITIES : (DISABILITIES_TOTAL_AMOUNT + 2) / 3;
+        int amount = DConfig.FIRST_JOIN_DISABILITIES >= 0 ? DConfig.FIRST_JOIN_DISABILITIES : (Disability.enabled().size() + 2) / 3;
 
         if (DConfig.MIN_DISABILITIES >= 0)
             amount = Math.max(amount, DConfig.MIN_DISABILITIES);
         if (DConfig.MAX_DISABILITIES >= 0)
             amount = Math.min(amount, DConfig.MAX_DISABILITIES);
 
-        return Math.max(0, Math.min(amount, DISABILITIES_TOTAL_AMOUNT));
+        return Math.max(0, Math.min(amount, Disability.enabled().size()));
     }
 
 }

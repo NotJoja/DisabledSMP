@@ -111,7 +111,7 @@ public final class InfoMenu {
                 Key.key("dismp", "bandage"), 1, "Bandage", "Bandage");
 
         int startAmount = JoinListener.firstJoinAmount();
-        int total = Disability.DISABILITIES_TOTAL_AMOUNT;
+        int total = Disability.enabled().size();
         boolean third = DConfig.FIRST_JOIN_DISABILITIES < 0;
 
         return List.of(
