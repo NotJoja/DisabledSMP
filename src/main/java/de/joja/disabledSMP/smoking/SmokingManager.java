@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -203,29 +204,38 @@ public class SmokingManager implements Listener {
 
         if (item.getPersistentDataContainer().has(typeKey, PersistentDataType.STRING)) {
             String smokeItemType = item.getPersistentDataContainer().get(typeKey, PersistentDataType.STRING);
-            System.out.println(smokeItemType);
             if (smokeItemType.equals(Type.VAPE.id))
                 player.playSound(
                         player,
                         "dismp:vape",
                         SoundCategory.HOSTILE,
-                        1.4f, // Volume
+                        2f, // Volume
                         1.0f  // Pitch
                 );
-            else if (smokeItemType.equals(Type.CIGARETTE.id))
+        }
+
+        trackAddict(player, type);
+    }
+
+    @EventHandler
+    public void onItemHeld(PlayerItemHeldEvent event) {
+
+        Player player = event.getPlayer();
+        ItemStack item = player.getInventory().getItem(event.getNewSlot());
+
+        if (item == null || item.getType() == Material.AIR) return;
+
+        if (item.getPersistentDataContainer().has(typeKey, PersistentDataType.STRING)) {
+            String smokeItemType = item.getPersistentDataContainer().get(typeKey, PersistentDataType.STRING);
+            if (smokeItemType.equals(Type.CIGARETTE.id))
                 player.playSound(
                         player,
                         "dismp:zigaretten",
                         SoundCategory.HOSTILE,
-                        4.5f, // Volume
+                        5f, // Volume
                         1.0f  // Pitch
                 );
-            System.out.println("sound");
         }
-        System.out.println("after if sound");
-
-
-        trackAddict(player, type);
     }
 
     /** Addict: a cigarette and a vape right after each other, in either order. */
