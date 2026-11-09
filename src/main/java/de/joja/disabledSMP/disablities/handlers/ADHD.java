@@ -19,7 +19,7 @@ import static de.joja.disabledSMP.DisabledSMP.plugin;
 public class ADHD extends DisabilityHandler {
 
     public static final double DAMAGE = 1.0;
-    public static final int STAY_TIME_MS = 10_000;
+    public static final int STAY_TIME_MS = 25_000;
     public static final int MOVE_RANGE = 8;
 
     Map<UUID, Location> lastLocation = new HashMap<>();
@@ -54,6 +54,12 @@ public class ADHD extends DisabilityHandler {
                 // setHealth ignores creative invulnerability, so skip these players explicitly
                 if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
                     continue;
+
+                // sleeping is fine: the time starts again from when they wake up
+                if (player.isSleeping()) {
+                    lastMoveTime.put(uuid, now);
+                    continue;
+                }
 
                 if (!lastMoveTime.containsKey(uuid))
                     continue;
