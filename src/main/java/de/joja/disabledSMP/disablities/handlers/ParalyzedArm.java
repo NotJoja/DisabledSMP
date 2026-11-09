@@ -5,6 +5,7 @@ import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
 import de.joja.disabledSMP.utils.ItemUtils;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +23,8 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.List;
 
 public class ParalyzedArm extends DisabilityHandler {
+
+import static de.joja.disabledSMP.DisabledSMP.plugin;
 
     public ParalyzedArm() {
         this.enName = "Paralyzed Arm";
@@ -39,6 +43,30 @@ public class ParalyzedArm extends DisabilityHandler {
         initIcons();
     }
 
+
+        // The client can lose track of a BLOCKED item (e.g. swapping to a blocked slot and dropping right away: the
+        // client already removed it, the server never did), so every few seconds the inventory is sent again.
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player player : Bukkit.getOnlinePlayers())
+                if (hasDis(player, Disability.PARALYZED_ARM))
+                    player.updateInventory();
+        }, RESYNC_TICKS, RESYNC_TICKS);
+    }
+
+    /** How often the inventory of players with a paralyzed arm is sent to them again. */
+    private static final long RESYNC_TICKS = 40;
+
+    /** The BLOCKED items can't be dropped (the client already hid it, so it is sent again right away). */
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        if (!hasDis(player, Disability.PARALYZED_ARM))
+            return;
+
+        if (event.getItemDrop().getItemStack().getType() == Material.CARROT_ON_A_STICK) {
+            event.setCancelled(true);
+            Bukkit.getScheduler().runTask(plugin, player::updateInventory);
+        }
 
 
     @EventHandler
