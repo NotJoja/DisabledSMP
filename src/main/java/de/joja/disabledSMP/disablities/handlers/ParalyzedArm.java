@@ -48,9 +48,34 @@ public class ParalyzedArm extends DisabilityHandler {
         // client already removed it, the server never did), so every few seconds the inventory is sent again.
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers())
-                if (hasDis(player, Disability.PARALYZED_ARM))
+                if (hasDis(player, Disability.PARALYZED_ARM)) {
+                    repairBlockedItems(player);
                     player.updateInventory();
+                }
         }, RESYNC_TICKS, RESYNC_TICKS);
+    }
+
+    private static ItemStack createBlockedItem() {
+        ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
+        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
+                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
+        return blocked;
+    }
+
+    /** Puts a fresh BLOCKED item where one was changed (renamed, other texture, ...) by something else. */
+    private static void repairBlockedItems(Player player) {
+        ItemStack fresh = createBlockedItem();
+        PlayerInventory inv = player.getInventory();
+        for (int i = 0; i < 4; i++)
+            if (isBlockedItem(inv.getItem(i)) && !fresh.isSimilar(inv.getItem(i)))
+                inv.setItem(i, fresh);
+        if (isBlockedItem(inv.getItemInOffHand()) && !fresh.isSimilar(inv.getItemInOffHand()))
+            inv.setItemInOffHand(fresh);
+    }
+
+    /** The BLOCKED placeholder items (other disabilities must leave them alone: no renaming, moving or retexturing). */
+    public static boolean isBlockedItem(ItemStack item) {
+        return item != null && item.getType() == Material.CARROT_ON_A_STICK;
     }
 
     /** How often the inventory of players with a paralyzed arm is sent to them again. */
@@ -158,9 +183,7 @@ public class ParalyzedArm extends DisabilityHandler {
         if (!hasDis(player, Disability.PARALYZED_ARM))
             return;
 
-        ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
-                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
+        ItemStack blocked = createBlockedItem();
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)
@@ -183,9 +206,7 @@ public class ParalyzedArm extends DisabilityHandler {
         if (player.getInventory().getItemInOffHand().getType() != Material.CARROT_ON_A_STICK)
             player.dropItem(EquipmentSlot.OFF_HAND);
 
-        ItemStack blocked = new ItemStack(Material.CARROT_ON_A_STICK);
-        ItemUtils.configureItem(blocked, Key.key("minecraft", "barrier"),
-                ItemUtils.translatable("item.dismp.blocked", "BLOCKED", 0xF00A0A, true), null);
+        ItemStack blocked = createBlockedItem();
 
         player.getInventory().setItemInOffHand(blocked);
         for (int i = 0; i < 4; i++)

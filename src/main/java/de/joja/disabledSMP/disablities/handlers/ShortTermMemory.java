@@ -93,7 +93,7 @@ public class ShortTermMemory extends DisabilityHandler {
     public void randomizeName(Player player, int slot, long duration) {
         ItemStack original = player.getInventory().getItem(slot);
 
-        if (original == null || original.getType().isAir())
+        if (original == null || original.getType().isAir() || ParalyzedArm.isBlockedItem(original))
             return;
 
         original = original.clone();
@@ -130,6 +130,10 @@ public class ShortTermMemory extends DisabilityHandler {
 
         ItemStack itemA = inv.getItem(a);
         ItemStack itemB = inv.getItem(b);
+
+        // the BLOCKED items of a paralyzed arm stay where they are
+        if (ParalyzedArm.isBlockedItem(itemA) || ParalyzedArm.isBlockedItem(itemB))
+            return;
         inv.setItem(a, itemB);
         inv.setItem(b, itemA);
     }
@@ -143,7 +147,7 @@ public class ShortTermMemory extends DisabilityHandler {
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
 
-            if (item != null && !item.getType().isAir()) {
+            if (item != null && !item.getType().isAir() && !ParalyzedArm.isBlockedItem(item)) {
                 occupiedSlots.add(i);
             }
         }
