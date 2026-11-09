@@ -1,6 +1,7 @@
 package de.joja.disabledSMP.dismenu;
 
 import de.joja.disabledSMP.disablities.Disability;
+import de.joja.disabledSMP.listeners.JoinListener;
 import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import de.joja.disabledSMP.wheelchair.NailsManager;
@@ -109,19 +110,18 @@ public final class InfoMenu {
                 ingredients('P', PAPER, 'R', RED_WOOL),
                 Key.key("dismp", "bandage"), 1, "Bandage", "Bandage");
 
-        int startAmount = DConfig.FIRST_JOIN_DISABILITIES >= 0
-                ? DConfig.FIRST_JOIN_DISABILITIES : Disability.DISABILITIES_TOTAL_AMOUNT / 2;
-        int total = Disability.DISABILITIES_TOTAL_AMOUNT;
-        boolean half = DConfig.FIRST_JOIN_DISABILITIES < 0;
+        int startAmount = JoinListener.firstJoinAmount();
+        int total = Disability.enabled().size();
+        boolean third = DConfig.FIRST_JOIN_DISABILITIES < 0;
 
         return List.of(
                 new Page(ITEMS, Key.key("dismp", "item/pack_icon"), Key.key("dismp", "pack_icon"),
                         "DisabledSMP", "DisabledSMP",
-                        "You start with **" + startAmount + " random disabilities**" + (half ? " (half of all of them)" : "") + ".\n\n"
+                        "You start with **" + startAmount + " random disabilities**" + (third ? " (a third of all of them)" : "") + ".\n\n"
                                 + "When you **kill a player**, you pass one of your disabilities on to them.\n"
                                 + "When you **get killed**, you receive one of theirs.\n\n"
                                 + "Use the tabs below to learn about everything else.",
-                        "Du startest mit **" + startAmount + " zufälligen Disabilities**" + (half ? " (der Hälfte aller)" : "") + ".\n\n"
+                        "Du startest mit **" + startAmount + " zufälligen Disabilities**" + (third ? " (ein Drittel aller)" : "") + ".\n\n"
                                 + "Wenn du **einen Spieler tötest**, gibst du ihm eine deiner Disabilities weiter.\n"
                                 + "Wenn du **getötet wirst**, bekommst du eine von seinen.\n\n"
                                 + "Mit den Reitern unten erfährst du alles Weitere.",

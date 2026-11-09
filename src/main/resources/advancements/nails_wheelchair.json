@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:challenges",
+  "display": {
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:nails" } },
+    "title": { "translate": "advancement.dismp.nails_wheelchair.title", "fallback": "NAGELneuer Benzer" },
+    "description": { "translate": "advancement.dismp.nails_wheelchair.description", "fallback": "Break a wheelchair with nails you placed" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

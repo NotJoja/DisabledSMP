@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -379,7 +380,7 @@ public class WheelchairManager implements Listener {
             }, COLLAPSE_DELAY_TICKS);
     }
 
-    /** Destroys the wheelchair: tool break sound, some particles and the crafting materials drop. */
+    /** Destroys the wheelchair: wheelchair break sound, some particles and the crafting materials drop. */
     private void destroy(Horse horse) {
         Location loc = horse.getLocation().add(0, 0.6, 0);
 
@@ -389,7 +390,7 @@ public class WheelchairManager implements Listener {
         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.OAK_STAIRS));
         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BLOCK, 2));
 
-        loc.getWorld().playSound(loc, Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+        loc.getWorld().playSound(loc, "dismp:wheelchair_break", SoundCategory.PLAYERS, 1f, 1f);
         loc.getWorld().spawnParticle(Particle.ITEM, loc, 30, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.IRON_BLOCK));
         loc.getWorld().spawnParticle(Particle.ITEM, loc, 15, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.LEATHER));
 

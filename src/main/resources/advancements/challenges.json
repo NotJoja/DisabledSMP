@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:root",
+  "display": {
+    "icon": { "id": "minecraft:diamond_sword" },
+    "title": { "translate": "advancement.dismp.challenges.title", "fallback": "Challenges" },
+    "description": { "translate": "advancement.dismp.challenges.description", "fallback": "Show what you are capable of." },
+    "frame": "goal",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:getting_to_know_yourself",
+  "parent": "disabledsmp:disabilities",
   "display": {
     "icon": { "id": "minecraft:totem_of_undying" },
     "title": { "translate": "advancement.dismp.golden_downy.title", "fallback": "Golden Downy" },

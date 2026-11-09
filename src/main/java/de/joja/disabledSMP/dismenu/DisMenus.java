@@ -50,15 +50,15 @@ public final class DisMenus {
     public static void openMain(Player player) {
         Lang lang = Lang.of(player);
         List<Disability> owned = plugin.disabilityMap.get(player.getUniqueId());
-        int ownedCount = owned == null ? 0 : owned.size();
+        int ownedCount = owned == null ? 0 : (int) owned.stream().filter(Disability::isEnabled).count();
 
         Component summary = text(lang.pick(
-                "You have " + ownedCount + " of " + Disability.DISABILITIES_TOTAL_AMOUNT + " disabilities.\nPick one to see more.",
-                "Du hast " + ownedCount + " von " + Disability.DISABILITIES_TOTAL_AMOUNT + " Disabilities.\nWähle eine aus, um mehr zu sehen."),
+                "You have " + ownedCount + " of " + Disability.enabled().size() + " disabilities.\nPick one to see more.",
+                "Du hast " + ownedCount + " von " + Disability.enabled().size() + " Disabilities.\nWähle eine aus, um mehr zu sehen."),
                 0xFFFFFF, false);
 
         List<ActionButton> buttons = new ArrayList<>();
-        for (Disability dis : Disability.values()) {
+        for (Disability dis : Disability.enabled()) {
             boolean has = owned != null && owned.contains(dis);
             Component tooltip = description(lang, dis)
                     .appendNewline().appendNewline()
@@ -140,7 +140,11 @@ public final class DisMenus {
     // ------------------------------------------------------------ helpers
 
     static void show(Player player, Component title, List<DialogBody> body, DialogType type) {
-        Dialog dialog = Dialog.create(factory -> factory.empty()
+        player.showDialog(dialog(title, body, type));
+    }
+
+    static Dialog dialog(Component title, List<DialogBody> body, DialogType type) {
+        return Dialog.create(factory -> factory.empty()
                 .base(DialogBase.builder(title)
                         .body(body)
                         .canCloseWithEscape(true)
@@ -148,7 +152,6 @@ public final class DisMenus {
                         .afterAction(DialogBase.DialogAfterAction.NONE)
                         .build())
                 .type(type));
-        player.showDialog(dialog);
     }
 
     static ActionButton button(Component label, Component tooltip, int width, Consumer<Player> onClick) {

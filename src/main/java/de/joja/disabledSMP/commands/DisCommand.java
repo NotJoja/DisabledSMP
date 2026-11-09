@@ -113,7 +113,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         if (all) {
             int added = 0;
-            for (Disability d : Disability.values())
+            for (Disability d : Disability.enabled())
                 if (!disabilities.contains(d)) {
                     disabilities.add(d);
                     d.handler.addToPlayer(target);
@@ -125,7 +125,10 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (disabilities.contains(dis)) {
+        if (!dis.isEnabled()) {
+            msg(sender, "<red>That disability is turned off in the config!",
+                "<red>Diese Disability ist in der Config ausgeschaltet!");
+        } else if (disabilities.contains(dis)) {
             msg(sender, "<yellow>Player already has that disability!",
                 "<yellow>Der Spieler hat diese Disability bereits!");
         } else {
@@ -224,6 +227,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        java.util.Set<String> disabledBefore = DConfig.DISABLED_DISABILITIES;
         DConfig.reload();
 
         // attribute based disabilities only apply their values when they are added: apply them again
@@ -231,6 +235,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
             if (disabilities == null)
                 continue;
+
+            // disabilities that were turned off or on in the config
+            for (Disability dis : disabilities) {
+                if (!dis.isEnabled() && !disabledBefore.contains(dis.enDataName))
+                    dis.handler.removeFromPlayer(player);
+                else if (dis.isEnabled() && disabledBefore.contains(dis.enDataName))
+                    dis.handler.addToPlayer(player);
+            }
             if (disabilities.contains(Disability.OVERWEIGHT))
                 Disability.OVERWEIGHT.handler.addToPlayer(player);
             if (disabilities.contains(Disability.DWARFISM))

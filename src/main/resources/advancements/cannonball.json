@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:challenges",
   "display": {
     "icon": { "id": "minecraft:tnt" },
     "title": { "translate": "advancement.dismp.cannonball.title", "fallback": "Fat-ality" },

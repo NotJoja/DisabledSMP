@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:getting_to_know_yourself",
+  "parent": "disabledsmp:disabilities",
   "display": {
     "icon": { "id": "minecraft:leather_boots" },
     "title": { "translate": "advancement.dismp.out_of_order.title", "fallback": "Nimm 2" },

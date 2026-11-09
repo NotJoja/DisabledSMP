@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:root",
+  "display": {
+    "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:wheelchair" } },
+    "title": { "translate": "advancement.dismp.lifestyle.title", "fallback": "Lifestyle" },
+    "description": { "translate": "advancement.dismp.lifestyle.description", "fallback": "Medicine, smoking and wheelchairs." },
+    "frame": "goal",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

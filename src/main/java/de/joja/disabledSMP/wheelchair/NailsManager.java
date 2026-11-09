@@ -2,6 +2,7 @@ package de.joja.disabledSMP.wheelchair;
 
 import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.DisabledSMP;
+import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.utils.ItemUtils;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.key.Key;
@@ -75,6 +76,7 @@ public class NailsManager implements Listener {
     private final NamespacedKey nailsKey;     // on the interaction
     private final NamespacedKey displayKey;   // on the interaction: uuid of its display
     private final NamespacedKey healthKey;   // on the interaction: hits it can take
+    private final NamespacedKey ownerKey;    // on the interaction: uuid of the player who placed it
     private final NamespacedKey recipeKey;
 
     public NailsManager(JavaPlugin plugin) {
@@ -83,6 +85,7 @@ public class NailsManager implements Listener {
         this.nailsKey = new NamespacedKey(plugin, "nails");
         this.displayKey = new NamespacedKey(plugin, "nails_display");
         this.healthKey = new NamespacedKey(plugin, "nails_health");
+        this.ownerKey = new NamespacedKey(plugin, "nails_owner");
         this.recipeKey = new NamespacedKey(plugin, "nails");
 
         registerRecipe();
@@ -145,7 +148,7 @@ public class NailsManager implements Listener {
 
     // ---------------------------------------------------------------- spawning
 
-    private void spawn(Location loc) {
+    private void spawn(Location loc, Player owner) {
         // lie rotated by a random multiple of 90 degrees, parallel to the blocks
         float yaw = 90f * ThreadLocalRandom.current().nextInt(4);
 
@@ -155,6 +158,7 @@ public class NailsManager implements Listener {
             i.setResponsive(true);
             i.setPersistent(true);
             i.getPersistentDataContainer().set(nailsKey, PersistentDataType.BYTE, (byte) 1);
+            i.getPersistentDataContainer().set(ownerKey, PersistentDataType.STRING, owner.getUniqueId().toString());
         });
 
         ItemDisplay display = loc.getWorld().spawn(loc, ItemDisplay.class, d -> {
@@ -211,7 +215,7 @@ public class NailsManager implements Listener {
             if (isNails(e))
                 return;
 
-        spawn(loc);
+        spawn(loc, player);
         loc.getWorld().playSound(loc, Sound.BLOCK_CHAIN_PLACE, 1f, 1.2f);
         player.swingMainHand();
 
@@ -300,9 +304,10 @@ public class NailsManager implements Listener {
                     // no damage event: even without a source vanilla shoves the victim around, and the wheelchair
                     // is supposed to roll through slowly. Just take the health away.
                     double left = living.getHealth() - DAMAGE;
-                    if (left <= 0)
+                    if (left <= 0) {
+                        grantNailsWheelchair(nails);
                         living.setHealth(0);
-                    else
+                    } else
                         living.setHealth(left);
                 } else {
                     if (living instanceof Player p)
@@ -312,5 +317,15 @@ public class NailsManager implements Listener {
                 living.getWorld().playSound(living.getLocation(), Sound.BLOCK_CHAIN_STEP, 1f, 1f);
             }
         }
+    }
+
+    /** NAGELneuer Benzer: the wheelchair broke from nails, credit whoever placed them (if they are online). */
+    private void grantNailsWheelchair(Entity nails) {
+        String owner = nails.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+        if (owner == null)
+            return;
+        Player player = Bukkit.getPlayer(UUID.fromString(owner));
+        if (player != null)
+            DisabledSMP.plugin.advancementManager.grant(player, AdvancementManager.NAILS_WHEELCHAIR);
     }
 }

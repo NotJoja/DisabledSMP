@@ -46,7 +46,8 @@ public abstract class DisabilityHandler implements Listener {
 
     public static boolean hasDis(Player player, Disability dis) {
         List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
-        return disabilities != null && disabilities.contains(dis);
+        // a disability that is turned off in the config has no effect (the player keeps it saved)
+        return disabilities != null && dis.isEnabled() && disabilities.contains(dis);
     }
 
     public void addToPlayer(Player player) {}
