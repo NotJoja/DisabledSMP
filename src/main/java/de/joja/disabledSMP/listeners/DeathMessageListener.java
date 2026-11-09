@@ -26,6 +26,10 @@ public class DeathMessageListener implements Listener {
     /** A death this soon after being hurt by nails counts as dying from them. */
     private static final long NAILS_WINDOW_MS = 3_000;
 
+    /** A death this soon after an allergic reaction counts as dying from it. */
+    private static final long ALLERGY_WINDOW_MS = 3_000;
+
+    private static final Map<UUID, Long> allergyDamage = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> nailsDamage = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> toothlessFood = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> heartAttacks = new ConcurrentHashMap<>();
@@ -36,6 +40,11 @@ public class DeathMessageListener implements Listener {
 
     public static void markHeartAttack(Player player) {
         heartAttacks.put(player.getUniqueId(), System.currentTimeMillis());
+    }
+
+    /** Called right before an allergic reaction hurts a player. */
+    public static void markAllergy(Player player) {
+        allergyDamage.put(player.getUniqueId(), System.currentTimeMillis());
     }
 
     /** Called right before the nails hurt a player. */
@@ -51,11 +60,13 @@ public class DeathMessageListener implements Listener {
         Long food = toothlessFood.remove(player.getUniqueId());
         Long heart = heartAttacks.remove(player.getUniqueId());
         Long nails = nailsDamage.remove(player.getUniqueId());
+        Long allergy = allergyDamage.remove(player.getUniqueId());
 
         long foodTime = food != null && now - food <= TOOTHLESS_WINDOW_MS ? food : -1;
         long heartTime = heart != null && now - heart <= HEART_ATTACK_WINDOW_MS ? heart : -1;
         long nailsTime = nails != null && now - nails <= NAILS_WINDOW_MS ? nails : -1;
-        if (foodTime < 0 && heartTime < 0 && nailsTime < 0)
+        long allergyTime = allergy != null && now - allergy <= ALLERGY_WINDOW_MS ? allergy : -1;
+        if (foodTime < 0 && heartTime < 0 && nailsTime < 0 && allergyTime < 0)
             return;
 
         // death messages are turned off (gamerule) or removed by another plugin
@@ -65,7 +76,10 @@ public class DeathMessageListener implements Listener {
         // the one that happened last is the cause
         String key;
         String fallback;
-        if (nailsTime >= foodTime && nailsTime >= heartTime) {
+        if (allergyTime >= nailsTime && allergyTime >= foodTime && allergyTime >= heartTime) {
+            key = "death.dismp.allergy";
+            fallback = "%s sneezed their last sneeze";
+        } else if (nailsTime >= foodTime && nailsTime >= heartTime) {
             key = "death.dismp.nails";
             fallback = "%s got nailed";
         } else if (foodTime >= heartTime) {

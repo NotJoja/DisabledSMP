@@ -74,6 +74,11 @@ disabilities:
 # Tuning of the disabilities
 # ----------------------------------------------------------------------------------------------------------------------
 
+# Allergy: dropped items you are allergic to hurt you when they lie within this many blocks (the ones in your own
+# inventory always do).
+allergy:
+  radius: 3
+
 # Asthma: sprinting fills a "breath" value (sprint_gain per second), resting empties it (rest_recovery per second,
 # keep it lower than the gain). At a random limit between min_limit_s and max_limit_s the player is out of breath
 # (Weakness + Slowness) until the value is back at 0.

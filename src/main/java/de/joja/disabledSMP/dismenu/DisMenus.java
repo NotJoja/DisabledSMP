@@ -140,7 +140,11 @@ public final class DisMenus {
     // ------------------------------------------------------------ helpers
 
     static void show(Player player, Component title, List<DialogBody> body, DialogType type) {
-        Dialog dialog = Dialog.create(factory -> factory.empty()
+        player.showDialog(dialog(title, body, type));
+    }
+
+    static Dialog dialog(Component title, List<DialogBody> body, DialogType type) {
+        return Dialog.create(factory -> factory.empty()
                 .base(DialogBase.builder(title)
                         .body(body)
                         .canCloseWithEscape(true)
@@ -148,7 +152,6 @@ public final class DisMenus {
                         .afterAction(DialogBase.DialogAfterAction.NONE)
                         .build())
                 .type(type));
-        player.showDialog(dialog);
     }
 
     static ActionButton button(Component label, Component tooltip, int width, Consumer<Player> onClick) {

@@ -35,6 +35,7 @@ public abstract class DConfig {
     public static volatile int SMOKE_DISABILITY_COOLDOWN_S;
 
     // ---- Asthma
+    public static volatile double ALLERGY_RADIUS;
     public static volatile double ASTHMA_MIN_LIMIT_S;
     public static volatile double ASTHMA_MAX_LIMIT_S;
     public static volatile double ASTHMA_SPRINT_GAIN;
@@ -94,6 +95,7 @@ public abstract class DConfig {
                 if (!enabledSection.getBoolean(name, true))
                     disabled.add(name.toLowerCase());
         DISABLED_DISABILITIES = java.util.Set.copyOf(disabled);
+        ALLERGY_RADIUS = plugin.getConfig().getDouble("allergy.radius", 3);
         ASTHMA_MIN_LIMIT_S = plugin.getConfig().getDouble("asthma.min_limit_s", 20);
         ASTHMA_MAX_LIMIT_S = plugin.getConfig().getDouble("asthma.max_limit_s", 30);
         ASTHMA_SPRINT_GAIN = plugin.getConfig().getDouble("asthma.sprint_gain", 1.0);
