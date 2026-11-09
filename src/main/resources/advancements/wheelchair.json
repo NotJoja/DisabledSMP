@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:yummy",
+  "parent": "disabledsmp:lifestyle",
   "display": {
     "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:wheelchair" } },
     "title": { "translate": "advancement.dismp.wheelchair.title", "fallback": "Nagelneuer Benzer" },

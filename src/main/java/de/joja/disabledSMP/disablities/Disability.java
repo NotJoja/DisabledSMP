@@ -2,9 +2,11 @@ package de.joja.disabledSMP.disablities;
 
 import de.joja.disabledSMP.disablities.handlers.*;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
-import de.joja.disabledSMP.dismenu.menus.Menu;
+import de.joja.disabledSMP.utils.DConfig;
+import io.papermc.paper.dialog.Dialog;
+import org.bukkit.entity.Player;
+import java.util.function.Function;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
 
 import java.util.List;
 
@@ -47,9 +49,7 @@ public enum Disability {
     public final Key cureIcon;
     public final Key grayCureIcon;
 
-    public final Menu specificInfoMenu;
-
-    public final Material[] ritual;
+    public final Function<Player, Dialog> specificInfoDialog;
 
     Disability(DisabilityHandler handler) {
         this.handler = handler;
@@ -67,12 +67,20 @@ public enum Disability {
         this.cureIcon = handler.cureIcon;
         this.grayCureIcon = handler.grayCureIcon;
 
-        this.specificInfoMenu = handler.specifcInfoMenu;
-
-        this.ritual = handler.ritual;
+        this.specificInfoDialog = handler.specificInfoDialog;
     }
 
     public static final int DISABILITIES_TOTAL_AMOUNT = values().length;
+
+    /** False if the disability is turned off in the config ("disabilities"). */
+    public boolean isEnabled() {
+        return !DConfig.DISABLED_DISABILITIES.contains(enDataName);
+    }
+
+    /** All disabilities that are turned on, in the usual order. */
+    public static List<Disability> enabled() {
+        return java.util.Arrays.stream(values()).filter(Disability::isEnabled).toList();
+    }
 
     public static Disability get(int i) {
         return values()[i];

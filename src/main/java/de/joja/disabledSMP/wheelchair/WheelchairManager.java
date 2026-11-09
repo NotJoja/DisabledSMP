@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -38,7 +39,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.persistence.PersistentDataType;
@@ -168,7 +171,7 @@ public class WheelchairManager implements Listener {
         );
         recipe.setIngredient('L', Material.LEATHER);
         recipe.setIngredient('#', Material.IRON_BARS);
-        recipe.setIngredient('O', Material.OAK_STAIRS);
+        recipe.setIngredient('O', new RecipeChoice.MaterialChoice(Tag.WOODEN_STAIRS));
         recipe.setIngredient('I', Material.IRON_BLOCK);
         recipe.setCategory(CraftingBookCategory.EQUIPMENT);
 
@@ -377,7 +380,7 @@ public class WheelchairManager implements Listener {
             }, COLLAPSE_DELAY_TICKS);
     }
 
-    /** Destroys the wheelchair: tool break sound, some particles and the crafting materials drop. */
+    /** Destroys the wheelchair: wheelchair break sound, some particles and the crafting materials drop. */
     private void destroy(Horse horse) {
         Location loc = horse.getLocation().add(0, 0.6, 0);
 
@@ -387,7 +390,7 @@ public class WheelchairManager implements Listener {
         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.OAK_STAIRS));
         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.IRON_BLOCK, 2));
 
-        loc.getWorld().playSound(loc, Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+        loc.getWorld().playSound(loc, "dismp:wheelchair_break", SoundCategory.PLAYERS, 1f, 1f);
         loc.getWorld().spawnParticle(Particle.ITEM, loc, 30, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.IRON_BLOCK));
         loc.getWorld().spawnParticle(Particle.ITEM, loc, 15, 0.3, 0.3, 0.3, 0.05, new ItemStack(Material.LEATHER));
 

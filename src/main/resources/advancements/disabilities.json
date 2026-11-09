@@ -1,0 +1,14 @@
+{
+  "parent": "disabledsmp:root",
+  "display": {
+    "icon": { "id": "minecraft:golden_apple" },
+    "title": { "translate": "advancement.dismp.disabilities.title", "fallback": "Disabilities" },
+    "description": { "translate": "advancement.dismp.disabilities.description", "fallback": "Everything about your disabilities." },
+    "frame": "goal",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "done": { "trigger": "minecraft:impossible" }
+  }
+}

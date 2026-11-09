@@ -2,14 +2,14 @@ package de.joja.disabledSMP.commands;
 
 import de.joja.disabledSMP.advancements.AdvancementManager;
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.menus.MainDisMenu;
+import de.joja.disabledSMP.dismenu.DisMenus;
+import de.joja.disabledSMP.dismenu.InfoMenu;
 import de.joja.disabledSMP.smoking.SmokingManager;
 import de.joja.disabledSMP.utils.DConfig;
 import de.joja.disabledSMP.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
                              @NotNull String[] args) {
 
         if (args.length == 0) {
-            String subs = "add|rm|menu|list" + (isAdmin(sender) ? "|admin|reload" : "");
+            String subs = "add|rm|menu|info|list" + (isAdmin(sender) ? "|admin|reload" : "");
             msg(sender, "<red>Usage: /dis <" + subs + "> [args]",
                     "<red>Verwendung: /dis <" + subs + "> [args]");
             return true;
@@ -41,6 +41,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             case "add" -> handleAdd(sender, args);
             case "rm" -> handleRemove(sender, args);
             case "menu" -> handleMenu(sender, args);
+            case "info" -> handleInfo(sender);
             case "list" -> handleList(sender, args);
             case "admin" -> handleAdmin(sender, args);
             case "reload" -> handleReload(sender);
@@ -112,23 +113,28 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         if (all) {
             int added = 0;
-            for (Disability d : Disability.values())
+            for (Disability d : Disability.enabled())
                 if (!disabilities.contains(d)) {
                     disabilities.add(d);
                     d.handler.addToPlayer(target);
                     added++;
                 }
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Added " + added + " disabilities to " + target.getName() + "!",
                 "<green>" + added + " Disabilities zu " + target.getName() + " hinzugefügt!");
             return;
         }
 
-        if (disabilities.contains(dis)) {
+        if (!dis.isEnabled()) {
+            msg(sender, "<red>That disability is turned off in the config!",
+                "<red>Diese Disability ist in der Config ausgeschaltet!");
+        } else if (disabilities.contains(dis)) {
             msg(sender, "<yellow>Player already has that disability!",
                 "<yellow>Der Spieler hat diese Disability bereits!");
         } else {
             disabilities.add(dis);
             dis.handler.addToPlayer(target);
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Successfully added disability to " + target.getName() + "!",
                 "<green>Disability erfolgreich zu " + target.getName() + " hinzugefügt!");
         }
@@ -189,6 +195,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             for (Disability d : new ArrayList<>(disabilities))
                 d.handler.removeFromPlayer(target);
             disabilities.clear();
+            plugin.saveDisabilities(uuid);
             msg(sender, "<green>Removed " + removed + " disabilities from " + target.getName() + "!",
                 "<green>" + removed + " Disabilities von " + target.getName() + " entfernt!");
             return;
@@ -202,6 +209,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
 
         disabilities.remove(dis);
         dis.handler.removeFromPlayer(target);
+        plugin.saveDisabilities(uuid);
         msg(sender, "<green>Successfully removed disability from " + target.getName() + "!",
                 "<green>Disability erfolgreich von " + target.getName() + " entfernt!");
     }
@@ -219,6 +227,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        java.util.Set<String> disabledBefore = DConfig.DISABLED_DISABILITIES;
         DConfig.reload();
 
         // attribute based disabilities only apply their values when they are added: apply them again
@@ -226,6 +235,14 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
             if (disabilities == null)
                 continue;
+
+            // disabilities that were turned off or on in the config
+            for (Disability dis : disabilities) {
+                if (!dis.isEnabled() && !disabledBefore.contains(dis.enDataName))
+                    dis.handler.removeFromPlayer(player);
+                else if (dis.isEnabled() && disabledBefore.contains(dis.enDataName))
+                    dis.handler.addToPlayer(player);
+            }
             if (disabilities.contains(Disability.OVERWEIGHT))
                 Disability.OVERWEIGHT.handler.addToPlayer(player);
             if (disabilities.contains(Disability.DWARFISM))
@@ -306,9 +323,17 @@ public class DisCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        Inventory disMenuInv = new MainDisMenu(player.getUniqueId()).createMenuInv();
-        player.openInventory(disMenuInv);
+        DisMenus.openMain(player);
         plugin.advancementManager.grant(player, AdvancementManager.GETTING_TO_KNOW_YOURSELF);
+    }
+
+    private void handleInfo(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            msg(sender, "<red>Only players can use this command!",
+                "<red>Nur Spieler können diesen Befehl benutzen!");
+            return;
+        }
+        InfoMenu.open(player);
     }
 
     private void handleList(CommandSender sender, String[] args) {
@@ -362,7 +387,7 @@ public class DisCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String s : new String[]{"add", "rm", "menu", "list", "admin", "reload"}) {
+            for (String s : new String[]{"add", "rm", "menu", "info", "list", "admin", "reload"}) {
                 if ((s.equals("admin") || s.equals("reload")) && !isAdmin(sender)) continue;
                 if (s.startsWith(args[0].toLowerCase())) completions.add(s);
             }

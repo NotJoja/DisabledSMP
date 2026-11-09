@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:yummy",
+  "parent": "disabledsmp:lifestyle",
   "display": {
     "icon": { "id": "minecraft:paper" },
     "title": { "translate": "advancement.dismp.addict.title", "fallback": "Addict" },

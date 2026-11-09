@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:getting_to_know_yourself",
+  "parent": "disabledsmp:disabilities",
   "display": {
     "icon": { "id": "minecraft:paper", "components": { "minecraft:item_model": "dismp:disicons/heart_attacks" } },
     "title": { "translate": "advancement.dismp.still_standing.title", "fallback": "I'm still standing!" },

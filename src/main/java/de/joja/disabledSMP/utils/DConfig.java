@@ -25,6 +25,9 @@ public abstract class DConfig {
     public static volatile int MIN_DISABILITIES;
     public static volatile int MAX_DISABILITIES;
 
+    /** Data names (see "disabilities" in the config) of the disabilities that are turned off. */
+    public static volatile java.util.Set<String> DISABLED_DISABILITIES = java.util.Set.of();
+
     // ---- Smoke gives disabilities
     public static volatile boolean SMOKE_DISABILITY_ENABLED;
     public static volatile double SMOKE_DISABILITY_SECONDS;
@@ -32,6 +35,7 @@ public abstract class DConfig {
     public static volatile int SMOKE_DISABILITY_COOLDOWN_S;
 
     // ---- Asthma
+    public static volatile double ALLERGY_RADIUS;
     public static volatile double ASTHMA_MIN_LIMIT_S;
     public static volatile double ASTHMA_MAX_LIMIT_S;
     public static volatile double ASTHMA_SPRINT_GAIN;
@@ -84,6 +88,14 @@ public abstract class DConfig {
         FIRST_JOIN_DISABILITIES = plugin.getConfig().getInt("first_join_disabilities", -1);
         MIN_DISABILITIES = plugin.getConfig().getInt("min_disabilities", -1);
         MAX_DISABILITIES = plugin.getConfig().getInt("max_disabilities", -1);
+        java.util.Set<String> disabled = new java.util.HashSet<>();
+        org.bukkit.configuration.ConfigurationSection enabledSection = plugin.getConfig().getConfigurationSection("disabilities");
+        if (enabledSection != null)
+            for (String name : enabledSection.getKeys(false))
+                if (!enabledSection.getBoolean(name, true))
+                    disabled.add(name.toLowerCase());
+        DISABLED_DISABILITIES = java.util.Set.copyOf(disabled);
+        ALLERGY_RADIUS = plugin.getConfig().getDouble("allergy.radius", 3);
         ASTHMA_MIN_LIMIT_S = plugin.getConfig().getDouble("asthma.min_limit_s", 20);
         ASTHMA_MAX_LIMIT_S = plugin.getConfig().getDouble("asthma.max_limit_s", 30);
         ASTHMA_SPRINT_GAIN = plugin.getConfig().getDouble("asthma.sprint_gain", 1.0);

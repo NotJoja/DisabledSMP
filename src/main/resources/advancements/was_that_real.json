@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:getting_to_know_yourself",
+  "parent": "disabledsmp:disabilities",
   "display": {
     "icon": { "id": "minecraft:creeper_head" },
     "title": { "translate": "advancement.dismp.was_that_real.title", "fallback": "Was that real?" },

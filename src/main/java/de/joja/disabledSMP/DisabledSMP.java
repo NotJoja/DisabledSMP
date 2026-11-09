@@ -2,7 +2,6 @@ package de.joja.disabledSMP;
 
 import de.joja.disabledSMP.commands.DisCommand;
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.MenuManager;
 import de.joja.disabledSMP.listeners.CureListener;
 import de.joja.disabledSMP.listeners.DeathMessageListener;
 import de.joja.disabledSMP.listeners.JoinListener;
@@ -84,7 +83,6 @@ public final class DisabledSMP extends JavaPlugin {
         pm.registerEvents(smokingManager, this);
         nailsManager = new NailsManager(this);
         pm.registerEvents(nailsManager, this);
-        pm.registerEvents(new MenuManager(), this);
         pm.registerEvents(new JoinListener(), this);
         pm.registerEvents(new KillListener(), this);
         pm.registerEvents(new CureListener(), this);
@@ -92,6 +90,12 @@ public final class DisabledSMP extends JavaPlugin {
 
         for (Disability dis : Disability.values())
             pm.registerEvents(dis.handler, this);
+
+        // safety net for every place that changes disabilities (menus, ...): save every 5 minutes
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            for (UUID uuid : disabilityMap.keySet())
+                saveDisabilities(uuid);
+        }, 20L * 60 * 5, 20L * 60 * 5);
 
         // Register the new combined command
         getCommand("dis").setExecutor(new DisCommand());
@@ -106,10 +110,20 @@ public final class DisabledSMP extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        disabilityMap.forEach(
-                (uuid, disabilities) -> YamlDisabilityStorage
-                        .saveDisabilities(uuid, disabilities.toArray(Disability[]::new))
-        );
+        for (UUID uuid : disabilityMap.keySet())
+            saveDisabilities(uuid);
+    }
+
+    /** Writes the disabilities of one player to disk. A failing file never stops the others from being saved. */
+    public void saveDisabilities(UUID uuid) {
+        List<Disability> disabilities = disabilityMap.get(uuid);
+        if (disabilities == null)
+            return;
+        try {
+            YamlDisabilityStorage.saveDisabilities(uuid, disabilities.toArray(Disability[]::new));
+        } catch (RuntimeException e) {
+            getLogger().severe("Could not save the disabilities of " + uuid + ": " + e);
+        }
     }
 
 }

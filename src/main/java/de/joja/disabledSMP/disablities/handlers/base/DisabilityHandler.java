@@ -1,9 +1,10 @@
 package de.joja.disabledSMP.disablities.handlers.base;
 
 import de.joja.disabledSMP.disablities.Disability;
-import de.joja.disabledSMP.dismenu.menus.Menu;
+import io.papermc.paper.dialog.Dialog;
+import org.bukkit.entity.Player;
+import java.util.function.Function;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -26,9 +27,7 @@ public abstract class DisabilityHandler implements Listener {
     public Key cureIcon;
     public Key grayCureIcon;
 
-    public Menu specifcInfoMenu = null;
-
-    public Material[] ritual = {Material.ANCIENT_DEBRIS, Material.DIAMOND_BLOCK, Material.HAY_BLOCK, Material.PUMPKIN, Material.MELON};
+    public Function<Player, Dialog> specificInfoDialog = null; // optional extra info page for the /dis menu
 
     public void initIcons() {
         icon = Key.key("dismp", "disicons/" + enDataName);
@@ -46,7 +45,9 @@ public abstract class DisabilityHandler implements Listener {
 
 
     public static boolean hasDis(Player player, Disability dis) {
-        return plugin.disabilityMap.get(player.getUniqueId()).contains(dis);
+        List<Disability> disabilities = plugin.disabilityMap.get(player.getUniqueId());
+        // a disability that is turned off in the config has no effect (the player keeps it saved)
+        return disabilities != null && dis.isEnabled() && disabilities.contains(dis);
     }
 
     public void addToPlayer(Player player) {}

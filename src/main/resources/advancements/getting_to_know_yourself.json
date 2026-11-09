@@ -1,5 +1,5 @@
 {
-  "parent": "disabledsmp:root",
+  "parent": "disabledsmp:disabilities",
   "display": {
     "icon": { "id": "minecraft:knowledge_book" },
     "title": { "translate": "advancement.dismp.getting_to_know_yourself.title", "fallback": "Getting to know yourself" },
