@@ -14,6 +14,13 @@ import static de.joja.disabledSMP.utils.Icons.CURE_RGB;
 
 public abstract class CureManager { ;
 
+    /** True for the cure items (they are potatoes with a marker, but not food). */
+    public static boolean isCureItem(ItemStack item) {
+        return item != null && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer()
+                        .has(new NamespacedKey(plugin, "cure"), PersistentDataType.INTEGER);
+    }
+
     public static ItemStack createCureItem(Disability disability) {
         ItemStack cureItem = new ItemStack(Material.POTATO);
 

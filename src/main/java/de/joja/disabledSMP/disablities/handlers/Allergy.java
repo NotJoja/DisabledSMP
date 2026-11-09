@@ -2,6 +2,7 @@ package de.joja.disabledSMP.disablities.handlers;
 
 import de.joja.disabledSMP.DisabledSMP;
 import de.joja.disabledSMP.advancements.AdvancementManager;
+import de.joja.disabledSMP.disablities.CureManager;
 import de.joja.disabledSMP.disablities.Disability;
 import de.joja.disabledSMP.dismenu.AllergyMenu;
 import de.joja.disabledSMP.disablities.handlers.base.DisabilityHandler;
@@ -14,6 +15,7 @@ import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -101,13 +103,13 @@ public class Allergy extends DisabilityHandler {
         if (plugin.allergyMap.get(uuid) == null)
             return false;
 
-        for (Material allergyItem : ALLERGY_TYPES[plugin.allergyMap.get(uuid)])
-            if (player.getInventory().contains(allergyItem))
+        for (ItemStack stack : player.getInventory().getContents())
+            if (isAllergen(stack, uuid))
                 return true;
 
         double r = DConfig.ALLERGY_RADIUS;
         for (Entity entity : player.getNearbyEntities(r, r, r))
-            if (entity instanceof Item item && isPlayerAllergicTo(item.getItemStack().getType(), uuid))
+            if (entity instanceof Item item && isAllergen(item.getItemStack(), uuid))
                 return true;
         return false;
     }
@@ -139,10 +141,15 @@ public class Allergy extends DisabilityHandler {
         }
     }
 
-    boolean isPlayerAllergicTo(Material item, UUID uuid) {
-        int allergyID = plugin.allergyMap.get(uuid);
+    /** Whether the item is something the player is allergic to. Cures are potatoes too, but they don't count. */
+    boolean isAllergen(ItemStack item, UUID uuid) {
+        if (item == null || item.getType().isAir() || CureManager.isCureItem(item))
+            return false;
+        Integer allergyID = plugin.allergyMap.get(uuid);
+        if (allergyID == null)
+            return false;
         for (Material allergyItem : ALLERGY_TYPES[allergyID])
-            if (item == allergyItem)
+            if (item.getType() == allergyItem)
                 return true;
         return false;
     }
