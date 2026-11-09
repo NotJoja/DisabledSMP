@@ -48,6 +48,27 @@ public abstract class YamlDisabilityStorage {
 
 
 
+    /** The colorblind mode chosen in /dis menu (the name of the mode), or null if none was chosen. */
+    public static String loadColorblindMode(UUID uuid) {
+        File file = file(uuid);
+        if (!file.exists()) return null;
+
+        return YamlConfiguration.loadConfiguration(file).getString("colorblind_mode");
+    }
+
+    public static void saveColorblindMode(UUID uuid, String mode) {
+        File file = file(uuid);
+        file.getParentFile().mkdirs();
+
+        YamlConfiguration cfg = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
+        cfg.set("colorblind_mode", mode);
+        try {
+            cfg.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void saveDisabilityIDs(UUID uuid, int[] disabilityIDs) {
         File file = file(uuid);
         file.getParentFile().mkdirs();

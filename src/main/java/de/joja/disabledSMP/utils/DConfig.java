@@ -9,6 +9,8 @@ public abstract class DConfig {
     public static volatile String RESOURCE_PACK_SHA1;
     public static volatile String COLORBLIND_PACK_URL;
     public static volatile String COLORBLIND_PACK_SHA1;
+    public static volatile String COLORBLIND_CLASSIC_PACK_URL;
+    public static volatile String COLORBLIND_CLASSIC_PACK_SHA1;
     public static volatile int MAX_KILL_TIME_MS;
 
     // ---- housekeeping
@@ -83,6 +85,8 @@ public abstract class DConfig {
         RESOURCE_PACK_SHA1 = plugin.getConfig().getString("resource_pack_sha1", "auto");
         COLORBLIND_PACK_URL = plugin.getConfig().getString("colorblind_pack_url", "https://raw.githubusercontent.com/NotJoja/DismpTP/master/Colorblind/Colorblind.zip");
         COLORBLIND_PACK_SHA1 = plugin.getConfig().getString("colorblind_pack_sha1", "auto");
+        COLORBLIND_CLASSIC_PACK_URL = plugin.getConfig().getString("colorblind_classic_pack_url", "https://raw.githubusercontent.com/NotJoja/DismpTP/master/ColorblindClassic/ColorblindClassic.zip");
+        COLORBLIND_CLASSIC_PACK_SHA1 = plugin.getConfig().getString("colorblind_classic_pack_sha1", "auto");
         MAX_KILL_TIME_MS = plugin.getConfig().getInt("max_kill_time_s") * 1000;
         DEBUG = plugin.getConfig().getBoolean("debug", false);
         FIRST_JOIN_DISABILITIES = plugin.getConfig().getInt("first_join_disabilities", -1);

@@ -20,7 +20,8 @@ import static de.joja.disabledSMP.DisabledSMP.plugin;
 
 /**
  * The resource packs of the plugin. Both are active at the same time (packs stack): everyone gets the main pack
- * (models, icons, lang files), players with Color Blindness additionally get the colorblind pack on top.
+ * (models, icons, lang files), players with Color Blindness additionally get one of the colorblind packs on top
+ * (the selective one or the classic black and white one, their choice).
  */
 public abstract class ResourcePacks {
 
@@ -34,10 +35,17 @@ public abstract class ResourcePacks {
             "Every colorblind player must use this resource pack!",
             "Jeder farbenblinde Spieler muss dieses Resource Pack benutzen!");
 
+    /** The old colorblind mode: everything black and white (players can choose it in /dis menu -> Color Blindness). */
+    public static final ResourcePack COLORBLIND_CLASSIC = new ResourcePack(
+            "colorblind_classic", () -> DConfig.COLORBLIND_CLASSIC_PACK_URL, () -> DConfig.COLORBLIND_CLASSIC_PACK_SHA1,
+            "Every colorblind player must use this resource pack!",
+            "Jeder farbenblinde Spieler muss dieses Resource Pack benutzen!");
+
     /** Starts calculating the hashes of packs with resource_pack_sha1 / colorblind_pack_sha1 set to "auto". */
     public static void startAutoHash() {
         MAIN.startAutoHash();
         COLORBLIND.startAutoHash();
+        COLORBLIND_CLASSIC.startAutoHash();
     }
 
     public static final class ResourcePack {

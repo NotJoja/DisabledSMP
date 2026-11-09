@@ -53,7 +53,8 @@ public final class DisabledSMP extends JavaPlugin {
             return;
 
         boolean changed = false;
-        for (String key : List.of("resource_pack_url", "resource_pack_sha1", "colorblind_pack_url", "colorblind_pack_sha1")) {
+        for (String key : List.of("resource_pack_url", "resource_pack_sha1", "colorblind_pack_url", "colorblind_pack_sha1",
+                "colorblind_classic_pack_url", "colorblind_classic_pack_sha1")) {
             Object wanted = defaults.get(key);
             if (wanted != null && !wanted.equals(getConfig().get(key))) {
                 getLogger().warning("config.yml: resetting '" + key + "' from '" + getConfig().get(key) + "' to '" + wanted + "'");
